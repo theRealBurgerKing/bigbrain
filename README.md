@@ -2,9 +2,9 @@
 
 [Please see course website for full spec](https://cgi.cse.unsw.edu.au/~cs6080/NOW/assessments/assignments/ass4)
 
-## Compulsory setup
+This assignment is due Friday the 25th of April, 8pm.
 
-Please run `./util/setup.sh` in your terminal before you begin. This will set up some checks in relation to the "Git Commit Requirements". If you ran this script before the MR rolled out specified in changelog, please run it again.
+**Please run `./util/setup.sh` in your terminal before you begin. This will set up some checks in relation to the "Git Commit Requirements".**
 
 It's important to note that you should **NOT** use any pre-built web app templates or any AI web app creators for this assignment.
 
