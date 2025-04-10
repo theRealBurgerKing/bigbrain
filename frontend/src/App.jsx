@@ -1,34 +1,89 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import React from 'react';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useParams,
+  useNavigate,
+  Outlet,
+} from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0);
+
+
+
+const Home = () => {
+  return <div>Home</div>;
+};
+
+const About = () => {
+  return <div>
+    About
+    <Outlet />
+  </div>;
+};
+
+const AboutTeam = () => {
+  return <div>AboutTeam</div>;
+};
+
+const AboutHistory = () => {
+  return <div>AboutHistory</div>;
+};
+
+const Profile = () => {
+  const params = useParams();
+  const navigate = useNavigate();
   
+  const [name, setName] = React.useState('');
+
+  if (!params.name) {
+    return (
+      <>
+        Name: <input value={name} onChange={e => setName(e.target.value)} />
+        <button onClick={() => {
+          navigate('/profile/' + name);
+        }}>Go!</button>
+      </>
+    );
+  }
+  return (
+    <div>
+      Profile {params.name}
+    </div>
+  );
+};
+
+const Nav = () => {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button id="counter" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <span><Link to="/">Home</Link></span>&nbsp;|&nbsp;
+      <span><Link to="/about">About</Link></span>&nbsp;|&nbsp;
+      <span><Link to="/about/team">Team</Link></span>&nbsp;|&nbsp;
+      <span><Link to="/about/history">History</Link></span>&nbsp;|&nbsp;
+      <span><Link to="/profile">Profile</Link></span>
     </>
-  )
+  );
+};
+
+function App() {
+  return (
+    <>
+      <BrowserRouter>
+        <Nav />
+        <hr />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />}>
+            <Route path="team" element={<AboutTeam />} />
+            <Route path="history" element={<AboutHistory />} />
+          </Route>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:name" element={<Profile />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
-export default App
+export default App;
