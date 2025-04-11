@@ -24,8 +24,8 @@ function Login(props){
   return (
     <>
       <h1>Login</h1>
-      Email: <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" /><br />
-      Password: <input value={password} onChange={(e) => setPassword(e.target.value)} type="text" /><br />
+      Email: <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" /><br />
+      Password: <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" /><br />
       <button onClick={login}>Login</button>
     </>
   );
