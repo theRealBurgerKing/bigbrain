@@ -26,13 +26,14 @@ function Pages() {
     }
   }, [token]);
 
-  const successJob = (token) => {
+  const successJob = (token, email) => {
     if (!token) {
       setErrorMessage('Invalid token received.');
       setOpen(true);
       return;
     }
     localStorage.setItem('token', token);
+    localStorage.setItem('email', email)
     setToken(token);
     navigate('/dashboard');
   };

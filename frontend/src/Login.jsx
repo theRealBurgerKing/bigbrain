@@ -20,7 +20,7 @@ function Login({ successJob, showError }) {
         password: password,
       });
       const token = response.data.token;
-      successJob(token);
+      successJob(token, email);
     } catch (err) {
       if (err.response) {
         showError(err.response.data?.error || 'Unknown error');
