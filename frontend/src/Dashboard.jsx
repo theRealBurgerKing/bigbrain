@@ -59,7 +59,51 @@ function Dashboard() {
     fetchGames();
   }, []);
 
-  // PUT request to create games
+  // PUT request to change games
+  const putGames = async (updatedGames) =>{
+    try {
+      const response = await axios.put(
+        'http://localhost:5005/admin/games',
+        {
+          games: updatedGames
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert('Games updated successfully!');
+        fetchGames();
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError('Bad input: Please check the game data format.');
+        } else if (err.response.status === 403) {
+          setError('Forbidden: You do not have permission to update games.');
+        } else if (err.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          localStorage.removeItem('token');
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
+        } else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        call
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setShowCreateGame(false);
+      setIsLoading(false);
+    }
+  };
+
+  // Create games
   const createGames = async () => {
     if (!token) {
       setError('No token found. Please log in again.');
@@ -82,8 +126,6 @@ function Dashboard() {
       }
       const randomPart = Math.floor(Math.random() * 1000);
       const uniqueId = `${timestamp.toString().slice(2, 10)}${hash.toString().slice(-6)}${randomPart}`;
-
-      console.log(`${timestamp.toString().slice(0, 9)}---${hash.toString().slice(-6)}----${randomPart}`);
       const updatedGames = [...games, {
         "id": uniqueId,
         "name": newGameName,
@@ -92,56 +134,17 @@ function Dashboard() {
           {}
         ]
       }];
-      console.log(updatedGames)
-      try {
-        const response = await axios.put(
-          'http://localhost:5005/admin/games',
-          {
-            games: updatedGames
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        if (response.status === 200) {
-          alert('Games updated successfully!');
-          fetchGames();
-        }
-      } catch (err) {
-        if (err.response) {
-          if (err.response.status === 400) {
-            setError('Bad input: Please check the game data format.');
-          } else if (err.response.status === 403) {
-            setError('Forbidden: You do not have permission to update games.');
-          } else if (err.response.status === 401) {
-            setError('Session expired. Please log in again.');
-            localStorage.removeItem('token');
-            setTimeout(() => {
-              navigate('/login');
-            }, 2000);
-          } else {
-            setError(err.response.data?.error || 'An error occurred while updating games.');
-          }
-        } else {
-          call
-          setError('Failed to connect to the server. Please try again.');
-        }
-      } finally {
-        setShowCreateGame(false);
-        setIsLoading(false);
-      }
+      putGames(updatedGames);
     }
     setError('');
   };
 
   //DEL
-  const deleteGame = async () =>{
-
+  const deleteGame = async (id) => {
+    const updatedGames = games.filter(game => game.id !== id);
+    putGames(updatedGames);
   };
-  
+
   return (
     <div style={{ padding: '20px' }}>
       <h2>Admin Dashboard</h2>
