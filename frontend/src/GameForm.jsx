@@ -165,7 +165,55 @@ function GameForm({ initialGame, onSave, onCancel }) {
           </ul>
         </div>
 
-        
+        {/* Question Editor */}
+        <div style={{ flex: 1 }}>
+          {selectedQuestion ? (
+            <>
+              <h3>Edit Question</h3>
+              <label>
+                Question Text:
+                <input
+                  type="text"
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  style={{ width: '100%', marginBottom: '10px' }}
+                />
+              </label>
+              <h4>Answers</h4>
+              {answers.map((answer, index) => (
+                <div key={index} style={{ marginBottom: '5px' }}>
+                  <label>
+                    Answer {index + 1}:
+                    <input
+                      type="text"
+                      value={answer}
+                      onChange={(e) => {
+                        const newAnswers = [...answers];
+                        newAnswers[index] = e.target.value;
+                        setAnswers(newAnswers);
+                      }}
+                      style={{ marginLeft: '10px', width: '300px' }}
+                    />
+                  </label>
+                </div>
+              ))}
+              <button
+                onClick={() => setAnswers([...answers, ''])}
+                style={{ marginTop: '10px' }}
+              >
+                Add Answer
+              </button>
+              <button
+                onClick={updateQuestion}
+                style={{ marginLeft: '10px' }}
+              >
+                Save Question
+              </button>
+            </>
+          ) : (
+            <p>Select a question to edit or add a new one.</p>
+          )}
+        </div>
       </div>
 
       {/* Save and Cancel */}
