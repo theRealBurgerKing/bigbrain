@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import GameForm from './GameForm';
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,26 +10,20 @@ function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showCreateGame, setShowCreateGame] = useState(false);
-  const [newGameName, setNewGameName] = useState('');
 
   // GET request to fetch all games
   const fetchGames = async () => {
     if (!token) {
       setError('No token found. Please log in again.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      setTimeout(() => navigate('/login'), 2000);
       return;
     }
     setIsLoading(true);
     setError('');
     try {
       const response = await axios.get('http://localhost:5005/admin/games', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.status === 200) {
         setGames(response.data.games || []);
       }
@@ -40,9 +34,7 @@ function Dashboard() {
         } else if (err.response.status === 401) {
           setError('Session expired. Please log in again.');
           localStorage.removeItem('token');
-          setTimeout(() => {
-            navigate('/login');
-          }, 2000);
+          setTimeout(() => navigate('/login'), 2000);
         } else {
           setError(err.response.data?.error || 'An error occurred while fetching games.');
         }
@@ -60,13 +52,12 @@ function Dashboard() {
   }, []);
 
   // PUT request to change games
-  const putGames = async (updatedGames) =>{
+  const putGames = async (updatedGames) => {
+    setIsLoading(true);
     try {
       const response = await axios.put(
         'http://localhost:5005/admin/games',
-        {
-          games: updatedGames
-        },
+        { games: updatedGames },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,9 +78,7 @@ function Dashboard() {
         } else if (err.response.status === 401) {
           setError('Session expired. Please log in again.');
           localStorage.removeItem('token');
-          setTimeout(() => {
-            navigate('/login');
-          }, 2000);
+          setTimeout(() => navigate('/login'), 2000);
         } else {
           setError(err.response.data?.error || 'An error occurred while updating games.');
         }
@@ -102,45 +91,32 @@ function Dashboard() {
     }
   };
 
-  // Create games
-  const createGames = async () => {
-    if (!token) {
-      setError('No token found. Please log in again.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-      return;
+  // Handle game creation
+  const handleCreateGame = (gameData) => {
+    const email = localStorage.getItem('email');
+    const timestamp = Date.now();
+    let hash = 0;
+    for (let i = 0; i < email.length; i++) {
+      hash = (hash * 31 + email.charCodeAt(i)) >>> 0;
     }
-    if (!newGameName) {
-      setShowCreateGame(false);
-      setError('No Game Name enter. Please input name.');
-      return;
-    }
-    else{
-      const email =localStorage.getItem('email');
-      const timestamp = Date.now();
-      let hash = 0;
-      for (let i = 0; i < email.length; i++) {
-        hash = (hash * 31 + email.charCodeAt(i)) >>> 0;
-      }
-      const randomPart = Math.floor(Math.random() * 1000);
-      const uniqueId = `${timestamp.toString().slice(2, 10)}${hash.toString().slice(-6)}${randomPart}`;
-      const updatedGames = [...games, {
-        "id": uniqueId,
-        "name": newGameName,
-        "owner": email,
-        "questions": [
-          {}
-        ]
-      }];
-      putGames(updatedGames);
-    }
-    setError('');
+    const randomPart = Math.floor(Math.random() * 1000);
+    const uniqueId = `${timestamp.toString().slice(2, 10)}${hash.toString().slice(-6)}${randomPart}`;
+    const newGame = {
+      id: uniqueId,
+      name: gameData.name,
+      owner: email,
+      thumbnail: gameData.thumbnail,
+      questions: gameData.questions,
+      createdAt: new Date().toISOString(),
+      active: 0,
+    };
+    const updatedGames = [...games, newGame];
+    putGames(updatedGames);
   };
 
-  //DEL
+  // Delete game
   const deleteGame = async (id) => {
-    const updatedGames = games.filter(game => game.id !== id);
+    const updatedGames = games.filter((game) => game.id !== id);
     putGames(updatedGames);
   };
 
@@ -153,13 +129,11 @@ function Dashboard() {
           disabled={isLoading}
           style={{ padding: '10px 20px' }}
         >
-          {isLoading ? 'Creating...' : 'Create Games'}
+          {isLoading ? 'Creating...' : 'Create Game'}
         </button>
       </div>
 
-      {error && (
-        <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>
-      )}
+      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
 
       {games.length > 0 ? (
         <div>
@@ -181,7 +155,9 @@ function Dashboard() {
                 <strong>Created At:</strong>{' '}
                 {new Date(game.createdAt).toLocaleString()} <br />
                 <strong>Active:</strong> {game.active ? 'Yes' : 'No'} <br />
-                <button onClick={() => navigate(`/game/${game.id}`)}>Edit Game</button>
+                <button onClick={() => navigate(`/game/${game.id}`)}>
+                  Edit Game
+                </button>
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
                 {game.thumbnail && (
                   <>
@@ -198,23 +174,31 @@ function Dashboard() {
           </ul>
         </div>
       ) : (
-        <p>No games available. Click "Fetch Games" to load the list.</p>
+        <p>No games available.</p>
       )}
 
       {showCreateGame && (
-        <div style={{
-          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white', padding: '20px', border: '1px solid #ccc', zIndex: '1000'
-        }}>
-          <h3>Create New Game</h3>
-          <input
-            type="text"
-            value={newGameName}
-            onChange={(e) => setNewGameName(e.target.value)}
-            placeholder="Enter game name"
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #ccc',
+            zIndex: '1000',
+            width: '80%',
+            maxWidth: '800px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+          }}
+        >
+          <GameForm
+            initialGame={null}
+            onSave={handleCreateGame}
+            onCancel={() => setShowCreateGame(false)}
           />
-          <button onClick={createGames}>Create</button>
-          <button onClick={() => setShowCreateGame(false)}>Cancel</button>
         </div>
       )}
     </div>
