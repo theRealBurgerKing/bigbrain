@@ -274,7 +274,48 @@ function QuestionEditor() {
             </label>
           </div>
 
-          
+          {/* Time Limit */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Time Limit (seconds):
+              <input
+                type="number"
+                value={timeLimit}
+                onChange={(e) => setTimeLimit(Number(e.target.value))}
+                min="1"
+                style={{ marginLeft: '10px', width: '100px' }}
+              />
+            </label>
+          </div>
+
+          {/* Points */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Points:
+              <input
+                type="number"
+                value={points}
+                onChange={(e) => setPoints(Number(e.target.value))}
+                min="1"
+                style={{ marginLeft: '10px', width: '100px' }}
+              />
+            </label>
+          </div>
+
+          {/* YouTube URL */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              YouTube URL (optional):
+              <input
+                type="text"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                style={{ width: '100%', marginTop: '5px' }}
+              />
+            </label>
+          </div>
+
           {/* Image Upload */}
           <div style={{ marginBottom: '10px' }}>
             <label>
