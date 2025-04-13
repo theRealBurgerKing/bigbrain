@@ -23,20 +23,30 @@ function GameEditor() {
       setIsLoading(true);
       setError('');
       try {
+        console.log('Fetching game with ID:', gameId); // Debug
         const response = await axios.get('http://localhost:5005/admin/games', {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log('Raw response:', response.data); // Debug raw data
+
+        // Convert games object to array
+        const games = Object.keys(response.data.games).map((id) => ({
+          id,
+          ...response.data.games[id],
+        }));
+        console.log('Normalized games:', games); // Debug normalized data
+
         if (response.status === 200) {
-          const gameData = response.data.games.find(
-            (g) => g.id.toString() === gameId
-          );
+          const gameData = games.find((g) => g.id.toString() === gameId);
           if (gameData) {
+            console.log('Found game:', gameData); // Debug selected game
             setGame(gameData);
           } else {
             setError('Game not found.');
           }
         }
       } catch (err) {
+        console.error('Fetch error:', err); // Debug
         handleError(err);
       } finally {
         setIsLoading(false);
@@ -75,6 +85,7 @@ function GameEditor() {
     setError('');
 
     try {
+      console.log('Saving game:', gameData); // Debug
       const response = await axios.put(
         'http://localhost:5005/admin/games',
         {
@@ -92,6 +103,7 @@ function GameEditor() {
         navigate('/dashboard');
       }
     } catch (err) {
+      console.error('Save error:', err); // Debug
       handleError(err);
     } finally {
       setIsLoading(false);

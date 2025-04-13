@@ -15,9 +15,9 @@ import GameEditor from './GameEditor';
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
@@ -40,7 +40,6 @@ function Pages() {
   };
 
   const logout = async () => {
-    console.log('Token:', token);
     if (!token) {
       setErrorMessage('No token found. Please log in again.');
       setOpen(true);

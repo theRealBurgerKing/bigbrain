@@ -12,14 +12,24 @@ function GameForm({ initialGame, onSave, onCancel }) {
 
   // Initialize form with initialGame data (if provided)
   useEffect(() => {
+    console.log('GameForm received initialGame:', initialGame); // Debug
     if (initialGame) {
       setGameName(initialGame.name || '');
       setThumbnail(initialGame.thumbnail || '');
-      setQuestions(
-        initialGame.questions?.length > 0
-          ? initialGame.questions
-          : [{ id: Date.now(), text: '', answers: ['', ''] }]
-      );
+      // Normalize questions
+      const initialQuestions = Array.isArray(initialGame.questions)
+        ? initialGame.questions.map((q, index) => ({
+            id: q.id || Date.now() + index,
+            text: q.text || '',
+            answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+          }))
+        : [];
+      setQuestions(initialQuestions);
+      console.log('Initialized questions:', initialQuestions); // Debug
+    } else {
+      setGameName('');
+      setThumbnail('');
+      setQuestions([]);
     }
   }, [initialGame]);
 
@@ -40,12 +50,13 @@ function GameForm({ initialGame, onSave, onCancel }) {
     setSelectedQuestion(question);
     setQuestionText(question.text || '');
     setAnswers(question.answers || ['', '']);
+    console.log('Selected question:', question); // Debug
   };
 
   // Add a new question
   const addQuestion = () => {
     const newQuestion = {
-      id: Date.now(), // Temporary ID
+      id: Date.now(),
       text: '',
       answers: ['', ''],
     };
@@ -83,11 +94,12 @@ function GameForm({ initialGame, onSave, onCancel }) {
       return;
     }
     const gameData = {
-      ...initialGame, // Preserve fields like id, owner for edit mode
+      ...initialGame,
       name: gameName,
       thumbnail: thumbnail || undefined,
       questions: questions.length > 0 ? questions : [{}],
     };
+    console.log('Saving game data:', gameData); // Debug
     onSave(gameData);
   };
 
@@ -140,29 +152,33 @@ function GameForm({ initialGame, onSave, onCancel }) {
           >
             Add Question
           </button>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {questions.map((q) => (
-              <li
-                key={q.id}
-                style={{
-                  padding: '5px',
-                  background:
-                    selectedQuestion?.id === q.id ? '#e0e0e0' : 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                <span onClick={() => selectQuestion(q)}>
-                  {q.text || 'Untitled Question'}
-                </span>
-                <button
-                  onClick={() => deleteQuestion(q.id)}
-                  style={{ marginLeft: '10px', color: 'red' }}
+          {questions.length > 0 ? (
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {questions.map((q) => (
+                <li
+                  key={q.id}
+                  style={{
+                    padding: '5px',
+                    background:
+                      selectedQuestion?.id === q.id ? '#e0e0e0' : 'transparent',
+                    cursor: 'pointer',
+                  }}
                 >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <span onClick={() => selectQuestion(q)}>
+                    {q.text || 'Untitled Question'}
+                  </span>
+                  <button
+                    onClick={() => deleteQuestion(q.id)}
+                    style={{ marginLeft: '10px', color: 'red' }}
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No questions yet. Click "Add Question" to start.</p>
+          )}
         </div>
 
         {/* Question Editor */}
