@@ -24,8 +24,28 @@ function Dashboard() {
       const response = await axios.get('http://localhost:5005/admin/games', {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log('Dashboard fetched games:', response.data);
+      const games = Array.isArray(response.data.games)
+        ? response.data.games.map((game) => ({
+            ...game,
+            questions: Array.isArray(game.questions)
+              ? game.questions.map((q) => ({
+                  id: q.id || Date.now(),
+                  text: q.text || '',
+                  answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+                  type: q.type || 'multiple choice',
+                  timeLimit: q.timeLimit || 30,
+                  points: q.points || 10,
+                  youtubeUrl: q.youtubeUrl || '',
+                  image: q.image || '',
+                  correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers : [],
+                  isCorrect: q.isCorrect || false,
+                }))
+              : [],
+          }))
+        : [];
       if (response.status === 200) {
-        setGames(response.data.games || []);
+        setGames(games);
       }
     } catch (err) {
       if (err.response) {
@@ -55,6 +75,7 @@ function Dashboard() {
   const putGames = async (updatedGames) => {
     setIsLoading(true);
     try {
+      console.log('Sending updated games:', updatedGames);
       const response = await axios.put(
         'http://localhost:5005/admin/games',
         { games: updatedGames },

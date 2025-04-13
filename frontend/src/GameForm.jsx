@@ -1,31 +1,36 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Reusable game form for creating or editing a game
 function GameForm({ initialGame, onSave, onCancel }) {
   const [gameName, setGameName] = useState('');
   const [thumbnail, setThumbnail] = useState('');
   const [questions, setQuestions] = useState([]);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [questionText, setQuestionText] = useState('');
-  const [answers, setAnswers] = useState(['', '']);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   // Initialize form with initialGame data (if provided)
   useEffect(() => {
-    console.log('GameForm received initialGame:', initialGame); // Debug
+    console.log('GameForm received initialGame:', initialGame);
     if (initialGame) {
       setGameName(initialGame.name || '');
       setThumbnail(initialGame.thumbnail || '');
-      // Normalize questions
       const initialQuestions = Array.isArray(initialGame.questions)
         ? initialGame.questions.map((q, index) => ({
             id: q.id || Date.now() + index,
             text: q.text || '',
             answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+            type: q.type || 'multiple choice', // Default type
+            timeLimit: q.timeLimit || 30, // Default time limit (seconds)
+            points: q.points || 10, // Default points
+            youtubeUrl: q.youtubeUrl || '',
+            image: q.image || '',
+            correctAnswers: q.correctAnswers || [], // For single/multiple choice
+            isCorrect: q.isCorrect || false, // For judgement
           }))
         : [];
       setQuestions(initialQuestions);
-      console.log('Initialized questions:', initialQuestions); // Debug
+      console.log('Initialized questions:', initialQuestions);
     } else {
       setGameName('');
       setThumbnail('');
@@ -45,12 +50,9 @@ function GameForm({ initialGame, onSave, onCancel }) {
     }
   };
 
-  // Select a question to edit
-  const selectQuestion = (question) => {
-    setSelectedQuestion(question);
-    setQuestionText(question.text || '');
-    setAnswers(question.answers || ['', '']);
-    console.log('Selected question:', question); // Debug
+  // Navigate to question editor
+  const editQuestion = (question) => {
+    navigate(`/game/${initialGame.id}/question/${question.id}`);
   };
 
   // Add a new question
@@ -59,32 +61,21 @@ function GameForm({ initialGame, onSave, onCancel }) {
       id: Date.now(),
       text: '',
       answers: ['', ''],
+      type: 'multiple choice',
+      timeLimit: 30,
+      points: 10,
+      youtubeUrl: '',
+      image: '',
+      correctAnswers: [],
+      isCorrect: false,
     };
     setQuestions([...questions, newQuestion]);
-    selectQuestion(newQuestion);
   };
 
   // Delete a question
   const deleteQuestion = (questionId) => {
     const updatedQuestions = questions.filter((q) => q.id !== questionId);
     setQuestions(updatedQuestions);
-    if (selectedQuestion?.id === questionId) {
-      setSelectedQuestion(null);
-      setQuestionText('');
-      setAnswers(['', '']);
-    }
-  };
-
-  // Update selected question
-  const updateQuestion = () => {
-    if (!selectedQuestion) return;
-    const updatedQuestions = questions.map((q) =>
-      q.id === selectedQuestion.id
-        ? { ...q, text: questionText, answers }
-        : q
-    );
-    setQuestions(updatedQuestions);
-    setSelectedQuestion({ ...selectedQuestion, text: questionText, answers });
   };
 
   // Handle save
@@ -97,9 +88,9 @@ function GameForm({ initialGame, onSave, onCancel }) {
       ...initialGame,
       name: gameName,
       thumbnail: thumbnail || undefined,
-      questions: questions.length > 0 ? questions : [{}],
+      questions: questions.length > 0 ? questions : [],
     };
-    console.log('Saving game data:', gameData); // Debug
+    console.log('Saving game data:', gameData);
     onSave(gameData);
   };
 
@@ -142,94 +133,43 @@ function GameForm({ initialGame, onSave, onCancel }) {
       </div>
 
       {/* Questions Management */}
-      <div style={{ display: 'flex', marginBottom: '20px' }}>
-        {/* Question List */}
-        <div style={{ width: '300px', marginRight: '20px' }}>
-          <h3>Questions</h3>
-          <button
-            onClick={addQuestion}
-            style={{ marginBottom: '10px', padding: '5px 10px' }}
-          >
-            Add Question
-          </button>
-          {questions.length > 0 ? (
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {questions.map((q) => (
-                <li
-                  key={q.id}
-                  style={{
-                    padding: '5px',
-                    background:
-                      selectedQuestion?.id === q.id ? '#e0e0e0' : 'transparent',
-                    cursor: 'pointer',
-                  }}
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Questions</h3>
+        <button
+          onClick={addQuestion}
+          style={{ marginBottom: '10px', padding: '5px 10px' }}
+        >
+          Add Question
+        </button>
+        {questions.length > 0 ? (
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {questions.map((q) => (
+              <li
+                key={q.id}
+                style={{
+                  padding: '5px',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span onClick={() => editQuestion(q)}>
+                  {q.text || 'Untitled Question'}
+                </span>
+                <button
+                  onClick={() => deleteQuestion(q.id)}
+                  style={{ color: 'red' }}
                 >
-                  <span onClick={() => selectQuestion(q)}>
-                    {q.text || 'Untitled Question'}
-                  </span>
-                  <button
-                    onClick={() => deleteQuestion(q.id)}
-                    style={{ marginLeft: '10px', color: 'red' }}
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No questions yet. Click "Add Question" to start.</p>
-          )}
-        </div>
-
-        {/* Question Editor */}
-        <div style={{ flex: 1 }}>
-          {selectedQuestion ? (
-            <>
-              <h3>Edit Question</h3>
-              <label>
-                Question Text:
-                <input
-                  type="text"
-                  value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
-                  style={{ width: '100%', marginBottom: '10px' }}
-                />
-              </label>
-              <h4>Answers</h4>
-              {answers.map((answer, index) => (
-                <div key={index} style={{ marginBottom: '5px' }}>
-                  <label>
-                    Answer {index + 1}:
-                    <input
-                      type="text"
-                      value={answer}
-                      onChange={(e) => {
-                        const newAnswers = [...answers];
-                        newAnswers[index] = e.target.value;
-                        setAnswers(newAnswers);
-                      }}
-                      style={{ marginLeft: '10px', width: '300px' }}
-                    />
-                  </label>
-                </div>
-              ))}
-              <button
-                onClick={() => setAnswers([...answers, ''])}
-                style={{ marginTop: '10px' }}
-              >
-                Add Answer
-              </button>
-              <button
-                onClick={updateQuestion}
-                style={{ marginLeft: '10px' }}
-              >
-                Save Question
-              </button>
-            </>
-          ) : (
-            <p>Select a question to edit or add a new one.</p>
-          )}
-        </div>
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No questions yet. Click "Add Question" to start.</p>
+        )}
       </div>
 
       {/* Save and Cancel */}

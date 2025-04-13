@@ -11,6 +11,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import ErrorModal from './ErrorModal';
 import GameEditor from './GameEditor';
+import QuestionEditor from './QuestionEditor';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -112,6 +113,7 @@ function Pages() {
         <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<GameEditor />} />
+        <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
 
