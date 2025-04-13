@@ -4,6 +4,13 @@
 
 This assignment is due Friday the 25th of April, 8pm.
 
+## Change Log
+
+* 09/04: Updated typos in spec (headers, bad sum of marks); removed custom.js to simplify; better defined a structure; made clearer what is and isn't required in the main game blob.
+* 11/04: Fix bug on backend where questions & answers were not being returned correctly.
+
+## 1. Setup
+
 **Please run `./util/setup.sh` in your terminal before you begin. This will set up some checks in relation to the "Git Commit Requirements".**
 
 It's important to note that you should **NOT** use any pre-built web app templates or any AI web app creators for this assignment.
@@ -20,7 +27,7 @@ The requirements describe a series of **screens**. Screens can be popups/modals,
 
 Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not individual-attempts.
 
-### 2.1. Feature 1. Admin Auth (10%)
+### 2.1. Feature 1. Admin Auth (9%)
 
 #### 2.1.1. Login Screen
  * A unique route must exist for this screen e.g. `/login`
@@ -42,7 +49,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * A logout button must exist for all authenticated users on any screen user interacts with.
  * This logout button, when clicked, logs user out and returns to the login screen, user then needs to login again to access the app.
 
-### 2.2. Feature 2. Admin Creating & Editing a Game (12%)
+### 2.2. Feature 2. Admin Creating & Editing a Game (11%)
 
 #### 2.2.1. Dashboard
  * A unique route must exist for this screen e.g. `/dashboard`
@@ -70,7 +77,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
    * The ability to optionally attach a URL to a youtube video, or upload a photo, to enhance the question being asked.
    * Anywhere between **2** and **6** answers, each contains the answer as a `string`
 
-### 2.3. Feature 3. Admin Start, Stop, Results of game session (12%)
+### 2.3. Feature 3. Admin Start, Stop, Results of game session (10%)
 
 #### 2.3.1. Starting a game session
  * On the dashboard page, users should be able to start a new game session via clicking a `start game` button.
@@ -92,7 +99,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
    * A chart showing the average response/answer time for each question
    * Any other interesting information you see fit (Bonus mark can be granted for this based on your implementation)
 
-### 2.4. Feature 4. Player able to join and play game session (12%)
+### 2.4. Feature 4. Player able to join and play game session (10%)
 
 #### 2.4.1. Play Join
  * A unique route must exist for this screen
@@ -113,7 +120,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * The answer screen remains visible until the admin advances the game question onto the next question.
  * Note: Once the game session begins (onto the first question or more) **NO** other players can join.
  
-### 2.5. Feature 5. Results (6%)
+### 2.5. Feature 5. Results (5%)
 
 #### 2.5.1. Game Session Results
  * After the final question is answered, a screen is displayed to players showing the key results:
@@ -122,24 +129,24 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
 #### 2.5.2. 🙉🙉🙉 (For pairs only) Past game session results
  * Allow admins to access a page whereby they can see a list of previous sessions for a game, and then view results for those previous sessions as well.
  
-### 2.5. Extra Features (6%)
+### 2.6. Extra Features (5%)
 
-#### 2.5.1. Lobby room
+#### 2.6.1. Lobby room
  * If a game session is active, but has yet to move into position 0 (i.e. is still in position -1), then a player lives in a state of limbo. Implement a "lobby" screen that is pleasant and entertaining for users while they await for the game to begin.
 
-#### 2.5.2. 🙉🙉🙉 (For pairs only) Game Upload
+#### 2.6.2. 🙉🙉🙉 (For pairs only) Game Upload
  * For `2.2.1`, when a new game is created, the user can optionally upload a `.csv` or `.json` (you choose) file containing the full data for a game. The data structure is validated on frontend before being passed to the backend normally.
  * If you implement this feature, you **MUST** attach an example `.csv` or `.json` into your assignment 4 repo in the project folder. This file must have name `2.5.json`  or `2.5.csv`. This is so we can actually test that it works while marking otherwise you won't be awarded mark for this section.
 
-#### 2.5.4. 🙉🙉🙉 (For pairs only) Points system
+#### 2.6.3. 🙉🙉🙉 (For pairs only) Points system
  * Devise a more advanced points system whereby a player's score is the product of the time taken to complete a question (i.e. speed) and the number of points a question is worth.
  * This points system should be explained (in writing) on the results screen for both admins and players.
 
-### 2.6. Linting
+### 2.7. Linting
 
 - Linting must be run from inside the `frontend` folder by running `npm run lint`. You have to make sure linting doesn't produce **any** error and warning to gain the mark for linting section.
 
-### 2.6. Testing
+### 2.8. Testing
 
 As part of this assignment you are required to write some tests for your components (component testing), and for your application as a whole (ui testing).
 
@@ -190,11 +197,44 @@ Tests must be run from inside the `frontend` folder by running `npm run test`. T
 
 You are welcomed to modify the `npm run test` command by updating the `test` script inside `frontend/package.json`. For example, if you would like to run standard react testing alongside cypress UI tests you can use `react-scripts test —watchAll=false && npm run cypress open` and if you've used cypress for both component and UI test, then you can replace that line with `cypress open`.
 
-### 2.7. Other notes
+### 2.9. Backend API Structure
+
+On backend, for a given admin, they have full control of the games blob storage which they can use GET, PUT `/admin/games` as the getter and setter for the game data. You can add as much or as less fields into each game object and per question object as you want.
+
+However, we do have a minimum requirement for the game object, which is:
+
+```json
+{
+    gameId: number,
+    owner: number,
+    questions: [
+        {
+            duration: number,
+            correctAnswers: string[],
+            [more],
+            [more],
+            [more],
+        },
+        {
+            duration: number,
+            correctAnswers: string[],
+            [more],
+            [more],
+            [more],
+        },
+    ],
+    [more],
+    [more],
+    [more],
+}
+```
+All those "[more]"s in the above JSON are just placeholders to show that you can add more data to the game or to the question. Whatever unique data YOU put in there will then just be given back to you by other API calls such as `/admin/games` and `/admin/session/{session_id}/status`.
+
+### 2.10. Other notes
 
 - The port you can use to `fetch` data from the backend is defined in `frontend/backend.config.json`
 - [This article may be useful to some students](https://stackoverflow.com/questions/66284286/react-jest-mock-usenavigate)
-- For users of typescript, [follow this guide](https://nw-syd-gitlab.cseunsw.tech/COMP6080/24T3/react-typescript)
+- For users of typescript, [follow this guide](https://nw-syd-gitlab.cseunsw.tech/COMP6080/25T1/react-typescript)
 - For images, you can just pass in base64 encoded images
 - For certain requests you may want to "poll" the backend, i.e. have the friend end repeatedly make an API call every 1 second to check for updates.
 - Make sure you navigated to the correct directory when installing dependencies.
