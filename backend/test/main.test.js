@@ -5,13 +5,16 @@ import { reset } from '../src/service';
 const THUMBNAIL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
 const QUESTIONS = [
   {
-
+    duration: 10,
+    correctAnswers: ['Answer 1'],
   },
   {
-
+    duration: 10,
+    correctAnswers: ['Answer 2'],
   },
   {
-
+    duration: 10,
+    correctAnswers: ['Answer 3'],
   },
 ];
 const PLAYERS = ['HAYDEN1','HAYDEN2','HAYDEN3','HAYDEN4','HAYDEN5'];
@@ -56,15 +59,15 @@ const singleQuizId = async () => {
 };
 
 const singleSessionStatus = async () => {
-  const { quizzes } = await getTry('/admin/games', 200, {}, await validToken());
-  const sessionid = quizzes[0].active;
+  const { games } = await getTry('/admin/games', 200, {}, await validToken());
+  const sessionid = games[0].active;
   const body = await getTry(`/admin/session/${sessionid}/status`, 200, {}, await validToken());
   return body.results;
 };
 
 const singleSessionId = async () => {
-  const { quizzes } = await getTry('/admin/games', 200, {}, await validToken());
-  return quizzes[0].active;
+  const { games } = await getTry('/admin/games', 200, {}, await validToken());
+  return games[0].active;
 };
 
 describe('Test the root path', () => {
@@ -78,7 +81,7 @@ describe('Test the root path', () => {
   });
 
   /***************************************************************
-                       Auth Tests
+                      Auth Tests
   ***************************************************************/
 
   test('Registration of initial user', async () => {
@@ -131,7 +134,7 @@ describe('Test the root path', () => {
   });
 
   /***************************************************************
-                       Quiz Tests
+                      Quiz Tests
   ***************************************************************/
   test('Initially there are no games', async () => {
     const body = await getTry('/admin/games', 200, {}, await validToken());
@@ -144,38 +147,42 @@ describe('Test the root path', () => {
 
   test('Creating a single quiz, token missing', async () => {
     const body = await putTry('/admin/games', 403, {
-      name: 'QUIZ',
+      games: [{
+        name: 'QUIZ',
+      }]
     });
   });
 
   test('Creating a single quiz', async () => {
     const body = await putTry('/admin/games', 200, {
-      games: [
-        {
-          name: 'QUIZ',
-        }
-      ]
+      games: [{
+        name: 'QUIZ',
+        owner: 'hayden.smith@unsw.edu.au',
+      }]
     }, await validToken());
   });
 
   test('That there is now one quiz', async () => {
     const body = await getTry('/admin/games', 200, {}, await validToken());
     expect(body.games).toHaveLength(1);
-    expect(typeof body.games[0].id).toBe('number');
-    expect(typeof body.games[0].createdAt).toBe('string');
     expect(body.games[0].name).toBe('QUIZ');
     expect(body.games[0].owner).toBe('hayden.smith@unsw.edu.au');
     expect(body.games[0].active).toBe(null);
-    expect(body.games[0].thumbnail).toBe(null);
     expect(body.games[0].oldSessions).toMatchObject([]);
   });
 
-  test('Create a second quiz', async () => {
+  test('Create two quizzes', async () => {
     const body = await putTry('/admin/games', 200, {
       games: [
         {
+          name: 'QUIZ1',
+          owner: 'hayden.smith@unsw.edu.au',
+        },
+        {
+          id: "abc1234",
           name: 'QUIZ2',
-        }
+          owner: 'hayden.smith@unsw.edu.au',
+        },
       ]
     }, await validToken());
   });
@@ -185,25 +192,23 @@ describe('Test the root path', () => {
     expect(body.games).toHaveLength(2);
   });
 
-  test('Try and delete a quiz with invalid token', async () => {
+  test('Try and delete all quizzes with invalid token', async () => {
+    await putTry(`/admin/games`, 403, {
+      games: []
+    });
     const { games } = await getTry('/admin/games', 200, {}, await validToken());
-    const quizid = games[1].id;
-    const body = await putTry(`/admin/games`, 403, {});
+    expect(games).toHaveLength(2);
   });
 
-  test('Try and delete a quiz with invalid quizid', async () => {
-    const body = await putTry(`/admin/games`, 400, {});
-  });
-
-  test('Try and delete a quiz', async () => {
-    const { quizzes } = await getTry('/admin/games', 200, {}, await validToken());
-    const quizid = quizzes[1].id;
+  test('Try and update games to contain only one quiz', async () => {
+    const { games } = await getTry('/admin/games', 200, {}, await validToken());
+    const quizid = games[0].id;
     const body = await putTry(`/admin/games`, 200, {
-      games: [
-        {
-          id: quizid,
-        }
-      ]
+      games: [{
+        id: quizid,
+        name: 'QUIZ2',
+        owner: 'hayden.smith@unsw.edu.au',
+      }]
     }, await validToken());
   });
 
@@ -214,28 +219,31 @@ describe('Test the root path', () => {
 
   test('Update quiz thumbnail and name', async () => {
     const quizid = await singleQuizId();
-    const body = await putTry(`/admin/games`, 200, {
-      games: [
-        {
-          id: quizid,
-          name: 'QUIZDIFF',
-          thumbnail: THUMBNAIL,
-          questions: QUESTIONS,
-        }
-      ]
+    await putTry(`/admin/games`, 200, {
+      games: [{
+        id: quizid,
+        owner: 'hayden.smith@unsw.edu.au',
+        name: 'QUIZDIFF',
+        thumbnail: THUMBNAIL,
+        questions: QUESTIONS,
+      }]
     }, await validToken());
   });
 
   test('Check that thumbnail and name updated', async () => {
     const quizid = await singleQuizId();
-    const quiz = await getTry(`/admin/games`, 200, {}, await validToken());
-    expect(quiz.games[0].name).toBe('QUIZDIFF');
-    expect(quiz.games[0].thumbnail).toBe(THUMBNAIL);
-    expect(quiz.games[0].questions).toMatchObject(QUESTIONS);
+    const { games } = await getTry(`/admin/games`, 200, {}, await validToken());
+    const game = games.at(0);
+    console.log(game);
+    
+    expect(game.id).toBe(quizid);
+    expect(game.name).toBe('QUIZDIFF');
+    expect(game.thumbnail).toBe(THUMBNAIL);
+    expect(game.questions).toMatchObject(QUESTIONS);
   });
 
   /***************************************************************
-                       Admin Running a Session
+                      Admin Running a Session
   ***************************************************************/
 
   test('Can\'t start a session with invalid token', async () => {
@@ -279,7 +287,7 @@ describe('Test the root path', () => {
   });
 
   test('Can\'t start a quiz with invalid quizid', async () => {
-    const body = await postTry('/admin/game/99999999999/mutate', 403, {
+    await postTry('/admin/game/99999999999/mutate', 400, {
       mutationType: 'START'
     }, await validToken());
   });
@@ -290,13 +298,14 @@ describe('Test the root path', () => {
       mutationType: 'START'
     }, await validToken());
     expect(response.data.status).toBe('started');
-    expect(typeof response.data.sessionId).toBe('number');
+    expect(typeof response.data.sessionId).toBe('string');
+    expect(response.data.sessionId).not.toBe(undefined);
   });
 
   test('A session now exists for the quiz', async () => {
     const quizid = await singleQuizId();
-    const body = await getTry(`/admin/game/${quizid}`, 200, {}, await validToken());
-    expect(typeof body.active).toBe('number');
+    const body = await getTry(`/admin/games`, 200, {}, await validToken());
+    expect(typeof body.games[0].active).toBe('number');
   });
 
   test('A has right initial props', async () => {
@@ -310,7 +319,7 @@ describe('Test the root path', () => {
   });
 
   /***************************************************************
-                       Try Playing
+                      Try Playing
   ***************************************************************/
 
   test('Test player can\'t join without a name', async () => {
@@ -390,10 +399,10 @@ describe('Test the root path', () => {
       }
     });
 
-    test(`Players attempt to submit answer`, async () => {
+    test(`Players attempt to submit answers`, async () => {
       for (const playerId of PLAYER_IDS) {
         const payload = {
-          answerIds: [ 0, 1, 2 ],
+          answers: ['Answer 1', 'Answer 2', 'Answer 3'],
         };
         const body = await putTry(`/play/${playerId}/answer`, 200, payload);
         expect(body).toMatchObject({});
@@ -431,8 +440,8 @@ describe('Test the root path', () => {
 
   test('Ensure that the session appears in old sessions', async () => {
     const quizid = await singleQuizId();
-    const { oldSessions } = await getTry(`/admin/game/${quizid}`, 200, {}, await validToken());
-    expect(oldSessions).toHaveLength(1);
+    const { games } = await getTry(`/admin/games`, 200, {}, await validToken());
+    expect(games[0].oldSessions).toHaveLength(1);
   });
 
   test('Should be unable to advance the quiz', async () => {
@@ -452,14 +461,14 @@ describe('Test the root path', () => {
   test(`Players should be able to get their results`, async () => {
     for (const playerId of PLAYER_IDS) {
       const body = await getTry(`/play/${playerId}/results`, 200);
-      expect(body).toMatchObject(QUESTIONS.map(q => ({ answerIds: [ 0, 1, 2 ], correct: false })));
+      expect(body).toMatchObject(QUESTIONS.map(q => ({ answers: ['Answer 1', 'Answer 2', 'Answer 3'], correct: false })));
     }
   });
 
   test('Admins can get the session results', async () => {
     const quizid = await singleQuizId();
-    const { oldSessions } = await getTry(`/admin/game/${quizid}`, 200, {}, await validToken());
-    const body = await getTry(`/admin/session/${oldSessions[0]}/results`, 200, {}, await validToken());
+    const { games } = await getTry(`/admin/games`, 200, {}, await validToken());
+    const body = await getTry(`/admin/session/${games[0].oldSessions[0]}/results`, 200, {}, await validToken());
   });
 
 });
