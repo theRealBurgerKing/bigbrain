@@ -190,7 +190,194 @@ function QuestionEditor() {
       questions: updatedQuestions,
     };
 
-    
+    try {
+      setIsLoading(true);
+      const response = await axios.put(
+        'http://localhost:5005/admin/games',
+        {
+          games: [updatedGame],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert('Question updated successfully!');
+        navigate(`/game/${gameId}`);
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          localStorage.removeItem('token');
+          setTimeout(() => navigate('/login'), 2000);
+        } else if (err.response.status === 403) {
+          setError('Forbidden: You do not have permission.');
+        } else {
+          setError(err.response.data?.error || 'An error occurred.');
+        }
+      } else {
+        setError('Failed to connect to the server. Please ensure the backend is running on http://localhost:5005.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>Edit Question</h2>
+      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+      {isLoading && !game ? (
+        <div>Loading...</div>
+      ) : !game || !question ? (
+        <div>Question not found.</div>
+      ) : (
+        <>
+          {/* Question Type */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Question Type:
+              <select
+                value={type}
+                onChange={(e) => {
+                  setType(e.target.value);
+                  setCorrectAnswers([]);
+                  if (e.target.value === 'judgement') {
+                    setAnswers(['True', 'False']);
+                  } else {
+                    setAnswers(['', '']);
+                  }
+                }}
+                style={{ marginLeft: '10px' }}
+              >
+                <option value="multiple choice">Multiple Choice</option>
+                <option value="single choice">Single Choice</option>
+                <option value="judgement">Judgement</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Question Text */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Question Text:
+              <input
+                type="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                style={{ width: '100%', marginTop: '5px' }}
+              />
+            </label>
+          </div>
+
+          
+          {/* Image Upload */}
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Image (optional):
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ marginLeft: '10px' }}
+              />
+            </label>
+            {image && (
+              <img
+                src={image}
+                alt="Question image"
+                style={{ maxWidth: '200px', marginTop: '10px' }}
+              />
+            )}
+          </div>
+
+          {/* Answers */}
+          <div style={{ marginBottom: '10px' }}>
+            <h4>Answers</h4>
+            {type === 'judgement' ? (
+              <div>
+                <label>
+                  Correct Answer:
+                  <select
+                    value={isCorrect ? 'True' : 'False'}
+                    onChange={(e) => setIsCorrect(e.target.value === 'True')}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                  </select>
+                </label>
+              </div>
+            ) : (
+              <>
+                {answers.map((answer, index) => (
+                  <div key={index} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
+                    <label style={{ flex: 1 }}>
+                      Answer {index + 1}:
+                      <input
+                        type="text"
+                        value={answer}
+                        onChange={(e) => {
+                          const newAnswers = [...answers];
+                          newAnswers[index] = e.target.value;
+                          setAnswers(newAnswers);
+                        }}
+                        style={{ marginLeft: '10px', width: '300px' }}
+                      />
+                    </label>
+                    <label style={{ marginLeft: '10px' }}>
+                      Correct:
+                      <input
+                        type={type === 'single choice' ? 'radio' : 'checkbox'}
+                        name={type === 'single choice' ? 'correctAnswer' : undefined}
+                        checked={correctAnswers.includes(index)}
+                        onChange={() => toggleCorrectAnswer(index)}
+                        style={{ marginLeft: '5px' }}
+                      />
+                    </label>
+                    {answers.length > 2 && (
+                      <button
+                        onClick={() => removeAnswer(index)}
+                        style={{ marginLeft: '10px', color: 'red' }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {answers.length < 6 && (
+                  <button onClick={addAnswer} style={{ marginTop: '10px' }}>
+                    Add Answer
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Save and Cancel */}
+          <div>
+            <button
+              onClick={handleSave}
+              disabled={isLoading}
+              style={{ padding: '10px 20px', marginRight: '10px' }}
+            >
+              {isLoading ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              onClick={() => navigate(`/game/${gameId}`)}
+              style={{ padding: '10px 20px' }}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default QuestionEditor;
