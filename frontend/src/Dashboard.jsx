@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import GameForm from './GameForm';
+import Modal from './Modal';
+
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +12,8 @@ function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showCreateGame, setShowCreateGame] = useState(false);
+  const [activeSession, setActiveSession] = useState(null);
+  const [showGameSession, setShowGameSession] = useState(false);
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -141,6 +145,15 @@ function Dashboard() {
     putGames(updatedGames);
   };
 
+  // Start game
+  const startGame = async () => {
+    setShowGameSession(true);
+    const timestamp = Date.now();
+    const randomPart = Math.floor(Math.random() * 1000);
+    const sessionId = `${timestamp.toString().slice(2, 10)}${randomPart}`;
+    setActiveSession(sessionId)
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h2>Admin Dashboard</h2>
@@ -180,6 +193,7 @@ function Dashboard() {
                   Edit Game
                 </button>
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
+                <button onClick={() => startGame(game.id)}>Start Game</button>
                 {game.thumbnail && (
                   <>
                     <strong>Thumbnail:</strong>{' '}
@@ -221,6 +235,17 @@ function Dashboard() {
             onCancel={() => setShowCreateGame(false)}
           />
         </div>
+      )}
+
+      {showGameSession && (
+        <Modal onClose={() => setShowGameSession(false)}>
+          <p>Session ID: {activeSession}</p>
+          <button onClick={() => {
+            navigator.clipboard.writeText(`${window.location.origin}/play/${activeSession}`);
+            }}>
+            Copy Link
+          </button>
+        </Modal>
       )}
     </div>
   );
