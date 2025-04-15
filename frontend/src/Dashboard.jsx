@@ -72,9 +72,6 @@ function Dashboard() {
     }
   };
 
-  const fetchSession=  async () => {
-
-  };
 
   // Call fetchGames when the component mounts
   useEffect(() => {
@@ -229,8 +226,9 @@ function Dashboard() {
 
   // Show game
   const showGame = async (targetId) => {
-    setShowGameSessionId(games.find(g => g.id === targetId).active)
-    setShowGameSession(true)
+    // setShowGameSessionId(games.find(g => g.id === targetId).active)
+    navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
+    // setShowGameSession(true)
   };
 
   return (
@@ -339,6 +337,18 @@ function Dashboard() {
           </button>
         </Modal>
       )}
+
+      {/* {advanceGameSession && (
+        <Modal onClose={() => setAdvanceGameSession(false)}>
+          <p>Session ID: {showGameSessionId}</p>
+          <button onClick={() => {}}>
+            YES
+          </button>
+          <button onClick={() => {}}>
+            NO
+          </button>
+        </Modal>
+      )} */}
     </div>
   );
 }
