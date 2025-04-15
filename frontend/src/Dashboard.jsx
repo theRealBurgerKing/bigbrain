@@ -152,6 +152,8 @@ function Dashboard() {
     putGames(updatedGames);
   };
 
+  //
+
   // Start game
   const startGame = async (id) => {
     setError('');
@@ -172,6 +174,7 @@ function Dashboard() {
           ...prev,
           [id]: response.data.data.sessionId
         }));
+        setActiveGame(id);
         setShowGameSessionId(response.data.data.sessionId);
         setShowGameSession(true);
       }
