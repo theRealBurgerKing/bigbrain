@@ -66,6 +66,7 @@ function GameSession() {
                 setError('Failed to connect to the server. Please try again.');
             }
         } finally {
+            fetchSession();
         }
     }
 
@@ -97,7 +98,7 @@ function GameSession() {
                 <p>No status</p>
             )
             }
-            <button onClick={nextQuestion(gameId)}>Next</button> <br />
+            <button onClick={() => nextQuestion(gameId)}>Next</button> <br />
             <button onClick={() => { navigate('/dashboard') }}>Back</button> <br />
 
         </div>
