@@ -31,7 +31,6 @@ function Dashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('Dashboard fetched games:', response.data);
-      // console.log(response.data.games);
       const games = Array.isArray(response.data.games)
         ? response.data.games.map((game) => ({
             ...game,
