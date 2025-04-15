@@ -10,13 +10,15 @@ import Register from './Register1';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import ErrorModal from './ErrorModal';
+import GameEditor from './GameEditor';
+import QuestionEditor from './QuestionEditor';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
@@ -26,19 +28,19 @@ function Pages() {
     }
   }, [token]);
 
-  const successJob = (token) => {
+  const successJob = (token, email) => {
     if (!token) {
       setErrorMessage('Invalid token received.');
       setOpen(true);
       return;
     }
     localStorage.setItem('token', token);
+    localStorage.setItem('email', email)
     setToken(token);
     navigate('/dashboard');
   };
 
   const logout = async () => {
-    console.log('Token:', token);
     if (!token) {
       setErrorMessage('No token found. Please log in again.');
       setOpen(true);
@@ -110,6 +112,8 @@ function Pages() {
         <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
         <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/game/:gameId" element={<GameEditor />} />
+        <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
 

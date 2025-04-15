@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 function Register({ successJob, showError }) {
   const [email, setEmail] = useState('');
@@ -8,7 +7,6 @@ function Register({ successJob, showError }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   // Verify that the password matches when onblur
   const handleConfirmPasswordBlur = (e) => {

@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 function Login({ successJob, showError }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const login = async () => {
     if (!email || !password) {
@@ -20,7 +18,7 @@ function Login({ successJob, showError }) {
         password: password,
       });
       const token = response.data.token;
-      successJob(token);
+      successJob(token, email);
     } catch (err) {
       if (err.response) {
         showError(err.response.data?.error || 'Unknown error');
