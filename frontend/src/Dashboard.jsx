@@ -14,6 +14,10 @@ function Dashboard() {
   const [showCreateGame, setShowCreateGame] = useState(false);
   const [activeSession, setActiveSession] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
+  const [isSessionOn, setIsSessionOn] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  localStorage.setItem('activeSession',null);
+  localStorage.setItem('activeGameId',null);
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -68,6 +72,10 @@ function Dashboard() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchSession=  async () => {
+
   };
 
   // Call fetchGames when the component mounts
@@ -146,12 +154,92 @@ function Dashboard() {
   };
 
   // Start game
-  const startGame = async () => {
-    setShowGameSession(true);
-    const timestamp = Date.now();
-    const randomPart = Math.floor(Math.random() * 1000);
-    const sessionId = `${timestamp.toString().slice(2, 10)}${randomPart}`;
-    setActiveSession(sessionId)
+  const startGame = async (id) => {
+    if (localStorage.getItem('activeSession') != 'null') {
+      setShowGameSession(true)
+    }
+    else{
+      setIsStarting(true);
+      try {
+        const response = await axios.post(
+          `http://localhost:5005/admin/game/${id}/mutate`,
+          { "mutationType": "START" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          setActiveSession(sessionId)
+          setShowGameSession(true);
+          localStorage.setItem('activeSession',response.data.sessionId);
+          localStorage.setItem('activeGameId',id);
+          setIsSessionOn(true);
+        }
+      } catch (err) {
+        if (err.response) {
+          if (err.response.status === 400) {
+            setError(err.response.data.error);
+            setActiveSession(true);
+            setShowGameSession(true);
+            setIsSessionOn(true);
+            localStorage.setItem('activeSession',null);
+          } else if (err.response.status === 403) {
+            setError(err.response.data.error);
+          }else {
+            setError(err.response.data?.error || 'An error occurred while updating games.');
+          }
+        } else {
+          console.log(err)
+          setError('Failed to connect to the server. Please try again.');
+        }
+      } finally {
+        setIsStarting(false);
+      }
+    }
+    
+  };
+
+  // Stop game
+  const stopGame = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "END" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log(response.data)
+        setIsSessionOn(false);
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError(err.response.data.error);
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
+        }else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    
+  };
+
+  // Show game
+  const showGame = async (id) => {
+    setShowGameSession(true)
   };
 
   return (
@@ -193,7 +281,18 @@ function Dashboard() {
                   Edit Game
                 </button>
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
-                <button onClick={() => startGame(game.id)}>Start Game</button>
+                <button
+                  onClick={() => startGame(game.id)}
+                >
+                  Start Game
+                </button>
+                {!isSessionOn && (
+                  <button onClick={() => showGame(game.id)}>show Game</button>
+                )}
+                {isSessionOn && (
+                  <button onClick={() => stopGame(game.id)}>Stop Game</button>
+                )}
+                
                 {game.thumbnail && (
                   <>
                     <strong>Thumbnail:</strong>{' '}
