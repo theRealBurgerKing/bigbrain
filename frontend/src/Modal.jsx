@@ -1,5 +1,40 @@
 import React, { useEffect } from "react";
-import './Modal.css';
+
+
+const modalWrapper = {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 50,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  
+const modalOverlay = {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  };
+  
+const modalContent = {
+    position: 'relative',
+    zIndex: 10,
+    backgroundColor: 'white',
+    borderRadius: '1rem',
+    boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
+    padding: '1.5rem',
+    maxWidth: '90%',
+  };
+  
+const modalClose = {
+    position: 'absolute',
+    top: '0.75rem',
+    right: '0.75rem',
+    color: '#6b7280',
+    fontSize: '1.25rem',
+    cursor: 'pointer',
+  };
+
 
 const Modal = ({ onClose, children }) => {
   useEffect(() => {
@@ -10,19 +45,19 @@ const Modal = ({ onClose, children }) => {
   }, []);
 
   return (
-    <div className="modal-wrapper">
+    <div style={modalWrapper}>
       {}
       <div
-        className="modal-overlay"
+        style={modalOverlay}
         onClick={onClose}
       />
 
       {}
-      <div className="modal-content">
+      <div style={modalContent}>
         {}
         <button
           onClick={onClose}
-          className="modal-close"
+          style={modalClose}
         >
           ×
         </button>
