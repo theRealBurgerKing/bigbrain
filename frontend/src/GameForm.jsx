@@ -1,3 +1,4 @@
+import { duration } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +22,7 @@ function GameForm({ initialGame, onSave, onCancel }) {
             text: q.text || '',
             answers: Array.isArray(q.answers) ? q.answers : ['', ''],
             type: q.type || 'multiple choice', // Default type
-            timeLimit: q.timeLimit || 30, // Default time limit (seconds)
+            duration: q.duration || 30, // Default time limit (seconds)
             points: q.points || 10, // Default points
             youtubeUrl: q.youtubeUrl || '',
             image: q.image || '',
@@ -62,7 +63,7 @@ function GameForm({ initialGame, onSave, onCancel }) {
       text: '',
       answers: ['', ''],
       type: 'multiple choice',
-      timeLimit: 30,
+      duration: 30,
       points: 10,
       youtubeUrl: '',
       image: '',

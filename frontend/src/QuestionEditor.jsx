@@ -14,7 +14,7 @@ function QuestionEditor() {
   // Question state
   const [type, setType] = useState('multiple choice');
   const [text, setText] = useState('');
-  const [timeLimit, setTimeLimit] = useState(30);
+  const [duration, setDuration] = useState(30);
   const [points, setPoints] = useState(10);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [image, setImage] = useState('');
@@ -58,7 +58,7 @@ function QuestionEditor() {
               setQuestion(questionData);
               setType(questionData.type || 'multiple choice');
               setText(questionData.text || '');
-              setTimeLimit(questionData.timeLimit || 30);
+              setDuration(questionData.duration || 30);
               setPoints(questionData.points || 10);
               setYoutubeUrl(questionData.youtubeUrl || '');
               setImage(questionData.image || '');
@@ -160,7 +160,7 @@ function QuestionEditor() {
       setError('At least one correct answer must be selected.');
       return;
     }
-    if (timeLimit <= 0) {
+    if (duration <= 0) {
       setError('Time limit must be greater than 0.');
       return;
     }
@@ -173,7 +173,7 @@ function QuestionEditor() {
       ...question,
       type,
       text,
-      timeLimit,
+      duration,
       points,
       youtubeUrl,
       image: image || undefined,
@@ -280,8 +280,8 @@ function QuestionEditor() {
               Time Limit (seconds):
               <input
                 type="number"
-                value={timeLimit}
-                onChange={(e) => setTimeLimit(Number(e.target.value))}
+                value={duration}
+                onChange={(e) => setDuration(Number(e.target.value))}
                 min="1"
                 style={{ marginLeft: '10px', width: '100px' }}
               />

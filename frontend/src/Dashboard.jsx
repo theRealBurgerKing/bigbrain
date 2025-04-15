@@ -34,7 +34,7 @@ function Dashboard() {
                   text: q.text || '',
                   answers: Array.isArray(q.answers) ? q.answers : ['', ''],
                   type: q.type || 'multiple choice',
-                  timeLimit: q.timeLimit || 30,
+                  duration: q.duration || 30,
                   points: q.points || 10,
                   youtubeUrl: q.youtubeUrl || '',
                   image: q.image || '',
