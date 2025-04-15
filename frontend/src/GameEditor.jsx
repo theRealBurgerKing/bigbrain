@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import GameForm from './GameForm';
+
 
 function GameEditor() {
   const { gameId } = useParams();
@@ -10,6 +11,8 @@ function GameEditor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [game, setGame] = useState(null);
+  const location = useLocation();
+  const games = location.state?.content;
 
   // Fetch game data on mount
   useEffect(() => {
@@ -23,11 +26,11 @@ function GameEditor() {
       setIsLoading(true);
       setError('');
       try {
-        console.log('Fetching game with ID:', gameId);
+        // console.log('Fetching game with ID:', gameId);
         const response = await axios.get('http://localhost:5005/admin/games', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log('Raw response:', response.data);
+        // console.log('Raw response:', response.data);
 
         // Ensure games is an array
         const games = Array.isArray(response.data.games)
@@ -36,12 +39,12 @@ function GameEditor() {
               id,
               ...response.data.games[id],
             }));
-        console.log('Normalized games:', games);
+        // console.log('Normalized games:', games);
 
         if (response.status === 200) {
           const gameData = games.find((g) => g.id.toString() === gameId);
           if (gameData) {
-            console.log('Found game:', gameData);
+            // console.log('Found game:', gameData);
             setGame(gameData);
           } else {
             setError('Game not found.');
@@ -82,11 +85,11 @@ function GameEditor() {
     setError('');
 
     try {
-      console.log('Saving game:', gameData);
+      // console.log('Saving game:', gameData);
       const response = await axios.put(
         'http://localhost:5005/admin/games',
         {
-          games: [gameData],
+          games: [...games, gameData],
         },
         {
           headers: {

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Reusable game form for creating or editing a game
-function GameForm({ initialGame, onSave, onCancel }) {
+function GameForm({ initialGame, onSave, onCancel}) {
   const [gameName, setGameName] = useState('');
   const [thumbnail, setThumbnail] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -12,7 +12,7 @@ function GameForm({ initialGame, onSave, onCancel }) {
 
   // Initialize form with initialGame data (if provided)
   useEffect(() => {
-    console.log('GameForm received initialGame:', initialGame);
+    // console.log('GameForm received initialGame:', initialGame);
     if (initialGame) {
       setGameName(initialGame.name || '');
       setThumbnail(initialGame.thumbnail || '');
@@ -31,7 +31,7 @@ function GameForm({ initialGame, onSave, onCancel }) {
           }))
         : [];
       setQuestions(initialQuestions);
-      console.log('Initialized questions:', initialQuestions);
+      // console.log('Initialized questions:', initialQuestions);
     } else {
       setGameName('');
       setThumbnail('');

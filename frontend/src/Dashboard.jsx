@@ -24,7 +24,7 @@ function Dashboard() {
       const response = await axios.get('http://localhost:5005/admin/games', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Dashboard fetched games:', response.data);
+      // console.log('Dashboard fetched games:', response.data);
       const games = Array.isArray(response.data.games)
         ? response.data.games.map((game) => ({
             ...game,
@@ -131,7 +131,9 @@ function Dashboard() {
       createdAt: new Date().toISOString(),
       active: 0,
     };
+
     const updatedGames = [...games, newGame];
+    console.log('-------------------------------',updatedGames)
     putGames(updatedGames);
   };
 
@@ -176,7 +178,7 @@ function Dashboard() {
                 <strong>Created At:</strong>{' '}
                 {new Date(game.createdAt).toLocaleString()} <br />
                 <strong>Active:</strong> {game.active ? 'Yes' : 'No'} <br />
-                <button onClick={() => navigate(`/game/${game.id}`)}>
+                <button onClick={() => navigate(`/game/${game.id}`, { state: { content: games } })}>
                   Edit Game
                 </button>
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
