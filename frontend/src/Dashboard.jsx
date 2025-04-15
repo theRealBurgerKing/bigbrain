@@ -12,12 +12,11 @@ function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showCreateGame, setShowCreateGame] = useState(false);
-  const [activeSession, setActiveSession] = useState(null);
+
+  const [showGameSessionId, setShowGameSessionId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
-  const [isSessionOn, setIsSessionOn] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  localStorage.setItem('activeSession',null);
-  localStorage.setItem('activeGameId',null);
+  const [activeSession, setActiveSession] = useState({});
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -155,49 +154,43 @@ function Dashboard() {
 
   // Start game
   const startGame = async (id) => {
-    if (localStorage.getItem('activeSession') != 'null') {
-      setShowGameSession(true)
-    }
-    else{
-      setIsStarting(true);
-      try {
-        const response = await axios.post(
-          `http://localhost:5005/admin/game/${id}/mutate`,
-          { "mutationType": "START" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        if (response.status === 200) {
-          setActiveSession(sessionId)
-          setShowGameSession(true);
-          localStorage.setItem('activeSession',response.data.sessionId);
-          localStorage.setItem('activeGameId',id);
-          setIsSessionOn(true);
+    setError('');
+    setIsStarting(true);
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "START" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      } catch (err) {
-        if (err.response) {
-          if (err.response.status === 400) {
-            setError(err.response.data.error);
-            setActiveSession(true);
-            setShowGameSession(true);
-            setIsSessionOn(true);
-            localStorage.setItem('activeSession',null);
-          } else if (err.response.status === 403) {
-            setError(err.response.data.error);
-          }else {
-            setError(err.response.data?.error || 'An error occurred while updating games.');
-          }
-        } else {
-          console.log(err)
-          setError('Failed to connect to the server. Please try again.');
-        }
-      } finally {
-        setIsStarting(false);
+      );
+      if (response.status === 200) {
+        setActiveSession(prev => ({
+          ...prev,
+          [id]: response.data.data.sessionId
+        }));
+        setShowGameSessionId(response.data.data.sessionId);
+        setShowGameSession(true);
       }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError("Game already has active session,now stop it.");
+          stopGame(id)
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
+        }else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        console.log(err)
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setIsStarting(false);
     }
     
   };
@@ -217,7 +210,11 @@ function Dashboard() {
       );
       if (response.status === 200) {
         console.log(response.data)
-        setIsSessionOn(false);
+        setActiveSession(prev => {
+          const copy = { ...prev };
+          delete copy[id];
+          return copy;
+        });
       }
     } catch (err) {
       if (err.response) {
@@ -239,6 +236,7 @@ function Dashboard() {
 
   // Show game
   const showGame = async (id) => {
+    setShowGameSessionId(activeSession[id])
     setShowGameSession(true)
   };
 
@@ -283,13 +281,14 @@ function Dashboard() {
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
                 <button
                   onClick={() => startGame(game.id)}
+                  // disabled={activeSession.includes(game.id)}
                 >
                   Start Game
                 </button>
-                {!isSessionOn && (
+                {activeSession[game.id] &&(
                   <button onClick={() => showGame(game.id)}>show Game</button>
                 )}
-                {isSessionOn && (
+                {activeSession[game.id] && (
                   <button onClick={() => stopGame(game.id)}>Stop Game</button>
                 )}
                 
@@ -338,9 +337,9 @@ function Dashboard() {
 
       {showGameSession && (
         <Modal onClose={() => setShowGameSession(false)}>
-          <p>Session ID: {activeSession}</p>
+          <p>Session ID: {showGameSessionId}</p>
           <button onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/play/${activeSession}`);
+            navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
             }}>
             Copy Link
           </button>
