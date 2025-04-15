@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import GameForm from './GameForm';
+import Modal from './Modal';
+
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +12,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [showCreateGame, setShowCreateGame] = useState(false);
+
+  const [showGameSessionId, setShowGameSessionId] = useState(null);
+  const [showGameSession, setShowGameSession] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -65,6 +71,7 @@ function Dashboard() {
       setIsLoading(false);
     }
   };
+
 
   // Call fetchGames when the component mounts
   useEffect(() => {
@@ -129,7 +136,7 @@ function Dashboard() {
       thumbnail: gameData.thumbnail,
       questions: gameData.questions,
       createdAt: new Date().toISOString(),
-      active: 0,
+      active: null,
     };
 
     const updatedGames = [...games, newGame];
@@ -141,6 +148,89 @@ function Dashboard() {
   const deleteGame = async (id) => {
     const updatedGames = games.filter((game) => game.id !== id);
     putGames(updatedGames);
+  };
+  
+  // Start game
+  const startGame = async (id) => {
+    setError('');
+    setIsStarting(true);
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "START" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        fetchGames();
+        setShowGameSessionId(response.data.data.sessionId);
+        setShowGameSession(true);
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError("Game already has active session,now stop it.");
+          stopGame(id)
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
+        }else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        console.log(err)
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setIsStarting(false);
+    }
+    
+  };
+
+  // Stop game
+  const stopGame = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "END" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log(response.data)
+        setShowGameSessionId('');
+        fetchGames();
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError(err.response.data.error);
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
+        }else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    
+  };
+
+  // Show game
+  const showGame = async (targetId) => {
+    // setShowGameSessionId(games.find(g => g.id === targetId).active)
+    navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
+    // setShowGameSession(true)
   };
 
   return (
@@ -154,6 +244,7 @@ function Dashboard() {
         >
           {isLoading ? 'Creating...' : 'Create Game'}
         </button>
+        <button onClick={() => {console.log(c)}}>Test</button>
       </div>
 
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
@@ -182,6 +273,19 @@ function Dashboard() {
                   Edit Game
                 </button>
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
+                <button
+                  onClick={() => startGame(game.id)}
+                  // disabled={activeSession.includes(game.id)}
+                >
+                  Start Game
+                </button>
+                {game.active &&(
+                  <button onClick={() => showGame(game.id)}>show Game</button>
+                )}
+                {game.active && (
+                  <button onClick={() => stopGame(game.id)}>Stop Game</button>
+                )}
+                
                 {game.thumbnail && (
                   <>
                     <strong>Thumbnail:</strong>{' '}
@@ -224,6 +328,29 @@ function Dashboard() {
           />
         </div>
       )}
+
+      {showGameSession && (
+        <Modal onClose={() => setShowGameSession(false)}>
+          <p>Session ID: {showGameSessionId}</p>
+          <button onClick={() => {
+            navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
+            }}>
+            Copy Link
+          </button>
+        </Modal>
+      )}
+
+      {/* {advanceGameSession && (
+        <Modal onClose={() => setAdvanceGameSession(false)}>
+          <p>Session ID: {showGameSessionId}</p>
+          <button onClick={() => {}}>
+            YES
+          </button>
+          <button onClick={() => {}}>
+            NO
+          </button>
+        </Modal>
+      )} */}
     </div>
   );
 }
