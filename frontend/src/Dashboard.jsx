@@ -244,7 +244,7 @@ function Dashboard() {
         >
           {isLoading ? 'Creating...' : 'Create Game'}
         </button>
-        <button onClick={() => {console.log(c)}}>Test</button>
+        <button onClick={() => {console.log('ccc')}}>Test</button>
       </div>
 
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
