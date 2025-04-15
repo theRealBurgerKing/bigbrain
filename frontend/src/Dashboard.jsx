@@ -16,7 +16,6 @@ function Dashboard() {
   const [showGameSessionId, setShowGameSessionId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const [activeSession, setActiveSession] = useState({});
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -32,6 +31,7 @@ function Dashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('Dashboard fetched games:', response.data);
+      // console.log(response.data.games);
       const games = Array.isArray(response.data.games)
         ? response.data.games.map((game) => ({
             ...game,
@@ -140,7 +140,7 @@ function Dashboard() {
       thumbnail: gameData.thumbnail,
       questions: gameData.questions,
       createdAt: new Date().toISOString(),
-      active: 0,
+      active: null,
     };
     const updatedGames = [...games, newGame];
     putGames(updatedGames);
@@ -151,9 +151,7 @@ function Dashboard() {
     const updatedGames = games.filter((game) => game.id !== id);
     putGames(updatedGames);
   };
-
-  //
-
+  
   // Start game
   const startGame = async (id) => {
     setError('');
@@ -170,11 +168,7 @@ function Dashboard() {
         }
       );
       if (response.status === 200) {
-        setActiveSession(prev => ({
-          ...prev,
-          [id]: response.data.data.sessionId
-        }));
-        setActiveGame(id);
+        fetchGames();
         setShowGameSessionId(response.data.data.sessionId);
         setShowGameSession(true);
       }
@@ -213,11 +207,8 @@ function Dashboard() {
       );
       if (response.status === 200) {
         console.log(response.data)
-        setActiveSession(prev => {
-          const copy = { ...prev };
-          delete copy[id];
-          return copy;
-        });
+        setShowGameSessionId('');
+        fetchGames();
       }
     } catch (err) {
       if (err.response) {
@@ -238,8 +229,8 @@ function Dashboard() {
   };
 
   // Show game
-  const showGame = async (id) => {
-    setShowGameSessionId(activeSession[id])
+  const showGame = async (targetId) => {
+    setShowGameSessionId(games.find(g => g.id === targetId).active)
     setShowGameSession(true)
   };
 
@@ -254,6 +245,7 @@ function Dashboard() {
         >
           {isLoading ? 'Creating...' : 'Create Game'}
         </button>
+        <button onClick={() => {console.log(c)}}>Test</button>
       </div>
 
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
@@ -288,10 +280,10 @@ function Dashboard() {
                 >
                   Start Game
                 </button>
-                {activeSession[game.id] &&(
+                {game.active &&(
                   <button onClick={() => showGame(game.id)}>show Game</button>
                 )}
-                {activeSession[game.id] && (
+                {game.active && (
                   <button onClick={() => stopGame(game.id)}>Stop Game</button>
                 )}
                 
