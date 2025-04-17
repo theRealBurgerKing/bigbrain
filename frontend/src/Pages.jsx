@@ -26,8 +26,10 @@ function Pages() {
       localStorage.setItem('token', token);
     } else {
       localStorage.removeItem('token');
+      localStorage.removeItem('myemail');
     }
   }, [token]);
+
 
   const successJob = (token, email) => {
     if (!token) {
@@ -58,6 +60,7 @@ function Pages() {
         },
       });
       localStorage.removeItem('token');
+      localStorage.removeItem('myemail');
       setToken(null);
       navigate('/login');
     } catch (err) {
@@ -66,6 +69,7 @@ function Pages() {
         if (err.response.status === 401) {
           setErrorMessage('Session expired. Please log in again.');
           localStorage.removeItem('token');
+          localStorage.removeItem('myemail');
           setToken(null);
           setTimeout(() => {
             navigate('/login');
@@ -80,7 +84,10 @@ function Pages() {
       }
       setOpen(true);
     } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('myemail');
       setIsLoading(false);
+      navigate('/login');
     }
   };
 

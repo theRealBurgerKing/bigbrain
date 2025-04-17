@@ -1,9 +1,8 @@
-import { duration } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Reusable game form for creating or editing a game
-function GameForm({ initialGame, onSave, onCancel}) {
+function GameForm({ initialGame, onSave, onCancel }) {
   const [gameName, setGameName] = useState('');
   const [thumbnail, setThumbnail] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -12,7 +11,6 @@ function GameForm({ initialGame, onSave, onCancel}) {
 
   // Initialize form with initialGame data (if provided)
   useEffect(() => {
-    // console.log('GameForm received initialGame:', initialGame);
     if (initialGame) {
       setGameName(initialGame.name || '');
       setThumbnail(initialGame.thumbnail || '');
@@ -21,17 +19,16 @@ function GameForm({ initialGame, onSave, onCancel}) {
             id: q.id || Date.now() + index,
             text: q.text || '',
             answers: Array.isArray(q.answers) ? q.answers : ['', ''],
-            type: q.type || 'multiple choice', // Default type
-            duration: q.duration || 30, // Default time limit (seconds)
-            points: q.points || 10, // Default points
+            type: q.type || 'multiple choice',
+            duration: Number(q.duration) || 30,
+            points: Number(q.points) || 10,
             youtubeUrl: q.youtubeUrl || '',
             image: q.image || '',
-            correctAnswers: q.correctAnswers || [], // For single/multiple choice
-            isCorrect: q.isCorrect || false, // For judgement
+            correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers : [],
+            isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
           }))
         : [];
       setQuestions(initialQuestions);
-      // console.log('Initialized questions:', initialQuestions);
     } else {
       setGameName('');
       setThumbnail('');
@@ -53,7 +50,7 @@ function GameForm({ initialGame, onSave, onCancel}) {
 
   // Navigate to question editor
   const editQuestion = (question) => {
-    navigate(`/game/${initialGame.id}/question/${question.id}`);
+    navigate(`/game/${initialGame?.gameId || 'new'}/question/${question.id}`);
   };
 
   // Add a new question
@@ -86,10 +83,23 @@ function GameForm({ initialGame, onSave, onCancel}) {
       return;
     }
     const gameData = {
-      ...initialGame,
+      gameId: initialGame?.gameId || Date.now(), // 确保 gameId 是数字
+      owner: initialGame?.owner || 1, // 假设 owner 为当前用户 ID
       name: gameName,
       thumbnail: thumbnail || undefined,
-      questions: questions.length > 0 ? questions : [],
+      questions: questions.length > 0 ? questions.map((q) => ({
+        duration: Number(q.duration), // 确保 duration 是数字
+        correctAnswers: q.correctAnswers,
+        text: q.text,
+        answers: q.answers,
+        type: q.type,
+        points: Number(q.points),
+        youtubeUrl: q.youtubeUrl,
+        image: q.image,
+        isCorrect: q.isCorrect,
+      })) : [],
+      createdAt: initialGame?.createdAt || new Date().toISOString(),
+      active: initialGame?.active || null,
     };
     console.log('Saving game data:', gameData);
     onSave(gameData);
