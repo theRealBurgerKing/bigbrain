@@ -9,6 +9,7 @@ function GameEditor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [games, setGames] = useState([]);
+  const [game, setGame] = useState(null);
   const [gameName, setGameName] = useState('');
   const [thumbnail, setThumbnail] = useState('');
 
@@ -40,10 +41,14 @@ function GameEditor() {
                 ? game.questions.map((q, index) => ({
                     id: q.id || `${Date.now()}-${index}`,
                     duration: q.duration ? Number(q.duration) : null,
+                    points: q.points ? Number(q.points) : 10,
                     correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
+                    isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
                     text: q.text || '',
                     answers: Array.isArray(q.answers) ? q.answers : ['', ''],
                     type: q.type || 'multiple choice',
+                    youtubeUrl: q.youtubeUrl || '',
+                    image: q.image || '',
                   }))
                 : [],
             }))
@@ -53,6 +58,7 @@ function GameEditor() {
           setGames(gamesData);
           const gameData = gamesData.find((g) => g.gameId === Number(gameId));
           if (gameData) {
+            setGame(gameData);
             setGameName(gameData.name);
             setThumbnail(gameData.thumbnail);
           } else {
@@ -94,7 +100,7 @@ function GameEditor() {
     }
   };
 
-  // Handle save game
+  // Handle save game metadata
   const handleSaveGame = async () => {
     if (!token) {
       setError('No token found. Please log in again.');
@@ -111,39 +117,18 @@ function GameEditor() {
     setError('');
 
     try {
-      // Update the specific game in the games list
-      const updatedGames = games.map((game) =>
-        game.gameId === Number(gameId)
+      const updatedGames = games.map((g) =>
+        g.gameId === Number(gameId)
           ? {
-              id: game.gameId,
-              owner: game.owner,
+              id: g.gameId,
+              owner: g.owner,
               name: gameName,
               thumbnail: thumbnail || '',
-              createdAt: game.createdAt,
-              active: game.active,
-              questions: game.questions.map(q => ({
-                duration: q.duration,
-                correctAnswers: q.correctAnswers,
-                text: q.text,
-                answers: q.answers,
-                type: q.type,
-              })),
+              createdAt: g.createdAt,
+              active: g.active,
+              questions: g.questions,
             }
-          : {
-              id: game.gameId,
-              owner: game.owner,
-              name: game.name,
-              thumbnail: game.thumbnail,
-              createdAt: game.createdAt,
-              active: game.active,
-              questions: game.questions.map(q => ({
-                duration: q.duration,
-                correctAnswers: q.correctAnswers,
-                text: q.text,
-                answers: q.answers,
-                type: q.type,
-              })),
-            }
+          : g
       );
 
       const response = await axios.put(
@@ -158,6 +143,7 @@ function GameEditor() {
       );
 
       if (response.status === 200) {
+        setGames(updatedGames);
         navigate('/dashboard');
       }
     } catch (err) {
@@ -182,13 +168,21 @@ function GameEditor() {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  if (!game) return <div>Game not found.</div>;
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Edit Game Metadata</h2>
+      <h2>Edit Game: {game.name}</h2>
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-
+      <button
+        onClick={() => navigate('/dashboard')}
+        style={{ padding: '10px 20px' }}
+      >
+        Back to Dashboard
+      </button>
+      {/* Edit Game Metadata */}
       <div style={{ marginBottom: '20px' }}>
+        <h3>Game Metadata</h3>
         <label>
           Game Name:
           <input
@@ -199,42 +193,40 @@ function GameEditor() {
             style={{ marginLeft: '10px', width: '300px' }}
           />
         </label>
-      </div>
-
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Thumbnail:
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleThumbnailUpload}
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        {thumbnail && (
-          <img
-            src={thumbnail}
-            alt="Game thumbnail"
-            style={{ maxWidth: '100px', marginTop: '10px' }}
-          />
-        )}
-      </div>
-
-      <div>
+        <div style={{ marginTop: '10px' }}>
+          <label>
+            Thumbnail:
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleThumbnailUpload}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt="Game thumbnail"
+              style={{ maxWidth: '100px', marginTop: '10px' }}
+            />
+          )}
+        </div>
         <button
           onClick={handleSaveGame}
           disabled={isLoading}
-          style={{ padding: '10px 20px', marginRight: '10px' }}
+          style={{ padding: '5px 10px', marginTop: '10px', marginRight: '10px' }}
         >
-          {isLoading ? 'Saving...' : 'Save'}
+          Save Metadata
         </button>
         <button
-          onClick={() => navigate('/dashboard')}
-          style={{ padding: '10px 20px' }}
+          onClick={() => navigate(`/game/${gameId}/questions`)}
+          style={{ padding: '5px 10px', marginTop: '10px' }}
         >
-          Cancel
+          Edit Questions
         </button>
       </div>
+
+      
     </div>
   );
 }

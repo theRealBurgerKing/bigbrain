@@ -121,6 +121,7 @@ function Pages() {
         <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<GameEditor />} />
+        <Route path="/game/:gameId/questions" element={<QuestionEditor />} />
         <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
         <Route path="/session/:sessionId" element={<GameSession />} />
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />

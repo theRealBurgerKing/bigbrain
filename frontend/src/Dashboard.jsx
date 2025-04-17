@@ -115,6 +115,41 @@ function Dashboard() {
   const handleEditGame = (gameId) => {
     navigate(`/game/${gameId}`);
   };
+  // Handle delete game
+  const handleDeleteGame = (gameId) => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+
+    const owner = localStorage.getItem('myemail') || 'unknown';
+    if (!owner || owner === 'unknown') {
+      setError('User not authenticated. Please log in again.');
+      return;
+    }
+
+    // Filter out the game to delete
+    const updatedGames = games
+      .filter(game => game.gameId !== Number(gameId))
+      .map(game => ({
+        id: game.gameId,
+        owner: game.owner,
+        name: game.name,
+        thumbnail: game.thumbnail,
+        createdAt: game.createdAt,
+        active: game.active,
+        questions: game.questions.map(q => ({
+          duration: q.duration,
+          correctAnswers: q.correctAnswers,
+          text: q.text,
+          answers: q.answers,
+          type: q.type,
+        })),
+      }));
+
+    updateGames(updatedGames);
+  };
   // Handle create game
   const handleCreateGame = () => {
     if (!newGameName.trim()) {
@@ -226,9 +261,15 @@ function Dashboard() {
                 )}
                 <button
                   onClick={() => handleEditGame(game.gameId)}
-                  style={{ padding: '5px 10px', marginTop: '10px' }}
+                  style={{ padding: '5px 10px', marginTop: '10px', marginRight: '10px' }}
                 >
                   Edit Game
+                </button>
+                <button
+                  onClick={() => handleDeleteGame(game.gameId)}
+                  style={{ padding: '5px 10px', marginTop: '10px', color: 'red' }}
+                >
+                  Delete Game
                 </button>
               </li>
             ))}
