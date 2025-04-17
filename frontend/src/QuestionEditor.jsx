@@ -345,8 +345,205 @@ function QuestionEditor() {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
-  
+  // If no questionId is provided, show the question list
+  if (!questionId) {
+    if (!game) return <div>Game not found.</div>;
 
+    return (
+      <div style={{ padding: '20px' }}>
+        <h2>Questions for Game: {game.name}</h2>
+        {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+
+        <div style={{ marginBottom: '20px' }}>
+          <button
+            onClick={handleAddQuestion}
+            style={{ padding: '5px 10px', marginBottom: '10px' }}
+          >
+            Add Question
+          </button>
+          {game.questions.length > 0 ? (
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {game.questions.map((q) => (
+                <li
+                  key={q.id}
+                  style={{
+                    padding: '5px',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span onClick={() => handleEditQuestion(q.id)}>
+                    {q.text || 'Untitled Question'}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteQuestion(q.id)}
+                    style={{ color: 'red' }}
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No questions yet. Click "Add Question" to start.</p>
+          )}
+        </div>
+
+        <button
+          onClick={() => navigate(`/game/${gameId}`)}
+          style={{ padding: '10px 20px' }}
+        >
+          Back to Game Editor
+        </button>
+      </div>
+    );
+  }
+
+  // If questionId is provided, show the question editor
+  if (!question) return <div>Question not found.</div>;
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>Edit Question</h2>
+      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Question Type:
+          <select
+            value={type}
+            onChange={(e) => {
+              setType(e.target.value);
+              setCorrectAnswers([]);
+              setIsCorrect(false);
+            }}
+            style={{ marginLeft: '10px' }}
+          >
+            <option value="multiple choice">Multiple Choice</option>
+            <option value="single choice">Single Choice</option>
+            <option value="judgement">Judgement</option>
+          </select>
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Question:
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Enter question"
+            style={{ marginLeft: '10px', width: '300px' }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Time Limit (seconds):
+          <input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            min="1"
+            style={{ marginLeft: '10px', width: '100px' }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Points:
+          <input
+            type="number"
+            value={points}
+            onChange={(e) => setPoints(e.target.value)}
+            min="1"
+            style={{ marginLeft: '10px', width: '100px' }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          YouTube URL (optional):
+          <input
+            type="text"
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            placeholder="Enter YouTube URL"
+            style={{ marginLeft: '10px', width: '300px' }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Image (optional):
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ marginLeft: '10px' }}
+          />
+        </label>
+        {image && (
+          <img
+            src={image}
+            alt="Question image"
+            style={{ maxWidth: '100px', marginTop: '10px' }}
+          />
+        )}
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Answers (2-6)</h3>
+        {answers.map((answer, index) => (
+          <div key={index} style={{ marginBottom: '10px' }}>
+            <label>
+              Answer {index + 1}:
+              <input
+                type="text"
+                value={answer}
+                onChange={(e) => handleAnswerChange(index, e.target.value)}
+                style={{ marginLeft: '10px', width: '200px' }}
+              />
+            </label>
+            {type !== 'judgement' ? (
+              <label style={{ marginLeft: '10px' }}>
+                <input
+                  type={type === 'single choice' ? 'radio' : 'checkbox'}
+                  checked={correctAnswers.includes(index.toString())}
+                  onChange={() => toggleCorrectAnswer(index)}
+                />
+                Correct
+              </label>
+            ) : null}
+            <button
+              onClick={() => removeAnswer(index)}
+              style={{ marginLeft: '10px', color: 'red' }}
+              disabled={answers.length <= 2}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={addAnswer}
+          disabled={answers.length >= 6}
+          style={{ padding: '5px 10px' }}
+        >
+          Add Answer
+        </button>
+      </div>
+
+     
+    </div>
+  );
 }
 
 export default QuestionEditor;
