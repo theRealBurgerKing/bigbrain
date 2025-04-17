@@ -190,7 +190,163 @@ function QuestionEditor() {
     }
   };
 
+  // Handle correct answer toggle (for multiple choice and single choice)
+  const toggleCorrectAnswer = (index) => {
+    if (type === 'single choice') {
+      setCorrectAnswers([index.toString()]);
+    } else if (type === 'multiple choice') {
+      if (correctAnswers.includes(index.toString())) {
+        setCorrectAnswers(correctAnswers.filter((i) => i !== index.toString()));
+      } else {
+        setCorrectAnswers([...correctAnswers, index.toString()]);
+      }
+    }
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Update games on the backend
+  const updateGames = async (updatedGames) => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+    try {
+      const response = await axios.put(
+        'http://localhost:5005/admin/games',
+        { games: updatedGames },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        setGames(updatedGames);
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('myusername');
+          setTimeout(() => navigate('/login'), 2000);
+        } else if (err.response.status === 403) {
+          setError('Forbidden: You do not have permission to update this game.');
+        } else {
+          setError(err.response.data?.error || 'An error occurred while updating the game.');
+        }
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    }
+  };
+
+  // Handle save question
+  const handleSave = async () => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+
+    if (!text.trim()) {
+      setError('Question text is required.');
+      return;
+    }
+
+    if (duration < 1) {
+      setError('Time limit must be at least 1 second.');
+      return;
+    }
+
+    if (points < 1) {
+      setError('Points must be at least 1.');
+      return;
+    }
+
+    if (answers.length < 2 || answers.length > 6) {
+      setError('Answers must be between 2 and 6.');
+      return;
+    }
+
+    if (type === 'single choice' && correctAnswers.length !== 1) {
+      setError('Single choice questions must have exactly one correct answer.');
+      return;
+    }
+
+    if (type === 'multiple choice' && correctAnswers.length < 1) {
+      setError('Multiple choice questions must have at least one correct answer.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const updatedGames = games.map((g) =>
+        g.gameId === gameId
+          ? {
+              ...g,
+              questions: g.questions.map((q) =>
+                q.id === questionId
+                  ? {
+                      id: q.id,
+                      text: text,
+                      type: type,
+                      duration: Number(duration),
+                      points: Number(points),
+                      youtubeUrl: youtubeUrl,
+                      image: image,
+                      answers: answers,
+                      correctAnswers: type !== 'judgement' ? correctAnswers : [],
+                      isCorrect: type === 'judgement' ? isCorrect : false,
+                    }
+                  : q
+              ),
+            }
+          : g
+      );
+
+      await updateGames(updatedGames);
+      navigate(`/game/${gameId}/questions`);
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('myusername');
+          setTimeout(() => navigate('/login'), 2000);
+        } else if (err.response.status === 403) {
+          setError('Forbidden: You do not have permission to update this game.');
+        } else {
+          setError(err.response.data?.error || 'An error occurred while updating the question.');
+        }
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+
   
+
 }
 
 export default QuestionEditor;
