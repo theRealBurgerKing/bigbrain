@@ -111,23 +111,21 @@ function Dashboard() {
       setIsLoading(false);
     }
   };
-
+  // Handle edit game navigation
+  const handleEditGame = (gameId) => {
+    navigate(`/game/${gameId}`);
+  };
   // Handle create game
   const handleCreateGame = () => {
     if (!newGameName.trim()) {
       setError('Game name is required.');
       return;
     }
-
-    // 生成唯一的 gameId
     const timestamp = Date.now();
     const randomPart = Math.floor(Math.random() * 1000000);
-    const newGameId = `${timestamp}${randomPart}`; // 确保唯一性
-
-    // 从 localStorage 获取 owner（假设存储的是用户邮箱或 ID）
+    const newGameId = `${timestamp}${randomPart}`;
     const owner = localStorage.getItem('myemail');
 
-    // 构造新游戏对象
     const newGame = {
       id: Number(newGameId),
       owner: owner,
@@ -137,7 +135,6 @@ function Dashboard() {
       createdAt: new Date().toISOString(),
       active: null,
     };
-    // 将新游戏添加到现有游戏列表
     const updatedGames = [...games.map(game => ({
       id: game.gameId,
       owner: game.owner,
@@ -155,8 +152,6 @@ function Dashboard() {
     })), newGame];
 
     updateGames(updatedGames);
-    console.log("@@@@@");
-    console.log(updatedGames);
   };
 
   // Call fetchGames when the component mounts
@@ -229,6 +224,12 @@ function Dashboard() {
                 ) : (
                   <p>No questions available.</p>
                 )}
+                <button
+                  onClick={() => handleEditGame(game.gameId)}
+                  style={{ padding: '5px 10px', marginTop: '10px' }}
+                >
+                  Edit Game
+                </button>
               </li>
             ))}
           </ul>
