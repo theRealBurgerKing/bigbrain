@@ -275,7 +275,7 @@ function Dashboard() {
                 <button onClick={() => deleteGame(game.id)}>Delete Game</button>
                 <button
                   onClick={() => startGame(game.id)}
-                  // disabled={activeSession.includes(game.id)}
+                  disabled={game.active}
                 >
                   Start Game
                 </button>
