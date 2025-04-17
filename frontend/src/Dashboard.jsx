@@ -11,6 +11,12 @@ function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newGameName, setNewGameName] = useState('');
 
+
+  const [showGameSessionId, setShowGameSessionId] = useState(null);
+  const [showGameSession, setShowGameSession] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+
+  
   // GET request to fetch all games
   const fetchGames = async () => {
     if (!token) {
@@ -189,6 +195,92 @@ function Dashboard() {
     updateGames(updatedGames);
   };
 
+
+    // Start game
+    const startGame = async (id) => {
+      setError('');
+      setIsStarting(true);
+      try {
+        const response = await axios.post(
+          `http://localhost:5005/admin/game/${id}/mutate`,
+          { "mutationType": "START" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          fetchGames();
+          setShowGameSessionId(response.data.data.sessionId);
+          setShowGameSession(true);
+        }
+      } catch (err) {
+        if (err.response) {
+          if (err.response.status === 400) {
+            setError("Game already has active session,now stop it.");
+            stopGame(id)
+          } else if (err.response.status === 403) {
+            setError(err.response.data.error);
+          }else {
+            setError(err.response.data?.error || 'An error occurred while updating games.');
+          }
+        } else {
+          console.log(err)
+          setError('Failed to connect to the server. Please try again.');
+        }
+      } finally {
+        setIsStarting(false);
+      }
+      
+    };
+  
+    // Stop game
+    const stopGame = async (id) => {
+      try {
+        const response = await axios.post(
+          `http://localhost:5005/admin/game/${id}/mutate`,
+          { "mutationType": "END" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log(response.data)
+          setShowGameSessionId('');
+          fetchGames();
+        }
+      } catch (err) {
+        if (err.response) {
+          if (err.response.status === 400) {
+            setError(err.response.data.error);
+          } else if (err.response.status === 403) {
+            setError(err.response.data.error);
+          }else {
+            setError(err.response.data?.error || 'An error occurred while updating games.');
+          }
+        } else {
+          setError('Failed to connect to the server. Please try again.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      
+    };
+  
+    // Show game
+    const showGame = async (targetId) => {
+      // setShowGameSessionId(games.find(g => g.id === targetId).active)
+      navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
+      // setShowGameSession(true)
+    };
+
+    
+
   // Call fetchGames when the component mounts
   useEffect(() => {
     fetchGames();
@@ -271,6 +363,21 @@ function Dashboard() {
                 >
                   Delete Game
                 </button>
+                <button
+                  onClick={() => startGame(game.id)}
+                  // disabled={activeSession.includes(game.id)}
+                >
+                  Start Game
+                </button>
+                {game.active &&(
+                  <button onClick={() => showGame(game.id)}>show Game</button>
+                )}
+                {game.active && (
+                  <button onClick={() => stopGame(game.id)}>Stop Game</button>
+                )}
+
+
+
               </li>
             ))}
           </ul>

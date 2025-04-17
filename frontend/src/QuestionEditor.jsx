@@ -160,6 +160,7 @@ function QuestionEditor() {
 
   // Handle edit question navigation
   const handleEditQuestion = (questionId) => {
+    console.log("press!");
     navigate(`/game/${gameId}/question/${questionId}`);
   };
 
@@ -375,7 +376,8 @@ function QuestionEditor() {
                     alignItems: 'center',
                   }}
                 >
-                  <span onClick={() => handleEditQuestion(q.id)}>
+                  <span onClick={() => {
+                    handleEditQuestion(q.id)}}>
                     {q.text || 'Untitled Question'}
                   </span>
                   <button
@@ -541,7 +543,35 @@ function QuestionEditor() {
         </button>
       </div>
 
-     
+      {type === 'judgement' && (
+        <div style={{ marginBottom: '20px' }}>
+          <label>
+            Is Correct:
+            <input
+              type="checkbox"
+              checked={isCorrect}
+              onChange={(e) => setIsCorrect(e.target.checked)}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
+        </div>
+      )}
+
+      <div>
+        <button
+          onClick={handleSave}
+          disabled={isLoading}
+          style={{ padding: '10px 20px', marginRight: '10px' }}
+        >
+          {isLoading ? 'Saving...' : 'Save'}
+        </button>
+        <button
+          onClick={() => navigate(`/game/${gameId}/questions`)}
+          style={{ padding: '10px 20px' }}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
