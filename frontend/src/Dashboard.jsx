@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Modal from './Modal';
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +14,7 @@ function Dashboard() {
 
 
   const [showGameSessionId, setShowGameSessionId] = useState(null);
+  const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
@@ -214,6 +216,7 @@ function Dashboard() {
         if (response.status === 200) {
           fetchGames();
           setShowGameSessionId(response.data.data.sessionId);
+          setShowGameGameId(id);
           setShowGameSession(true);
         }
       } catch (err) {
@@ -253,6 +256,7 @@ function Dashboard() {
           console.log(response.data)
           setShowGameSessionId('');
           fetchGames();
+          navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id } });
         }
       } catch (err) {
         if (err.response) {
@@ -264,6 +268,7 @@ function Dashboard() {
             setError(err.response.data?.error || 'An error occurred while updating games.');
           }
         } else {
+          console.log(err)
           setError('Failed to connect to the server. Please try again.');
         }
       } finally {
@@ -274,9 +279,7 @@ function Dashboard() {
   
     // Show game
     const showGame = async (targetId) => {
-      // setShowGameSessionId(games.find(g => g.id === targetId).active)
-      navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
-      // setShowGameSession(true)
+      navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
     };
 
     
@@ -364,17 +367,18 @@ function Dashboard() {
                   Delete Game
                 </button>
                 <button
-                  onClick={() => startGame(game.id)}
+                  onClick={() => startGame(game.gameId)}
                   disabled={game.active}
                 >
                   Start Game
                 </button>
                 {game.active &&(
-                  <button onClick={() => showGame(game.id)}>show Game</button>
+                  <button onClick={() => showGame(game.gameId)}>show Game</button>
                 )}
                 {game.active && (
-                  <button onClick={() => stopGame(game.id)}>Stop Game</button>
+                  <button onClick={() => stopGame(game.gameId)}>Stop Game</button>
                 )}
+                <button onClick={()=> console.log(game)}>T</button>
 
 
 
@@ -435,6 +439,19 @@ function Dashboard() {
           </div>
         </div>
       )}
+
+      {showGameSession && (
+        <Modal onClose={() => setShowGameSession(false)}>
+          <p>Session ID: {showGameSessionId}</p>
+          <button onClick={() => {
+            navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
+            }}>
+            Copy Link
+          </button>
+          <button onClick={() => showGame(showGameGameId)}>show Game</button>
+        </Modal>
+      )}
+
     </div>
   );
 }
