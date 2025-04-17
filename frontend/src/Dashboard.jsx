@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import GameForm from './GameForm';
-import Modal from './Modal';
-
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,12 +8,15 @@ function Dashboard() {
   const [games, setGames] = useState([]);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const [showCreateGame, setShowCreateGame] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newGameName, setNewGameName] = useState('');
+
 
   const [showGameSessionId, setShowGameSessionId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
+  
   // GET request to fetch all games
   const fetchGames = async () => {
     if (!token) {
@@ -30,28 +30,30 @@ function Dashboard() {
       const response = await axios.get('http://localhost:5005/admin/games', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log('Dashboard fetched games:', response.data);
-      const games = Array.isArray(response.data.games)
-        ? response.data.games.map((game) => ({
-            ...game,
+
+      const gamesData = response.data.games
+        ? Object.values(response.data.games).map((game) => ({
+            gameId: game.id ? Number(game.id) : null,
+            owner: game.owner ? game.owner : null,
+            name: game.name || 'Untitled Game',
+            thumbnail: game.thumbnail || '',
+            createdAt: game.createdAt || new Date().toISOString(),
+            active: game.active || null,
             questions: Array.isArray(game.questions)
-              ? game.questions.map((q) => ({
-                  id: q.id || Date.now(),
+              ? game.questions.map((q, index) => ({
+                  id: q.id || `${Date.now()}-${index}`,
+                  duration: q.duration ? Number(q.duration) : null,
+                  correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
                   text: q.text || '',
                   answers: Array.isArray(q.answers) ? q.answers : ['', ''],
                   type: q.type || 'multiple choice',
-                  duration: q.duration || 30,
-                  points: q.points || 10,
-                  youtubeUrl: q.youtubeUrl || '',
-                  image: q.image || '',
-                  correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers : [],
-                  isCorrect: q.isCorrect || false,
                 }))
               : [],
           }))
         : [];
+
       if (response.status === 200) {
-        setGames(games);
+        setGames(gamesData);
       }
     } catch (err) {
       if (err.response) {
@@ -72,17 +74,16 @@ function Dashboard() {
     }
   };
 
-
-  // Call fetchGames when the component mounts
-  useEffect(() => {
-    fetchGames();
-  }, []);
-
-  // PUT request to change games
-  const putGames = async (updatedGames) => {
+  // PUT request to update games
+  const updateGames = async (updatedGames) => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
     setIsLoading(true);
+    setError('');
     try {
-      console.log('Sending updated games:', updatedGames);
       const response = await axios.put(
         'http://localhost:5005/admin/games',
         { games: updatedGames },
@@ -94,14 +95,13 @@ function Dashboard() {
         }
       );
       if (response.status === 200) {
-        alert('Games updated successfully!');
+        setShowCreateModal(false);
+        setNewGameName('');
         fetchGames();
       }
     } catch (err) {
       if (err.response) {
-        if (err.response.status === 400) {
-          setError('Bad input: Please check the game data format.');
-        } else if (err.response.status === 403) {
+        if (err.response.status === 403) {
           setError('Forbidden: You do not have permission to update games.');
         } else if (err.response.status === 401) {
           setError('Session expired. Please log in again.');
@@ -114,139 +114,193 @@ function Dashboard() {
         setError('Failed to connect to the server. Please try again.');
       }
     } finally {
-      setShowCreateGame(false);
       setIsLoading(false);
     }
   };
-
-  // Handle game creation
-  const handleCreateGame = (gameData) => {
-    const email = localStorage.getItem('email');
-    const timestamp = Date.now();
-    let hash = 0;
-    for (let i = 0; i < email.length; i++) {
-      hash = (hash * 31 + email.charCodeAt(i)) >>> 0;
+  // Handle edit game navigation
+  const handleEditGame = (gameId) => {
+    navigate(`/game/${gameId}`);
+  };
+  // Handle delete game
+  const handleDeleteGame = (gameId) => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
     }
-    const randomPart = Math.floor(Math.random() * 1000);
-    const uniqueId = `${timestamp.toString().slice(2, 10)}${hash.toString().slice(-6)}${randomPart}`;
+
+    const owner = localStorage.getItem('myemail') || 'unknown';
+    if (!owner || owner === 'unknown') {
+      setError('User not authenticated. Please log in again.');
+      return;
+    }
+
+    // Filter out the game to delete
+    const updatedGames = games
+      .filter(game => game.gameId !== Number(gameId))
+      .map(game => ({
+        id: game.gameId,
+        owner: game.owner,
+        name: game.name,
+        thumbnail: game.thumbnail,
+        createdAt: game.createdAt,
+        active: game.active,
+        questions: game.questions.map(q => ({
+          duration: q.duration,
+          correctAnswers: q.correctAnswers,
+          text: q.text,
+          answers: q.answers,
+          type: q.type,
+        })),
+      }));
+
+    updateGames(updatedGames);
+  };
+  // Handle create game
+  const handleCreateGame = () => {
+    if (!newGameName.trim()) {
+      setError('Game name is required.');
+      return;
+    }
+    const timestamp = Date.now();
+    const randomPart = Math.floor(Math.random() * 1000000);
+    const newGameId = `${timestamp}${randomPart}`;
+    const owner = localStorage.getItem('myemail');
+
     const newGame = {
-      id: uniqueId,
-      name: gameData.name,
-      owner: email,
-      thumbnail: gameData.thumbnail,
-      questions: gameData.questions,
+      id: Number(newGameId),
+      owner: owner,
+      name: newGameName,
+      questions: [],
+      thumbnail: '',
       createdAt: new Date().toISOString(),
       active: null,
     };
+    const updatedGames = [...games.map(game => ({
+      id: game.gameId,
+      owner: game.owner,
+      name: game.name,
+      thumbnail: game.thumbnail,
+      createdAt: game.createdAt,
+      active: game.active,
+      questions: game.questions.map(q => ({
+        duration: q.duration,
+        correctAnswers: q.correctAnswers,
+        text: q.text,
+        answers: q.answers,
+        type: q.type,
+      })),
+    })), newGame];
 
-    const updatedGames = [...games, newGame];
-    console.log('-------------------------------',updatedGames)
-    putGames(updatedGames);
+    updateGames(updatedGames);
   };
 
-  // Delete game
-  const deleteGame = async (id) => {
-    const updatedGames = games.filter((game) => game.id !== id);
-    putGames(updatedGames);
-  };
+
+    // Start game
+    const startGame = async (id) => {
+      setError('');
+      setIsStarting(true);
+      try {
+        const response = await axios.post(
+          `http://localhost:5005/admin/game/${id}/mutate`,
+          { "mutationType": "START" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          fetchGames();
+          setShowGameSessionId(response.data.data.sessionId);
+          setShowGameSession(true);
+        }
+      } catch (err) {
+        if (err.response) {
+          if (err.response.status === 400) {
+            setError("Game already has active session,now stop it.");
+            stopGame(id)
+          } else if (err.response.status === 403) {
+            setError(err.response.data.error);
+          }else {
+            setError(err.response.data?.error || 'An error occurred while updating games.');
+          }
+        } else {
+          console.log(err)
+          setError('Failed to connect to the server. Please try again.');
+        }
+      } finally {
+        setIsStarting(false);
+      }
+      
+    };
   
-  // Start game
-  const startGame = async (id) => {
-    setError('');
-    setIsStarting(true);
-    try {
-      const response = await axios.post(
-        `http://localhost:5005/admin/game/${id}/mutate`,
-        { "mutationType": "START" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+    // Stop game
+    const stopGame = async (id) => {
+      try {
+        const response = await axios.post(
+          `http://localhost:5005/admin/game/${id}/mutate`,
+          { "mutationType": "END" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log(response.data)
+          setShowGameSessionId('');
+          fetchGames();
         }
-      );
-      if (response.status === 200) {
-        fetchGames();
-        setShowGameSessionId(response.data.data.sessionId);
-        setShowGameSession(true);
-      }
-    } catch (err) {
-      if (err.response) {
-        if (err.response.status === 400) {
-          setError("Game already has active session,now stop it.");
-          stopGame(id)
-        } else if (err.response.status === 403) {
-          setError(err.response.data.error);
-        }else {
-          setError(err.response.data?.error || 'An error occurred while updating games.');
+      } catch (err) {
+        if (err.response) {
+          if (err.response.status === 400) {
+            setError(err.response.data.error);
+          } else if (err.response.status === 403) {
+            setError(err.response.data.error);
+          }else {
+            setError(err.response.data?.error || 'An error occurred while updating games.');
+          }
+        } else {
+          setError('Failed to connect to the server. Please try again.');
         }
-      } else {
-        console.log(err)
-        setError('Failed to connect to the server. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsStarting(false);
-    }
-    
-  };
+      
+    };
+  
+    // Show game
+    const showGame = async (targetId) => {
+      // setShowGameSessionId(games.find(g => g.id === targetId).active)
+      navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
+      // setShowGameSession(true)
+    };
 
-  // Stop game
-  const stopGame = async (id) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:5005/admin/game/${id}/mutate`,
-        { "mutationType": "END" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log(response.data)
-        setShowGameSessionId('');
-        fetchGames();
-      }
-    } catch (err) {
-      if (err.response) {
-        if (err.response.status === 400) {
-          setError(err.response.data.error);
-        } else if (err.response.status === 403) {
-          setError(err.response.data.error);
-        }else {
-          setError(err.response.data?.error || 'An error occurred while updating games.');
-        }
-      } else {
-        setError('Failed to connect to the server. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
     
-  };
 
-  // Show game
-  const showGame = async (targetId) => {
-    // setShowGameSessionId(games.find(g => g.id === targetId).active)
-    navigate(`/session/${games.find(g => g.id === targetId).active}`, { state: { gameId: targetId } });
-    // setShowGameSession(true)
-  };
+  // Call fetchGames when the component mounts
+  useEffect(() => {
+    fetchGames();
+  }, []);
 
   return (
     <div style={{ padding: '20px' }}>
       <h2>Admin Dashboard</h2>
+
       <div style={{ marginBottom: '20px' }}>
         <button
-          onClick={() => setShowCreateGame(true)}
+          onClick={() => setShowCreateModal(true)}
           disabled={isLoading}
           style={{ padding: '10px 20px' }}
         >
-          {isLoading ? 'Creating...' : 'Create Game'}
+          Create Game
         </button>
-        <button onClick={() => {console.log('ccc')}}>Test</button>
       </div>
 
+      {isLoading && <div>Loading...</div>}
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
 
       {games.length > 0 ? (
@@ -255,7 +309,7 @@ function Dashboard() {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {games.map((game) => (
               <li
-                key={game.id}
+                key={game.gameId ?? 'missing-id'}
                 style={{
                   border: '1px solid #ccc',
                   padding: '10px',
@@ -263,16 +317,52 @@ function Dashboard() {
                   borderRadius: '5px',
                 }}
               >
+                <strong>Game ID:</strong> {game.gameId ?? 'N/A'} <br />
+                <strong>Owner:</strong> {game.owner ?? 'N/A'} <br />
                 <strong>Name:</strong> {game.name} <br />
-                <strong>ID:</strong> {game.id} <br />
-                <strong>Owner:</strong> {game.owner} <br />
                 <strong>Created At:</strong>{' '}
                 {new Date(game.createdAt).toLocaleString()} <br />
                 <strong>Active:</strong> {game.active ? 'Yes' : 'No'} <br />
-                <button onClick={() => navigate(`/game/${game.id}`, { state: { content: games } })}>
+                {game.thumbnail && (
+                  <>
+                    <strong>Thumbnail:</strong>{' '}
+                    <img
+                      src={game.thumbnail}
+                      alt={`${game.name} thumbnail`}
+                      style={{ maxWidth: '100px', marginTop: '5px' }}
+                    />
+                  </>
+                )}
+                <strong>Questions:</strong>
+                {game.questions.length > 0 ? (
+                  <ul style={{ paddingLeft: '20px' }}>
+                    {game.questions.map((q) => (
+                      <li key={q.id}>
+                        <strong>Text:</strong> {q.text || 'Untitled Question'} <br />
+                        <strong>Duration:</strong> {q.duration ?? 'N/A'} seconds <br />
+                        <strong>Correct Answers:</strong>{' '}
+                        {q.correctAnswers.length > 0 ? q.correctAnswers.join(', ') : 'None'} <br />
+                        <strong>Type:</strong> {q.type} <br />
+                        <strong>Answers:</strong>{' '}
+                        {q.answers.length > 0 ? q.answers.join(', ') : 'None'}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No questions available.</p>
+                )}
+                <button
+                  onClick={() => handleEditGame(game.gameId)}
+                  style={{ padding: '5px 10px', marginTop: '10px', marginRight: '10px' }}
+                >
                   Edit Game
                 </button>
-                <button onClick={() => deleteGame(game.id)}>Delete Game</button>
+                <button
+                  onClick={() => handleDeleteGame(game.gameId)}
+                  style={{ padding: '5px 10px', marginTop: '10px', color: 'red' }}
+                >
+                  Delete Game
+                </button>
                 <button
                   onClick={() => startGame(game.id)}
                   disabled={game.active}
@@ -285,17 +375,9 @@ function Dashboard() {
                 {game.active && (
                   <button onClick={() => stopGame(game.id)}>Stop Game</button>
                 )}
-                
-                {game.thumbnail && (
-                  <>
-                    <strong>Thumbnail:</strong>{' '}
-                    <img
-                      src={game.thumbnail}
-                      alt={`${game.name} thumbnail`}
-                      style={{ maxWidth: '100px', marginTop: '5px' }}
-                    />
-                  </>
-                )}
+
+
+
               </li>
             ))}
           </ul>
@@ -304,7 +386,7 @@ function Dashboard() {
         <p>No games available.</p>
       )}
 
-      {showCreateGame && (
+      {showCreateModal && (
         <div
           style={{
             position: 'fixed',
@@ -315,42 +397,44 @@ function Dashboard() {
             padding: '20px',
             border: '1px solid #ccc',
             zIndex: '1000',
-            width: '80%',
-            maxWidth: '800px',
-            maxHeight: '80vh',
-            overflowY: 'auto',
+            width: '300px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
           }}
         >
-          <GameForm
-            initialGame={null}
-            onSave={handleCreateGame}
-            onCancel={() => setShowCreateGame(false)}
-          />
+          <h3>Create New Game</h3>
+          <div style={{ marginBottom: '10px' }}>
+            <label>
+              Game Name:
+              <input
+                type="text"
+                value={newGameName}
+                onChange={(e) => setNewGameName(e.target.value)}
+                placeholder="Enter game name"
+                style={{ marginLeft: '10px', width: '200px' }}
+              />
+            </label>
+          </div>
+          <div>
+            <button
+              onClick={handleCreateGame}
+              disabled={isLoading}
+              style={{ padding: '5px 10px', marginRight: '10px' }}
+            >
+              Create
+            </button>
+            <button
+              onClick={() => {
+                setShowCreateModal(false);
+                setNewGameName('');
+                setError('');
+              }}
+              style={{ padding: '5px 10px' }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
-
-      {showGameSession && (
-        <Modal onClose={() => setShowGameSession(false)}>
-          <p>Session ID: {showGameSessionId}</p>
-          <button onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
-            }}>
-            Copy Link
-          </button>
-        </Modal>
-      )}
-
-      {/* {advanceGameSession && (
-        <Modal onClose={() => setAdvanceGameSession(false)}>
-          <p>Session ID: {showGameSessionId}</p>
-          <button onClick={() => {}}>
-            YES
-          </button>
-          <button onClick={() => {}}>
-            NO
-          </button>
-        </Modal>
-      )} */}
     </div>
   );
 }

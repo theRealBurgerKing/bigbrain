@@ -52,6 +52,7 @@ function Register({ successJob, showError }) {
         showError('Registration successful, but no token received.');
         return;
       }
+      localStorage.setItem('myemail', email);
       successJob(token);
     } catch (err) {
       if (err.response) {

@@ -18,6 +18,7 @@ function Login({ successJob, showError }) {
         password: password,
       });
       const token = response.data.token;
+      localStorage.setItem('myemail', email);
       successJob(token, email);
     } catch (err) {
       if (err.response) {
