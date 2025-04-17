@@ -112,20 +112,20 @@
                   "description": "The index of the correct answer - THIS IS MANDATORY TO MAKE BACKEND FUNCTION",
                   "example": ["Answer 3", "Answer 4"]
                 },
-                "Answers": {
+                "answers": {
                   "type": "array",
                   "example": [
                     {
-                      "Answer": "THIS IS JUST AN EXAMPLE"
+                      "answer": "THIS IS JUST AN EXAMPLE"
                     },
                     {
-                      "Answer": "YOU CAN HAVE WHATEVER MAKES SENSE FOR YOUR QUESTION AS YOU PUT THEM BACK"
+                      "answer": "YOU CAN HAVE WHATEVER MAKES SENSE FOR YOUR QUESTION AS YOU PUT THEM BACK"
                     },
                     {
-                      "Answer": "Answer 3"
+                      "answer": "Answer 3"
                     },
                     {
-                      "Answer": "Answer 4"
+                      "answer": "Answer 4"
                     }
                   ]
                 }
@@ -492,8 +492,8 @@
                   "type": "array",
                   "items": {
                     "properties": {
-                      "answerIds": {
-                        "$ref": "#/components/fields/AnswerIds"
+                      "answers": {
+                        "$ref": "#/components/fields/Answers"
                       },
                       "correct": {
                         "$ref": "#/components/fields/AnswerCorrect"
@@ -517,8 +517,8 @@
             "type": "array",
             "items": {
               "properties": {
-                "answerIds": {
-                  "$ref": "#/components/fields/AnswerIds"
+                "answers": {
+                  "$ref": "#/components/fields/Answers"
                 },
                 "correct": {
                   "$ref": "#/components/fields/AnswerCorrect"
@@ -609,8 +609,8 @@
           "schema": {
             "type": "object",
             "properties": {
-              "answerIds": {
-                "$ref": "#/components/fields/AnswerIds"
+              "answers": {
+                "$ref": "#/components/fields/Answers"
               }
             }
           }
@@ -974,6 +974,17 @@
         "summary": "Once the question timer is finished, returns the correct answer",
         "tags": ["Player"],
         "parameters": [{ "$ref": "#/components/parameters/PlayerIdQuery" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/200/PlayerAnswersAll" },
+          "400": { "$ref": "#/components/responses/400" }
+        }
+      },
+      "put": {
+        "summary": "For the current question that the session is up to, this allows the player to submit their answer",
+        "tags": ["Player"],
+        "parameters": [
+          { "$ref": "#/components/parameters/PlayerIdQuery" }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -990,18 +1001,6 @@
             }
           }
         },
-        "responses": {
-          "200": { "$ref": "#/components/responses/200/PlayerAnswersAll" },
-          "400": { "$ref": "#/components/responses/400" }
-        }
-      },
-      "put": {
-        "summary": "For the current question that the session is up to, this allows the player to submit their answer",
-        "tags": ["Player"],
-        "parameters": [
-          { "$ref": "#/components/parameters/PlayerIdQuery" },
-          { "$ref": "#/components/parameters/PlayerAnswers" }
-        ],
         "responses": {
           "200": { "$ref": "#/components/responses/200/Empty" },
           "400": { "$ref": "#/components/responses/400" }

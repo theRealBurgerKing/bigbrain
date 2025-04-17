@@ -179,9 +179,9 @@ export const getGamesFromAdmin = (email) =>
 export const updateGamesFromAdmin = ({ gamesArrayFromRequest, email }) =>
   gameLock((resolve, reject) => {
     try {
-      // Get all existing game IDs owned by this admin
-      const adminGameIds = Object.keys(games).filter(
-        (gameId) => games[gameId].owner === email
+      // Get all existing game IDs owned by other admins
+      const otherAdminGameIds = Object.keys(games).filter(
+        (gameId) => games[gameId].owner !== email
       );
 
       // Verify all games in array belong to admin
@@ -201,12 +201,13 @@ export const updateGamesFromAdmin = ({ gamesArrayFromRequest, email }) =>
       // Convert array to object format and update
       const newGames = {};
       gamesArrayFromRequest.forEach((gameFromRequest) => {
+        const gameIdFromRequest = gameFromRequest.id || gameFromRequest.gameId || gameFromRequest.gameID;
         // If game has an ID and it exists in admin's games, use that ID
         // Otherwise generate a new ID
         const gameId =
-          gameFromRequest.id &&
-          adminGameIds.includes(gameFromRequest.id.toString())
-            ? gameFromRequest.id.toString()
+          gameIdFromRequest &&
+          otherAdminGameIds.includes(gameIdFromRequest.toString()) === false
+            ? gameIdFromRequest.toString()
             : generateId(Object.keys(games));
 
         //
@@ -381,7 +382,7 @@ const newPlayerPayload = (name, numQuestions) => ({
   answers: Array(numQuestions).fill({
     questionStartedAt: null,
     answeredAt: null,
-    answerIds: [],
+    answers: [],
     correct: false,
   }),
 });

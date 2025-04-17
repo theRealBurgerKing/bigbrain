@@ -8,6 +8,7 @@ This assignment is due Friday the 25th of April, 8pm.
 
 * 09/04: Updated typos in spec (headers, bad sum of marks); removed custom.js to simplify; better defined a structure; made clearer what is and isn't required in the main game blob.
 * 11/04: Fix bug on backend where questions & answers were not being returned correctly.
+* 15/04: Fix bug on backend where gameId from frontend was not handled properly, game creation requirement, happy path requirement & swagger doc player can't GET/PUT answer.
 
 ## 1. Setup
 
@@ -53,7 +54,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
 
 #### 2.2.1. Dashboard
  * A unique route must exist for this screen e.g. `/dashboard`
- * A dashboard of all games is displayed, where each game shows the **title**, **number of questions** it contains, a **thumbnail**, and a **total duration** to complete (sum of each individual question's duration)
+ * A dashboard of all games is displayed, where each game shows the **name**. And 🙉🙉🙉(For pairs only), you also need to include **number of questions** it contains, a **thumbnail**, and a **total duration** to complete (sum of each individual question's duration)
  * Each game listed should have a clickable UI component relating to it that takes user to the screen to edit that particular game. E.G. `/game/{game_id}`
  * A button exists on this screen which brings up a UI component that allows user to create a new game, provide a name for the game. After a new game is created, it **must** be added to the dashboard immediately without a refresh.
  * 🙉🙉🙉 (For pairs only) A button exists on this screen that brings up a UI component to allow user to delete a particular game.
@@ -162,15 +163,24 @@ Vitest has been setup in your `frontend` folder, there is one example test file 
 
 For **ui testing**, you must:
 
-- Write a test for the "happy path" of an admin that is described as:
-  1.  Registers successfully
-  2.  Creates a new presentation successfully
-  3.  Updates the thumbnail and name of the presentation successfully
-  4.  Add some slides in a slideshow deck successfully
-  5.  Switch between slides successfully
-  6.  Delete a presentation successfully
-  7.  Logs out of the application successfully
-  8.  Logs back into the application successfully
+- Write a test for the "happy path" of an admin that is described as: 
+
+  1. Registers successfully
+
+  2. Creates a new game successfully
+
+  3. (Not required) Updates the thumbnail and name of the game successfully (yes, it will have no questions)
+
+  4. Starts a game successfully
+
+  5. Ends a game successfully (yes, no one will have played it)
+
+  6. Loads the results page successfully
+
+  7. Logs out of the application successfully
+
+  8. Logs back into the application successfully
+
 - (🙉🙉🙉 For pairs only) also required to write a test for another path through the program, describing the steps and the rationale behind this choice in `TESTING.md`, this path **must** contain different features than the ones described in the previous path.
 
 #### Advice for Component Testing
