@@ -116,7 +116,7 @@ function QuestionEditor() {
     const newQuestion = {
       id: Date.now().toString(),
       text: '',
-      answers: ['', ''],
+      answers: type === 'judgement' ? ['True', 'False'] : ['', ''], // Set fixed answers for judgement type
       type: 'multiple choice',
       duration: 30,
       points: 10,
@@ -125,13 +125,13 @@ function QuestionEditor() {
       correctAnswers: [],
       isCorrect: false,
     };
-
+  
     const updatedGames = games.map((g) =>
       g.gameId === gameId
         ? { ...g, questions: [...g.questions, newQuestion] }
         : g
     );
-
+  
     setGames(updatedGames);
     updateGames(updatedGames);
     navigate(`/game/${gameId}/question/${newQuestion.id}`);
@@ -166,35 +166,37 @@ function QuestionEditor() {
 
   // Handle answer change
   const handleAnswerChange = (index, value) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
+    if (type !== 'judgement') { // Prevent modifying answers for judgement type
+      const newAnswers = [...answers];
+      newAnswers[index] = value;
+      setAnswers(newAnswers);
+    }
   };
 
   // Add new answer option
   const addAnswer = () => {
-    if (answers.length < 6) {
+    if (type !== 'judgement' && answers.length < 6) { // Prevent adding answers for judgement type
       setAnswers([...answers, '']);
-    } else {
+    } else if (answers.length >= 6) {
       setError('Maximum 6 answers allowed.');
     }
   };
 
   // Remove answer option
   const removeAnswer = (index) => {
-    if (answers.length > 2) {
+    if (type !== 'judgement' && answers.length > 2) { // Prevent removing answers for judgement type
       const newAnswers = answers.filter((_, i) => i !== index);
       setAnswers(newAnswers);
       setCorrectAnswers(correctAnswers.filter((answerIndex) => answerIndex !== index.toString()));
-    } else {
+    } else if (type !== 'judgement') {
       setError('Minimum 2 answers required.');
     }
   };
 
   // Handle correct answer toggle (for multiple choice and single choice)
   const toggleCorrectAnswer = (index) => {
-    if (type === 'single choice') {
-      setCorrectAnswers([index.toString()]);
+    if (type === 'single choice' || type === 'judgement') {
+      setCorrectAnswers([index.toString()]); // Allow only one correct answer for single choice and judgement
     } else if (type === 'multiple choice') {
       if (correctAnswers.includes(index.toString())) {
         setCorrectAnswers(correctAnswers.filter((i) => i !== index.toString()));
@@ -262,40 +264,45 @@ function QuestionEditor() {
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
-
+  
     if (!text.trim()) {
       setError('Question text is required.');
       return;
     }
-
+  
     if (duration < 1) {
       setError('Time limit must be at least 1 second.');
       return;
     }
-
+  
     if (points < 1) {
       setError('Points must be at least 1.');
       return;
     }
-
-    if (answers.length < 2 || answers.length > 6) {
+  
+    if (type !== 'judgement' && (answers.length < 2 || answers.length > 6)) {
       setError('Answers must be between 2 and 6.');
       return;
     }
-
+  
     if (type === 'single choice' && correctAnswers.length !== 1) {
       setError('Single choice questions must have exactly one correct answer.');
       return;
     }
-
+  
     if (type === 'multiple choice' && correctAnswers.length < 1) {
       setError('Multiple choice questions must have at least one correct answer.');
       return;
     }
-
+  
+    if (type === 'judgement' && correctAnswers.length !== 1) {
+      setError('Judgement questions must have exactly one correct answer (True or False).');
+      return;
+    }
+  
     setIsLoading(true);
     setError('');
-
+  
     try {
       const updatedGames = games.map((g) =>
         g.gameId === gameId
@@ -311,16 +318,16 @@ function QuestionEditor() {
                       points: Number(points),
                       youtubeUrl: youtubeUrl,
                       image: image,
-                      answers: answers,
-                      correctAnswers: type !== 'judgement' ? correctAnswers : [],
-                      isCorrect: type === 'judgement' ? isCorrect : false,
+                      answers: type === 'judgement' ? ['True', 'False'] : answers, // Ensure fixed answers for judgement
+                      correctAnswers: type !== 'judgement' ? correctAnswers : correctAnswers,
+                      isCorrect: false, // Judgement type no longer uses isCorrect
                     }
                   : q
               ),
             }
           : g
       );
-
+  
       await updateGames(updatedGames);
       navigate(`/game/${gameId}/questions`);
     } catch (err) {
@@ -411,7 +418,7 @@ function QuestionEditor() {
     <div style={{ padding: '20px' }}>
       <h2>Edit Question</h2>
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           Question Type:
@@ -421,6 +428,9 @@ function QuestionEditor() {
               setType(e.target.value);
               setCorrectAnswers([]);
               setIsCorrect(false);
+              if (e.target.value === 'judgement') {
+                setAnswers(['True', 'False']); // Set fixed answers for judgement
+              }
             }}
             style={{ marginLeft: '10px' }}
           >
@@ -430,7 +440,7 @@ function QuestionEditor() {
           </select>
         </label>
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           Question:
@@ -443,7 +453,7 @@ function QuestionEditor() {
           />
         </label>
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           Time Limit (seconds):
@@ -456,7 +466,7 @@ function QuestionEditor() {
           />
         </label>
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           Points:
@@ -469,7 +479,7 @@ function QuestionEditor() {
           />
         </label>
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           YouTube URL (optional):
@@ -482,7 +492,7 @@ function QuestionEditor() {
           />
         </label>
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
         <label>
           Image (optional):
@@ -501,9 +511,9 @@ function QuestionEditor() {
           />
         )}
       </div>
-
+  
       <div style={{ marginBottom: '20px' }}>
-        <h3>Answers (2-6)</h3>
+        <h3>Answers</h3>
         {answers.map((answer, index) => (
           <div key={index} style={{ marginBottom: '10px' }}>
             <label>
@@ -513,50 +523,39 @@ function QuestionEditor() {
                 value={answer}
                 onChange={(e) => handleAnswerChange(index, e.target.value)}
                 style={{ marginLeft: '10px', width: '200px' }}
+                disabled={type === 'judgement'} // Disable editing for judgement answers
               />
             </label>
-            {type !== 'judgement' ? (
-              <label style={{ marginLeft: '10px' }}>
-                <input
-                  type={type === 'single choice' ? 'radio' : 'checkbox'}
-                  checked={correctAnswers.includes(index.toString())}
-                  onChange={() => toggleCorrectAnswer(index)}
-                />
-                Correct
-              </label>
-            ) : null}
-            <button
-              onClick={() => removeAnswer(index)}
-              style={{ marginLeft: '10px', color: 'red' }}
-              disabled={answers.length <= 2}
-            >
-              Remove
-            </button>
+            <label style={{ marginLeft: '10px' }}>
+              <input
+                type={type === 'multiple choice' ? 'checkbox' : 'radio'} // Use radio for single choice and judgement
+                checked={correctAnswers.includes(index.toString())}
+                onChange={() => toggleCorrectAnswer(index)}
+              />
+              Correct
+            </label>
+            {type !== 'judgement' && (
+              <button
+                onClick={() => removeAnswer(index)}
+                style={{ marginLeft: '10px', color: 'red' }}
+                disabled={answers.length <= 2}
+              >
+                Remove
+              </button>
+            )}
           </div>
         ))}
-        <button
-          onClick={addAnswer}
-          disabled={answers.length >= 6}
-          style={{ padding: '5px 10px' }}
-        >
-          Add Answer
-        </button>
+        {type !== 'judgement' && (
+          <button
+            onClick={addAnswer}
+            disabled={answers.length >= 6}
+            style={{ padding: '5px 10px' }}
+          >
+            Add Answer
+          </button>
+        )}
       </div>
-
-      {type === 'judgement' && (
-        <div style={{ marginBottom: '20px' }}>
-          <label>
-            Is Correct:
-            <input
-              type="checkbox"
-              checked={isCorrect}
-              onChange={(e) => setIsCorrect(e.target.checked)}
-              style={{ marginLeft: '10px' }}
-            />
-          </label>
-        </div>
-      )}
-
+  
       <div>
         <button
           onClick={handleSave}
@@ -573,7 +572,6 @@ function QuestionEditor() {
         </button>
       </div>
     </div>
-  );
-}
+  )};
 
 export default QuestionEditor;
