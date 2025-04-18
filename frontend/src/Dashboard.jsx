@@ -11,14 +11,11 @@ function Dashboard() {
   const token = localStorage.getItem('token');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newGameName, setNewGameName] = useState('');
-
-
+  const [selectedFile, setSelectedFile] = useState(null);
   const [showGameSessionId, setShowGameSessionId] = useState(null);
   const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-
-  
   // GET request to fetch all games
   const fetchGames = async () => {
     if (!token) {
@@ -99,6 +96,7 @@ function Dashboard() {
       if (response.status === 200) {
         setShowCreateModal(false);
         setNewGameName('');
+        setSelectedFile(null);
         fetchGames();
       }
     } catch (err) {
@@ -119,10 +117,80 @@ function Dashboard() {
       setIsLoading(false);
     }
   };
+
+  // Validate JSON content
+  const validateJson = (jsonData) => {
+    try {
+      // Ensure jsonData is an array of questions
+      if (!Array.isArray(jsonData)) {
+        throw new Error('JSON must be an array of questions.');
+      }
+      if (jsonData.length === 0) {
+        throw new Error('JSON must contain at least one question.');
+      }
+      // Validate each question
+      jsonData.forEach((q, index) => {
+        // Required fields
+        if (!q.text || typeof q.text !== 'string') {
+          throw new Error(`Question ${index + 1}: Text is required and must be a string.`);
+        }
+        if (!['multiple choice', 'single choice', 'judgement'].includes(q.type)) {
+          throw new Error(`Question ${index + 1}: Type must be multiple choice, single choice, or judgement.`);
+        }
+        if (!Number.isInteger(q.duration) || q.duration <= 0) {
+          throw new Error(`Question ${index + 1}: Duration must be a positive integer.`);
+        }
+        if (!Number.isInteger(q.points) || q.points <= 0) {
+          throw new Error(`Question ${index + 1}: Points must be a positive integer.`);
+        }
+        // Validate answers
+        if (!Array.isArray(q.answers)) {
+          throw new Error(`Question ${index + 1}: Answers must be an array.`);
+        }
+        if (q.type === 'judgement') {
+          if (q.answers.length !== 2 || q.answers[0] !== 'True' || q.answers[1] !== 'False') {
+            throw new Error(`Question ${index + 1}: Judgement questions must have exactly two answers: True, False.`);
+          }
+          if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length !== 1 || !['0', '1'].includes(q.correctAnswers[0])) {
+            throw new Error(`Question ${index + 1}: Correct answers for judgement must be ["0"] or ["1"].`);
+          }
+        } else {
+          if (q.answers.length < 2 || q.answers.length > 6) {
+            throw new Error(`Question ${index + 1}: Answers must be between 2 and 6.`);
+          }
+          if (!q.answers.every(a => typeof a === 'string' && a.trim())) {
+            throw new Error(`Question ${index + 1}: All answers must be non-empty strings.`);
+          }
+          if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length === 0) {
+            throw new Error(`Question ${index + 1}: Correct answers must be a non-empty array.`);
+          }
+          if (q.correctAnswers.some(i => !Number.isInteger(Number(i)) || Number(i) < 0 || Number(i) >= q.answers.length)) {
+            throw new Error(`Question ${index + 1}: Invalid correct answer indices.`);
+          }
+          if (q.type === 'single choice' && q.correctAnswers.length !== 1) {
+            throw new Error(`Question ${index + 1}: Single choice questions must have exactly one correct answer.`);
+          }
+        }
+        // Validate optional fields
+        if (q.youtubeUrl && typeof q.youtubeUrl !== 'string') {
+          throw new Error(`Question ${index + 1}: youtubeUrl must be a string if provided.`);
+        }
+        if (q.image && typeof q.image !== 'string') {
+          throw new Error(`Question ${index + 1}: Image must be a string if provided.`);
+        }
+      });
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
   // Handle edit game navigation
   const handleEditGame = (gameId) => {
     navigate(`/game/${gameId}`);
   };
+
   // Handle delete game
   const handleDeleteGame = (gameId) => {
     if (!token) {
@@ -158,18 +226,25 @@ function Dashboard() {
 
     updateGames(updatedGames);
   };
-  // Handle create game
-  const handleCreateGame = () => {
+
+  // Handle create game with required name and optional JSON upload
+  const handleCreateGame = async () => {
     if (!newGameName.trim()) {
       setError('Game name is required.');
       return;
     }
+
     const timestamp = Date.now();
     const randomPart = Math.floor(Math.random() * 1000000);
     const newGameId = `${timestamp}${randomPart}`;
-    const owner = localStorage.getItem('myemail');
+    const owner = localStorage.getItem('myemail') || 'unknown';
 
-    const newGame = {
+    if (!owner || owner === 'unknown') {
+      setError('User not authenticated. Please log in again.');
+      return;
+    }
+
+    let newGame = {
       id: Number(newGameId),
       owner: owner,
       name: newGameName,
@@ -178,6 +253,34 @@ function Dashboard() {
       createdAt: new Date().toISOString(),
       active: null,
     };
+
+    // Handle JSON upload if a file is selected
+    if (selectedFile) {
+      try {
+        const jsonContent = await selectedFile.text();
+        const jsonData = JSON.parse(jsonContent);
+        if (!validateJson(jsonData)) {
+          return;
+        }
+
+        // Parse JSON to create questions
+        newGame.questions = jsonData.map((q, index) => ({
+          id: `${newGameId}-${index + 1}`,
+          text: q.text,
+          type: q.type,
+          duration: q.duration,
+          points: q.points,
+          youtubeUrl: q.youtubeUrl || '',
+          image: q.image || '',
+          answers: q.answers,
+          correctAnswers: q.correctAnswers.map(String),
+        }));
+      } catch (err) {
+        setError('Failed to parse JSON file: ' + err.message);
+        return;
+      }
+    }
+
     const updatedGames = [...games.map(game => ({
       id: game.gameId,
       owner: game.owner,
@@ -193,96 +296,90 @@ function Dashboard() {
         type: q.type,
       })),
     })), newGame];
-
     updateGames(updatedGames);
   };
 
-
-    // Start game
-    const startGame = async (id) => {
-      setError('');
-      setIsStarting(true);
-      try {
-        const response = await axios.post(
-          `http://localhost:5005/admin/game/${id}/mutate`,
-          { "mutationType": "START" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        if (response.status === 200) {
-          fetchGames();
-          setShowGameSessionId(response.data.data.sessionId);
-          setShowGameGameId(id);
-          setShowGameSession(true);
+  // Start game
+  const startGame = async (id) => {
+    setError('');
+    setIsStarting(true);
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "START" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      } catch (err) {
-        if (err.response) {
-          if (err.response.status === 400) {
-            setError("Game already has active session,now stop it.");
-            stopGame(id)
-          } else if (err.response.status === 403) {
-            setError(err.response.data.error);
-          }else {
-            setError(err.response.data?.error || 'An error occurred while updating games.');
-          }
-        } else {
-          console.log(err)
-          setError('Failed to connect to the server. Please try again.');
-        }
-      } finally {
-        setIsStarting(false);
+      );
+      if (response.status === 200) {
+        fetchGames();
+        setShowGameSessionId(response.data.data.sessionId);
+        setShowGameGameId(id);
+        setShowGameSession(true);
       }
-      
-    };
-  
-    // Stop game
-    const stopGame = async (id) => {
-      try {
-        const response = await axios.post(
-          `http://localhost:5005/admin/game/${id}/mutate`,
-          { "mutationType": "END" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        if (response.status === 200) {
-          console.log(response.data)
-          setShowGameSessionId('');
-          fetchGames();
-          navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id } });
-        }
-      } catch (err) {
-        if (err.response) {
-          if (err.response.status === 400) {
-            setError(err.response.data.error);
-          } else if (err.response.status === 403) {
-            setError(err.response.data.error);
-          }else {
-            setError(err.response.data?.error || 'An error occurred while updating games.');
-          }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError("Game already has active session, now stop it.");
+          stopGame(id);
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
         } else {
-          console.log(err)
-          setError('Failed to connect to the server. Please try again.');
+          setError(err.response.data?.error || 'An error occurred while updating games.');
         }
-      } finally {
-        setIsLoading(false);
+      } else {
+        console.log(err);
+        setError('Failed to connect to the server. Please try again.');
       }
-      
-    };
-  
-    // Show game
-    const showGame = async (targetId) => {
-      navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
-    };
+    } finally {
+      setIsStarting(false);
+    }
+  };
 
-    
+  // Stop game
+  const stopGame = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/admin/game/${id}/mutate`,
+        { "mutationType": "END" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+        setShowGameSessionId('');
+        fetchGames();
+        navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id } });
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError(err.response.data.error);
+        } else if (err.response.status === 403) {
+          setError(err.response.data.error);
+        } else {
+          setError(err.response.data?.error || 'An error occurred while updating games.');
+        }
+      } else {
+        console.log(err);
+        setError('Failed to connect to the server. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show game
+  const showGame = async (targetId) => {
+    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
+  };
 
   // Call fetchGames when the component mounts
   useEffect(() => {
@@ -302,7 +399,6 @@ function Dashboard() {
           Create Game
         </button>
       </div>
-
       {isLoading && <div>Loading...</div>}
       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
 
@@ -372,16 +468,13 @@ function Dashboard() {
                 >
                   Start Game
                 </button>
-                {game.active &&(
-                  <button onClick={() => showGame(game.gameId)}>show Game</button>
+                {game.active && (
+                  <button onClick={() => showGame(game.gameId)}>Show Game</button>
                 )}
                 {game.active && (
                   <button onClick={() => stopGame(game.gameId)}>Stop Game</button>
                 )}
-                <button onClick={()=> console.log(game)}>T</button>
-
-
-
+                <button onClick={() => console.log(game)}>T</button>
               </li>
             ))}
           </ul>
@@ -389,7 +482,6 @@ function Dashboard() {
       ) : (
         <p>No games available.</p>
       )}
-
       {showCreateModal && (
         <div
           style={{
@@ -408,13 +500,23 @@ function Dashboard() {
           <h3>Create New Game</h3>
           <div style={{ marginBottom: '10px' }}>
             <label>
-              Game Name:
+              Game Name (required):
               <input
                 type="text"
                 value={newGameName}
                 onChange={(e) => setNewGameName(e.target.value)}
                 placeholder="Enter game name"
                 style={{ marginLeft: '10px', width: '200px' }}
+              />
+            </label>
+          </div>
+          <div style={{ marginBottom: '10px' }}><label>
+              Upload JSON (optional):
+              <input
+                type="file"
+                accept=".json"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+                style={{ marginLeft: '10px', display: 'block' }}
               />
             </label>
           </div>
@@ -430,6 +532,7 @@ function Dashboard() {
               onClick={() => {
                 setShowCreateModal(false);
                 setNewGameName('');
+                setSelectedFile(null);
                 setError('');
               }}
               style={{ padding: '5px 10px' }}
@@ -439,19 +542,17 @@ function Dashboard() {
           </div>
         </div>
       )}
-
       {showGameSession && (
         <Modal onClose={() => setShowGameSession(false)}>
           <p>Session ID: {showGameSessionId}</p>
           <button onClick={() => {
             navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
-            }}>
+          }}>
             Copy Link
           </button>
-          <button onClick={() => showGame(showGameGameId)}>show Game</button>
+          <button onClick={() => showGame(showGameGameId)}>Show Game</button>
         </Modal>
       )}
-
     </div>
   );
 }
