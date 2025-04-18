@@ -82,7 +82,7 @@ function Login({ successJob, showError }) {
   };
 
   const labelStyle = {
-    fontSize: '1.5vh', // Label font size in viewport units
+    fontSize: '1.8vh', // Label font size in viewport units
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
@@ -91,7 +91,7 @@ function Login({ successJob, showError }) {
   const inputStyle = {
     width: '80%', // Full width of input group
     padding: '1.5vh 2vw', // Padding in viewport units
-    fontSize: '1.8vh', // Font size in viewport units
+    fontSize: '1.5vh', // Font size in viewport units
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: isLoading ? '#f5f5f5' : '#fff',
