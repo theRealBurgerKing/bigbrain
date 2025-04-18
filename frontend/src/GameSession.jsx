@@ -125,7 +125,7 @@ function GameSession() {
             }
             <button onClick={() => setShowResults(true)}>Results</button>
             <button onClick={() => nextQuestion(gameId)}>Next</button> <br />
-            <button onClick={() => { navigate('/dashboard') }}>Back</button> <br />
+            <button onClick={() => navigate('/dashboard')}>Back</button> <br />
 
             {showResultsOrNot && (
                 <Modal onClose={() => setShowResultsOrNot(false)}>
@@ -134,7 +134,7 @@ function GameSession() {
                         setShowResults(true);
                         }}>Y
                     </button>
-                    <button>N</button>
+                    <button onClick={() => navigate('/dashboard')}>No</button>
                 </Modal>
             )}
             {showResults &&(

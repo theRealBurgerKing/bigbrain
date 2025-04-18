@@ -5,17 +5,19 @@ import axios from 'axios';
 function PlayGround() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
     const { sessionId } = useParams();
     const [error, setError] = useState('');
     const [player, setPlayer] = useState('');
     const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
     const [active, setActive] = useState(false);
+    const [finish, setFinish] = useState(false);
     const [question, setQuestion] = useState({});
-    const [timeLeft, setTimeLeft] = useState(0);
+    const [timeLeft, setTimeLeft] = useState(-1);
     const [selectedAnswers, setSelectedAnswers] = useState([]);
-
-
-
+    const [correctAnswers, setCorrectAnswers] = useState([]);
+    const prevActiveRef = useRef(active);
+    const [results, setResults] = useState([]);
 
     const attendGame = async () => {
         try {
@@ -48,41 +50,68 @@ function PlayGround() {
         }
     };
 
-    const fetchQuestion = async () => {
+    const fetchActive = async () => {
         try {
             const response = await axios.get(
                 `http://localhost:5005/play/${playerId}/status`
             );
             if (response.status === 200) {
-                if (response.data.started) {
-                    setActive(true);
-                    try {
-                        const q = await axios.get(
-                            `http://localhost:5005/play/${playerId}/question`
-                        );
-                        if (q.status === 200) {
-                            setQuestion(q.data.question);
-                            const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
-                            const duration = q.data.question.duration * 1000;
-                            const now = Date.now();
-                            setTimeLeft(Math.max(0, Math.floor((startTime + duration - now) / 1000)));
-                        }
-                    } catch (err) {
-                        console.log(err)
-                        if (err.response) {
-                            setError(err.response.data.error);
-                            setTimeout(() => navigate('/play'), 2000);
-                            return () => clearTimeout(timeout);
-                        }
-                    }
+                setActive(response.data.started)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            if (err.response) {
+                if (err.response.data.error === "Session ID is not an active session") {
+                    setActive(false);
+                    setFinish(true); 
+                }
+            }else{
+                setError(err.response.data.error);
+                setTimeout(() => navigate('/play'), 2000);
+                return () => clearTimeout(timeout);
+            }
+        }
+    };
+
+    const fetchanswer = async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:5005/play/${playerId}/answer`
+            );
+            if (response.status === 200) {
+                setCorrectAnswers(response.data.answers)
+            }
+        } catch (err) {
+            console.log(err)
+            if (err.response) {
+                setError(err.response.data.error);
+            }
+        }
+    };
+
+    const fetchQuestion = async () => {
+        try {
+            const q = await axios.get(
+                `http://localhost:5005/play/${playerId}/question`
+            );
+            if (q.status === 200) {
+                setQuestion(q.data.question);
+                const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
+                const duration = q.data.question.duration * 1000;
+                const now = Date.now();
+                const remainingTime = Math.max(0, Math.floor((startTime + duration - now) / 1000));
+                setTimeLeft(remainingTime);
+                if (remainingTime == 0) {
+                    fetchanswer();
                 }
             }
         } catch (err) {
             console.log(err)
             if (err.response) {
                 setError(err.response.data.error);
-                setTimeout(() => navigate('/play'), 2000);
-                return () => clearTimeout(timeout);
+                // setTimeout(() => navigate('/play'), 2000);
+                // return () => clearTimeout(timeout);
             }
         }
     }
@@ -107,27 +136,14 @@ function PlayGround() {
     const submitQuestion = async () => {
         setError('')
         try {
-            const response = await axios.put(
+            const q = await axios.put(
                 `http://localhost:5005/play/${playerId}/answer`,
-                {"answers":selectedAnswers}
-            );
-            if (response.status === 200) {
-                if (response.data.started) {
-                    setActive(true);
-                    try {
-                        const q = await axios.get(
-                            `http://localhost:5005/play/${playerId}/question`
-                        );
-                        if (q.status === 200) {
-                            setQuestion(q.data.question);
-                        }
-                    } catch (err) {
-                        console.log(err)
-                        if (err.response) {
-                            setError(err.response.data.error);
-                        }
-                    }
+                {
+                    "answers": selectedAnswers
                 }
+            );
+            if (q.status === 200) {
+                console.log('ok');
             }
         } catch (err) {
             console.log(err)
@@ -135,18 +151,62 @@ function PlayGround() {
                 setError(err.response.data.error);
             }
         }
-    }
+    };
+
+    const fetchscore = async () =>{
+        try {
+            const response = await axios.get(
+                `http://localhost:5005/play/${playerId}/results`
+            );
+            if (response.status === 200) {
+                setResults(response.data)
+                console.log(response.data)
+            }
+        } catch (err) {
+            console.log(err)
+            if (err.response) {
+                setError(err.response.data.error);
+            }
+        }
+    };
 
 
     useEffect(() => {
-        if (!playerId) return;
-
+        if (!playerId || finish) return;
         const intervalId = setInterval(() => {
-            fetchQuestion();
+            fetchActive();
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [playerId]);
+    }, [playerId,finish]);
+    
+    useEffect(() => {
+        if (!active) return;
+        const intervalId = setInterval(() => {
+            setError('');
+            fetchQuestion();
+        }, 1000);
+    
+        return () => clearInterval(intervalId);
+    }, [active]);
+
+    useEffect(() => {
+        if (prevActiveRef.current && !active) {
+            console.log("Game ended.");
+            setError('');
+            fetchscore();
+        }
+        prevActiveRef.current = active;
+    }, [active]);
+
+
+    useEffect(() => {
+        if (question && question.id) {
+            setSelectedAnswers([]);
+            setCorrectAnswers([]);
+        }
+    }, [question.id]);
+
 
 
     return (
@@ -167,7 +227,7 @@ function PlayGround() {
                     <button onClick={attendGame}>Attend the game!</button>
                 </>
             )}
-            {playerId && question && (
+            {playerId && question && !finish &&(
                 <>
                     <h2>{active ? question.text : 'Waiting'}</h2>
                 </>
@@ -179,28 +239,47 @@ function PlayGround() {
                     <p>Time:{timeLeft}</p>
                     {question.answers.length > 0 ? (
                         <ul style={{ listStyle: 'none', padding: 0 }}>
-                            {question.answers.map((ans, index) => (
-                                <li key={index}>
+                            {question.answers.map((ans, index) => {
+                                const indexStr = index.toString();
+                                let isCorrect = correctAnswers?.includes(indexStr);
+
+                                return(
+                                    <li
+                                        key={index}
+                                        style={{
+                                            backgroundColor: isCorrect ? 'lightgreen' : 'transparent',
+                                            padding: '5px',
+                                            borderRadius: '5px',
+                                        }}
+                                    >
                                     {index}:{ans}
                                     <input
                                         type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
                                         name="ans"
-                                        checked={selectedAnswers.includes(index.toString())}
-                                        onChange={() => handleAnswerSelect(index.toString())}
+                                        checked={selectedAnswers.includes(indexStr)}
+                                        onChange={() => handleAnswerSelect(indexStr)}
                                     />
-                                </li>
-                            ))}</ul>
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     ) : (
                         <p>No questions yet.</p>
                     )}
                     <button
                         onClick={() => submitQuestion()}
-                        // disabled={timeLeft <= 0}
+                    // disabled={timeLeft <= 0}
                     >
                         Submit
                     </button>
                 </>
 
+            )}
+            {finish &&(
+                <>
+                    <h2>Result</h2>
+
+                </>
             )}
         </div>
     );
