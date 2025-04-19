@@ -381,7 +381,7 @@ function Dashboard() {
 
   // Show game
   const showGame = async (targetId) => {
-    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
+    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId, questions: games.find(g => g.gameId === targetId).questions  } });
   };
 
   // Call fetchGames when the component mounts

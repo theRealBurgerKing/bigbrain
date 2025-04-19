@@ -2,10 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
+import Results from './Results';
+
 
 function GameSession() {
     const location = useLocation();
     const gameId = location.state?.gameId;
+    const question = location.state?.questions;
 
     const { sessionId } = useParams();
     const navigate = useNavigate();
@@ -17,6 +20,9 @@ function GameSession() {
     const [showResults,setShowResults]=useState(false);
     const [showResultsOrNot,setShowResultsOrNot]=useState(false);
     const resultsShownRef = useRef(false);
+    const[results, setResults] =useState([]);
+    
+
 
     const fetchSession = async () => {
         if (!token) {
@@ -84,6 +90,23 @@ function GameSession() {
         }
     }
 
+    const getResults =async(q)=>{
+        try {
+            const response = await axios.get(
+                `http://localhost:5005/admin/session/${q}/results`,
+                {headers: { Authorization: `Bearer ${token}` }}
+            );
+            if (response.status === 200) {
+                console.log(response.data)
+                setResults(response.data)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+
+        setShowResults(true)
+    };
+
     // Fetch data on mount
     useEffect(() => {
         if (!active) return;
@@ -123,7 +146,7 @@ function GameSession() {
                 <p>No status</p>
             )
             }
-            <button onClick={() => setShowResults(true)}>Results</button>
+            {/* <button onClick={() => setShowResults(true)}>Results</button> */}
             <button onClick={() => nextQuestion(gameId)}>Next</button> <br />
             <button onClick={() => navigate('/dashboard')}>Back</button> <br />
 
@@ -131,7 +154,7 @@ function GameSession() {
                 <Modal onClose={() => setShowResultsOrNot(false)}>
                     <p>showResults?</p>
                     <button onClick={() => {
-                        setShowResults(true);
+                        getResults(sessionId);
                         }}>Y
                     </button>
                     <button onClick={() => navigate('/dashboard')}>No</button>
@@ -139,11 +162,8 @@ function GameSession() {
             )}
             {showResults &&(
                 <Modal onClose={() => setShowResults(false)}>
-                    <p>
-                        1   <br />
-                        2   <br />
-                        3
-                    </p>
+                    <Results data={results} question={question}>
+                    </Results>
                 </Modal>
             )}
 
