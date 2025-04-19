@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Modal from './Modal';
 
 function QuestionEditor() {
   const { gameId, questionId } = useParams();
@@ -8,6 +9,8 @@ function QuestionEditor() {
   const token = localStorage.getItem('token');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const [games, setGames] = useState([]);
   const [game, setGame] = useState(null);
   const [question, setQuestion] = useState(null);
@@ -171,7 +174,8 @@ function QuestionEditor() {
     if (type !== 'judgement' && answers.length < 6) { // Prevent adding answers for judgement type
       setAnswers([...answers, '']);
     } else if (answers.length >= 6) {
-      setError('Maximum 6 answers allowed.');
+      setModalError('Maximum 6 answers allowed.');
+      setShowModal(true);
     }
   };
 
@@ -182,7 +186,8 @@ function QuestionEditor() {
       setAnswers(newAnswers);
       setCorrectAnswers(correctAnswers.filter((answerIndex) => answerIndex !== index.toString()));
     } else if (type !== 'judgement') {
-      setError('Minimum 2 answers required.');
+      setModalError('Minimum 2 answers required.');
+      setShowModal(true);
     }
   };
 
@@ -214,7 +219,8 @@ function QuestionEditor() {
   // Update games on the backend
   const updateGames = async (updatedGames) => {
     if (!token) {
-      setError('No token found. Please log in again.');
+      setModalError('No token found. Please log in again.');
+      setShowModal(true);
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
@@ -235,17 +241,21 @@ function QuestionEditor() {
     } catch (err) {
       if (err.response) {
         if (err.response.status === 401) {
-          setError('Session expired. Please log in again.');
+          setModalError('Session expired. Please log in again.');
+          setShowModal(true);
           localStorage.removeItem('token');
           localStorage.removeItem('myusername');
           setTimeout(() => navigate('/login'), 2000);
         } else if (err.response.status === 403) {
-          setError('Forbidden: You do not have permission to update this game.');
+          setModalError('Forbidden: You do not have permission to update this game.');
+          setShowModal(true);
         } else {
-          setError(err.response.data?.error || 'An error occurred while updating the game.');
+          setModalError(err.response.data?.error || 'An error occurred while updating the question.');
+          setShowModal(true);
         }
       } else {
-        setError('Failed to connect to the server.');
+        setModalError('Failed to connect to the server.');
+        setShowModal(true);
       }
     }
   };
@@ -253,48 +263,56 @@ function QuestionEditor() {
   // Handle save question
   const handleSave = async () => {
     if (!token) {
-      setError('No token found. Please log in again.');
+      setModalError('No token found. Please log in again.');
+      setShowModal(true);
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
   
     if (!text.trim()) {
-      setError('Question text is required.');
+      setModalError('Question text is required.');
+      setShowModal(true);
       return;
     }
   
     if (duration < 1) {
-      setError('Time limit must be at least 1 second.');
+      setModalError('Time limit must be at least 1 second.');
+      setShowModal(true);
       return;
     }
   
     if (points < 1) {
-      setError('Points must be at least 1.');
+      setModalError('Points must be at least 1.');
+      setShowModal(true);
       return;
     }
   
     if (type !== 'judgement' && (answers.length < 2 || answers.length > 6)) {
-      setError('Answers must be between 2 and 6.');
+      setModalError('Answers must be between 2 and 6.');
+      setShowModal(true);
       return;
     }
   
     if (type === 'single choice' && correctAnswers.length !== 1) {
-      setError('Single choice questions must have exactly one correct answer.');
+      setModalError('Single choice questions must have exactly one correct answer.');
+      setShowModal(true);
       return;
     }
   
     if (type === 'multiple choice' && correctAnswers.length < 1) {
-      setError('Multiple choice questions must have at least one correct answer.');
+      setModalError('Multiple choice questions must have at least one correct answer.');
+      setShowModal(true);
       return;
     }
   
     if (type === 'judgement' && correctAnswers.length !== 1) {
-      setError('Judgement questions must have exactly one correct answer (True or False).');
+      setModalError('Judgement questions must have exactly one correct answer (True or False).');
+      setShowModal(true);
       return;
     }
   
     setIsLoading(true);
-    setError('');
+    setModalError('');
   
     try {
       const updatedGames = games.map((g) =>
@@ -326,17 +344,21 @@ function QuestionEditor() {
     } catch (err) {
       if (err.response) {
         if (err.response.status === 401) {
-          setError('Session expired. Please log in again.');
+          setModalError('Session expired. Please log in again.');
+          setShowModal(true);
           localStorage.removeItem('token');
           localStorage.removeItem('myusername');
           setTimeout(() => navigate('/login'), 2000);
         } else if (err.response.status === 403) {
-          setError('Forbidden: You do not have permission to update this game.');
+          setModalError('Forbidden: You do not have permission to update this game.');
+          setShowModal(true);
         } else {
-          setError(err.response.data?.error || 'An error occurred while updating the question.');
+          setModalError(err.response.data?.error || 'An error occurred while updating the question.');
+          setShowModal(true);
         }
       } else {
-        setError('Failed to connect to the server.');
+        setModalError('Failed to connect to the server.');
+        setShowModal(true);
       }
     } finally {
       setIsLoading(false);
@@ -555,6 +577,12 @@ function QuestionEditor() {
     marginTop: '0.5vh',
   };
 
+  const modalTextStyle = {
+    fontSize: '1.8vh',
+    color: '#333',
+    textAlign: 'center',
+  };
+
   if (isLoading) return <div style={loadingStyle}>Loading...</div>;
   if (error) return <div style={errorStyle}>{error}</div>;
 
@@ -635,6 +663,11 @@ function QuestionEditor() {
                 setIsCorrect(false);
                 if (e.target.value === 'judgement') {
                   setAnswers(['True', 'False']); // Set fixed answers for judgement
+                } else if (e.target.value === 'multiple choice') {
+                  setAnswers(['', '']); // Clear answers when switching to multiple choice
+                }
+                else if (e.target.value === 'single') {
+                  setAnswers(['', '']); // Clear answers when switching to multiple choice
                 }
               }}
               style={selectStyle}
@@ -776,6 +809,13 @@ function QuestionEditor() {
             Cancel
           </button>
         </div>
+
+        {/* Modal for displaying errors */}
+        {showModal && (
+          <Modal onClose={() => setShowModal(false)}>
+            <p style={modalTextStyle}>{modalError}</p>
+          </Modal>
+        )}
       </div>
     </div>
   );

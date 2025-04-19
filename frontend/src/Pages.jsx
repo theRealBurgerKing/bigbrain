@@ -106,7 +106,7 @@ function Pages() {
 
   // Define styles as named objects
   const containerStyle = {
-    height: '100%',
+    minHeight: '100vh',
     width: '100%',
     backgroundColor: '#f0f2f5',
     padding: '0px',

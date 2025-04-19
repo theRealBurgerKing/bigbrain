@@ -6,7 +6,7 @@ import Pages from './Pages';
 function App() {
   // Define styles as named objects
   const appStyle = {
-    height: '98vh',
+    minHeight: '100%',
     width: '100%',
     margin: '0px',
     padding: '0px',
