@@ -333,19 +333,22 @@ function GameEditor() {
           </div>
           <div style={buttonContainerStyle}>
             <button
-              style={isLoading ? disabledButtonStyle : buttonStyle}
-              onClick={handleSaveGame}
-              disabled={isLoading}
-            >
-              Save
-            </button>
-            <button
               style={buttonStyle}
               onClick={() => navigate(`/game/${gameId}/questions`)}
             >
               Edit Questions
             </button>
           </div>
+          <div style={buttonContainerStyle}>
+            <button
+              style={isLoading ? disabledButtonStyle : buttonStyle}
+              onClick={handleSaveGame}
+              disabled={isLoading}
+            >
+              Save
+            </button>
+          </div>
+          
         </div>
       </div>
     </div>

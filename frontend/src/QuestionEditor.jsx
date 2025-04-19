@@ -139,20 +139,14 @@ function QuestionEditor() {
 
   // Handle delete question
   const handleDeleteQuestion = (questionId) => {
-    //console.log('Deleting question with ID:', questionId, 'Type:', typeof questionId);
-    //console.log('Current questions:', game.questions);
     const updatedGames = games.map((g) =>
       g.gameId === gameId
         ? {
             ...g,
-            questions: g.questions.filter((q) => {
-              //console.log('Comparing q.id:', q.id, 'with questionId:', questionId, 'Result:', q.id !== questionId);
-              return q.id !== questionId;
-            }),
+            questions: g.questions.filter((q) => q.id !== questionId),
           }
         : g
     );
-    //console.log('After deletion, updated games:', updatedGames);
     setGames(updatedGames);
     updateGames(updatedGames);
     fetchGames();
@@ -160,7 +154,6 @@ function QuestionEditor() {
 
   // Handle edit question navigation
   const handleEditQuestion = (questionId) => {
-    console.log("press!");
     navigate(`/game/${gameId}/question/${questionId}`);
   };
 
@@ -256,7 +249,6 @@ function QuestionEditor() {
       }
     }
   };
-
   // Handle save question
   const handleSave = async () => {
     if (!token) {
@@ -264,42 +256,34 @@ function QuestionEditor() {
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
-  
     if (!text.trim()) {
       setError('Question text is required.');
       return;
     }
-  
     if (duration < 1) {
       setError('Time limit must be at least 1 second.');
       return;
     }
-  
     if (points < 1) {
       setError('Points must be at least 1.');
       return;
     }
-  
     if (type !== 'judgement' && (answers.length < 2 || answers.length > 6)) {
       setError('Answers must be between 2 and 6.');
       return;
     }
-  
     if (type === 'single choice' && correctAnswers.length !== 1) {
       setError('Single choice questions must have exactly one correct answer.');
       return;
     }
-  
     if (type === 'multiple choice' && correctAnswers.length < 1) {
       setError('Multiple choice questions must have at least one correct answer.');
       return;
     }
-  
     if (type === 'judgement' && correctAnswers.length !== 1) {
       setError('Judgement questions must have exactly one correct answer (True or False).');
       return;
     }
-  
     setIsLoading(true);
     setError('');
   
@@ -327,7 +311,6 @@ function QuestionEditor() {
             }
           : g
       );
-  
       await updateGames(updatedGames);
       navigate(`/game/${gameId}/questions`);
     } catch (err) {
@@ -350,228 +333,217 @@ function QuestionEditor() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  
+
+  if (isLoading) return <div style={loadingStyle}>Loading...</div>;
+  if (error) return <div style={errorStyle}>{error}</div>;
 
   // If no questionId is provided, show the question list
   if (!questionId) {
-    if (!game) return <div>Game not found.</div>;
+    if (!game) return <div style={gameNotFoundStyle}>Game not found.</div>;
 
     return (
-      <div style={{ padding: '20px' }}>
-        <h2>Questions for Game: {game.name}</h2>
-        {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+      <div style={containerStyle}>
+        <div style={editorStyle}>
+          <h2 style={titleStyle}>Questions for Game: {game.name}</h2>
+          {error && <div style={errorStyle}>{error}</div>}
 
-        <div style={{ marginBottom: '20px' }}>
-          <button
-            onClick={handleAddQuestion}
-            style={{ padding: '5px 10px', marginBottom: '10px' }}
-          >
-            Add Question
-          </button>
-          {game.questions.length > 0 ? (
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {game.questions.map((q) => (
-                <li
-                  key={q.id}
-                  style={{
-                    padding: '5px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <span onClick={() => {
-                    handleEditQuestion(q.id)}}>
-                    {q.text || 'Untitled Question'}
-                  </span>
-                  <button
-                    onClick={() => handleDeleteQuestion(q.id)}
-                    style={{ color: 'red' }}
+          <div style={inputGroupStyle}>
+            <button
+              style={buttonStyle}
+              onClick={handleAddQuestion}
+            >
+              Add Question
+            </button>
+            {game.questions.length > 0 ? (
+              <ul style={questionListStyle}>
+                {game.questions.map((q) => (
+                  <li
+                    key={q.id}
+                    style={questionItemStyle}
                   >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No questions yet. Click "Add Question" to start.</p>
-          )}
-        </div>
+                    <span
+                      style={questionTextStyle}
+                      onClick={() => handleEditQuestion(q.id)}
+                    >
+                      {q.text || 'Untitled Question'}
+                    </span>
+                    <button
+                      style={deleteButtonStyle}
+                      onClick={() => handleDeleteQuestion(q.id)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={noQuestionsStyle}>No questions yet. Click "Add Question" to start.</p>
+            )}
+          </div>
 
-        <button
-          onClick={() => navigate(`/game/${gameId}`)}
-          style={{ padding: '10px 20px' }}
-        >
-          Back to Game Editor
-        </button>
+          <div style={buttonContainerStyle}>
+            <button
+              style={buttonStyle}
+              onClick={() => navigate(`/game/${gameId}`)}
+            >
+              Back to Game Editor
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   // If questionId is provided, show the question editor
-  if (!question) return <div>Question not found.</div>;
+  if (!question) return <div style={questionNotFoundStyle}>Question not found.</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Edit Question</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+    <div style={containerStyle}>
+      <div style={editorStyle}>
+        <h2 style={titleStyle}>Edit Question</h2>
+        {error && <div style={errorStyle}>{error}</div>}
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Question Type:
-          <select
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value);
-              setCorrectAnswers([]);
-              setIsCorrect(false);
-              if (e.target.value === 'judgement') {
-                setAnswers(['True', 'False']); // Set fixed answers for judgement
-              }
-            }}
-            style={{ marginLeft: '10px' }}
-          >
-            <option value="multiple choice">Multiple Choice</option>
-            <option value="single choice">Single Choice</option>
-            <option value="judgement">Judgement</option>
-          </select>
-        </label>
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            Question Type:
+            <select
+              value={type}
+              onChange={(e) => {
+                setType(e.target.value);
+                setCorrectAnswers([]);
+                setIsCorrect(false);
+                if (e.target.value === 'judgement') {
+                  setAnswers(['True', 'False']); // Set fixed answers for judgement
+                }
+              }}
+              style={selectStyle}
+            >
+              <option value="multiple choice">Multiple Choice</option>
+              <option value="single choice">Single Choice</option>
+              <option value="judgement">Judgement</option>
+            </select>
+          </label>
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Question:
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Enter question"
-            style={{ marginLeft: '10px', width: '300px' }}
-          />
-        </label>
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            Question:
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Enter question"
+              style={inputStyle}
+            />
+          </label>
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Time Limit (seconds):
-          <input
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            min="1"
-            style={{ marginLeft: '10px', width: '100px' }}
-          />
-        </label>
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            Time Limit (seconds):
+            <input
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              min="1"
+              style={numberInputStyle}
+            />
+          </label>
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Points:
-          <input
-            type="number"
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
-            min="1"
-            style={{ marginLeft: '10px', width: '100px' }}
-          />
-        </label>
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            Points:
+            <input
+              type="number"
+              value={points}
+              onChange={(e) => setPoints(e.target.value)}
+              min="1"
+              style={numberInputStyle}
+            />
+          </label>
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          YouTube URL (optional):
-          <input
-            type="text"
-            value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
-            placeholder="Enter YouTube URL"
-            style={{ marginLeft: '10px', width: '300px' }}
-          />
-        </label>
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            YouTube URL (optional):
+            <input
+              type="text"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              placeholder="Enter YouTube URL"
+              style={inputStyle}
+            />
+          </label>
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Image (optional):
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        {image && (
-          <img
-            src={image}
-            alt="Question image"
-            style={{ maxWidth: '100px', marginTop: '10px' }}
-          />
-        )}
-      </div>
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>
+            Image (optional):
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={fileInputStyle}
+            />
+          </label>
+          {image && (
+            <img
+              src={image}
+              alt="Question image"
+              style={thumbnailStyle}
+            />
+          )}
+        </div>
   
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Answers</h3>
-        {answers.map((answer, index) => (
-          <div key={index} style={{ marginBottom: '10px' }}>
-            <label>
-              Answer {index + 1}:
-              <input
-                type="text"
-                value={answer}
-                onChange={(e) => handleAnswerChange(index, e.target.value)}
-                style={{ marginLeft: '10px', width: '200px' }}
-                disabled={type === 'judgement'} // Disable editing for judgement answers
-              />
-            </label>
-            <label style={{ marginLeft: '10px' }}>
-              <input
-                type={type === 'multiple choice' ? 'checkbox' : 'radio'} // Use radio for single choice and judgement
-                checked={correctAnswers.includes(index.toString())}
-                onChange={() => toggleCorrectAnswer(index)}
-              />
-              Correct
-            </label>
-            {type !== 'judgement' && (
-              <button
-                onClick={() => removeAnswer(index)}
-                style={{ marginLeft: '10px', color: 'red' }}
-                disabled={answers.length <= 2}
-              >
-                Remove
-              </button>
-            )}
-          </div>
-        ))}
-        {type !== 'judgement' && (
-          <button
-            onClick={addAnswer}
-            disabled={answers.length >= 6}
-            style={{ padding: '5px 10px' }}
-          >
-            Add Answer
-          </button>
-        )}
-      </div>
+        <div style={inputGroupStyle}>
+          <h3 style={subtitleStyle}>Answers</h3>
+          {answers.map((answer, index) => (
+            <div key={index} style={answerGroupStyle}>
+              <label style={labelStyle}>
+                Answer {index + 1}:
+                <input
+                  type="text"
+                  value={answer}
+                  onChange={(e) => handleAnswerChange(index, e.target.value)}
+                  style={answerInputStyle}
+                  disabled={type === 'judgement'} // Disable editing for judgement answers
+                />
+              </label>
+              <label style={{ marginLeft: '1vw' }}>
+                <input
+                  type={type === 'multiple choice' ? 'checkbox' : 'radio'} // Use radio for single choice and judgement
+                  checked={correctAnswers.includes(index.toString())}
+                  onChange={() => toggleCorrectAnswer(index)}
+                />
+                Correct
+              </label>
+              {type !== 'judgement' && (
+                <button
+                  style={answers.length <= 2 ? disabledDeleteButtonStyle : deleteButtonStyle}
+                  onClick={() => removeAnswer(index)}
+                  disabled={answers.length <= 2}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          {type !== 'judgement' && (
+            <button
+              style={answers.length >= 6 ? disabledButtonStyle : buttonStyle}
+              onClick={addAnswer}
+              disabled={answers.length >= 6}
+            >
+              Add Answer
+            </button>
+          )}
+        </div>
   
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={isLoading}
-          style={{ padding: '10px 20px', marginRight: '10px' }}
-        >
-          {isLoading ? 'Saving...' : 'Save'}
-        </button>
-        <button
-          onClick={() => navigate(`/game/${gameId}/questions`)}
-          style={{ padding: '10px 20px' }}
-        >
-          Cancel
-        </button>
       </div>
     </div>
-  )};
+  );
+}
 
 export default QuestionEditor;
