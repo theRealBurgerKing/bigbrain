@@ -444,7 +444,7 @@ function Dashboard() {
     borderRadius: '4px',
     cursor: 'pointer',
     margin: '0.5vh 1vw',
-    transition: 'background-color 0.3s, transform 0.1s',
+    transition: 'background-color 0.3s, transform 0.1s'
   };
 
   const disabledButtonStyle = {
@@ -688,7 +688,7 @@ function Dashboard() {
                       </button>
                     )}
                     <button
-                      style={buttonStyle}
+                      style={!game.oldSessions.length ? disabledButtonStyle : buttonStyle}
                       onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
                       disabled={!game.oldSessions.length}
                     >
