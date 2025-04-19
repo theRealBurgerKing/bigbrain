@@ -4,10 +4,20 @@ import {
 import Pages from './Pages';
 
 function App() {
+  // Define styles as named objects
+  const appStyle = {
+    height: '98vh',
+    width: '100%',
+    margin: '0px',
+    padding: '0px',
+  };
+
   return (
-    <Router>
-      <Pages/>
-    </Router>
+    <div style={appStyle}>
+      <Router>
+        <Pages />
+      </Router>
+    </div>
   );
 }
 

@@ -96,6 +96,7 @@ function Register({ successJob, showError }) {
     justifyContent: 'center',
     padding: '2vh 3vw', // Padding in viewport units
     margin: '0px',
+    marginTop: '4vh',
   };
 
   const titleStyle = {
@@ -129,7 +130,7 @@ function Register({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '25vw', // Button width matches input group
+    width: '24vw', // Button width matches input group
     padding: '1.2vh 0', // Padding in viewport units
     fontSize: '1.8vh', // Font size in viewport units
     fontWeight: '500',

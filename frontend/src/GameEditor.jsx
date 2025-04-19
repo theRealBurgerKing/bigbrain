@@ -166,67 +166,188 @@ function GameEditor() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
-  if (!game) return <div>Game not found.</div>;
+  // Define all styles as named objects
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    padding: '0px',
+    margin: '0px',
+    backgroundColor: '#f0f2f5',
+  };
+
+  const editorStyle = {
+    width: '50vw',
+    padding: '2vh 3vw',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    margin: '2vh 0',
+  };
+
+  const titleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
+
+  const subtitleStyle = {
+    fontSize: '2.5vh',
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: '2vh',
+    textAlign: 'left',
+  };
+
+  const buttonContainerStyle = {
+    marginBottom: '2vh',
+    // textAlign: 'center',
+  };
+
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const disabledButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#a3bffa',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+    margin: '0.5vh 1vw',
+  };
+
+  const loadingStyle = {
+    textAlign: 'center',
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const errorStyle = {
+    color: 'red',
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+    textAlign: 'center',
+  };
+
+  const gameNotFoundStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    textAlign: 'center',
+  };
+
+  const inputGroupStyle = {
+    marginBottom: '1.5vh',
+    textAlign: 'left',
+  };
+
+  const labelStyle = {
+    fontSize: '1.5vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+    display: 'block',
+  };
+
+  const inputStyle = {
+    width: '25vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1vw',
+  };
+
+  const fileInputStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    marginLeft: '1vw',
+  };
+
+  const thumbnailStyle = {
+    maxWidth: '10vw',
+    marginTop: '0.5vh',
+  };
+
+  if (isLoading) return <div style={loadingStyle}>Loading...</div>;
+  if (error) return <div style={errorStyle}>{error}</div>;
+  if (!game) return <div style={gameNotFoundStyle}>Game not found.</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Edit Game: {game.name}</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-      <button
-        onClick={() => navigate('/dashboard')}
-        style={{ padding: '10px 20px' }}
-      >
-        Back to Dashboard
-      </button>
-      {/* Edit Game Metadata */}
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Game Metadata</h3>
-        <label>
-          Game Name:
-          <input
-            type="text"
-            value={gameName}
-            onChange={(e) => setGameName(e.target.value)}
-            placeholder="Enter game name"
-            style={{ marginLeft: '10px', width: '300px' }}
-          />
-        </label>
-        <div style={{ marginTop: '10px' }}>
-          <label>
-            Thumbnail:
+    <div style={containerStyle}>
+      <div style={editorStyle}>
+        <h2 style={titleStyle}>Edit Game: {game.name}</h2>
+        {error && <div style={errorStyle}>{error}</div>}
+        <div style={buttonContainerStyle}>
+          <button
+            style={buttonStyle}
+            onClick={() => navigate('/dashboard')}
+          >
+            Back to Dashboard
+          </button>
+        </div>
+        {/* Edit Game Metadata */}
+        <div style={inputGroupStyle}>
+          <h3 style={subtitleStyle}>Game Metadata</h3>
+          <label style={labelStyle}>
+            Game Name:
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleThumbnailUpload}
-              style={{ marginLeft: '10px' }}
+              type="text"
+              value={gameName}
+              onChange={(e) => setGameName(e.target.value)}
+              placeholder="Enter game name"
+              style={inputStyle}
             />
           </label>
-          {thumbnail && (
-            <img
-              src={thumbnail}
-              alt="Game thumbnail"
-              style={{ maxWidth: '100px', marginTop: '10px' }}
-            />
-          )}
+          <div style={{ marginTop: '1vh' }}>
+            <label style={labelStyle}>
+              Thumbnail:
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailUpload}
+                style={fileInputStyle}
+              />
+            </label>
+            {thumbnail && (
+              <img
+                src={thumbnail}
+                alt="Game thumbnail"
+                style={thumbnailStyle}
+              />
+            )}
+          </div>
+          <div style={buttonContainerStyle}>
+            <button
+              style={isLoading ? disabledButtonStyle : buttonStyle}
+              onClick={handleSaveGame}
+              disabled={isLoading}
+            >
+              Save
+            </button>
+            <button
+              style={buttonStyle}
+              onClick={() => navigate(`/game/${gameId}/questions`)}
+            >
+              Edit Questions
+            </button>
+          </div>
         </div>
-        <button
-          onClick={handleSaveGame}
-          disabled={isLoading}
-          style={{ padding: '5px 10px', marginTop: '10px', marginRight: '10px' }}
-        >
-          Save Metadata
-        </button>
-        <button
-          onClick={() => navigate(`/game/${gameId}/questions`)}
-          style={{ padding: '5px 10px', marginTop: '10px' }}
-        >
-          Edit Questions
-        </button>
       </div>
-
-      
     </div>
   );
 }

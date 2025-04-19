@@ -435,8 +435,9 @@ function Dashboard() {
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    height: '3vh',
+    width: '9vw',
+    fontSize: '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
@@ -448,8 +449,9 @@ function Dashboard() {
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    height: '3vh',
+    width: '9vw',
+    fontSize: '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
@@ -502,17 +504,8 @@ function Dashboard() {
 
   const gameDetailStyle = {
     fontSize: '1.8vh',
-    color: '#555',
+    // color: '#555',
     marginBottom: '0.5vh',
-  };
-
-  const questionListStyle = {
-    paddingLeft: '2vw',
-    margin: '1vh 0',
-  };
-
-  const questionItemStyle = {
-    marginBottom: '1vh',
   };
 
   const thumbnailStyle = {
@@ -520,13 +513,14 @@ function Dashboard() {
     marginTop: '0.5vh',
   };
 
-  const gameActionsStyle = {
-    marginTop: '1vh',
+  const editGameActionsStyle = {
+    display: 'flex',
   };
-  const noQuestionsStyle = {
-    fontSize: '1.8vh',
-    color: '#555',
-  };
+
+  const sessionActionStyle = {
+    display: 'flex',
+  }
+
   const noGamesStyle = {
     fontSize: '1.8vh',
     color: '#555',
@@ -593,7 +587,10 @@ function Dashboard() {
     fontSize: '1.8vh',
     marginBottom: '1vh',
   };
-
+  const gameNameStyle = {
+    fontSize: '2.2vh',
+    marginBottom: '20px',
+  };
   return (
     <div style={containerStyle}>
       <div style={dashboardStyle}>
@@ -618,14 +615,13 @@ function Dashboard() {
             <ul style={gameListStyle}>
               {games.map((game) => (
                 <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
-                  <div style={gameDetailStyle}><strong>Game ID:</strong> {game.gameId ?? 'N/A'}</div>
+                  <div style={gameNameStyle}><strong>Game name:</strong> {game.name}</div>
                   <div style={gameDetailStyle}><strong>Owner:</strong> {game.owner ?? 'N/A'}</div>
-                  <div style={gameDetailStyle}><strong>Name:</strong> {game.name}</div>
                   <div style={gameDetailStyle}><strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}</div>
                   <div style={gameDetailStyle}><strong>Active:</strong> {game.active ? 'Yes' : 'No'}</div>
                   {game.thumbnail && (
                     <div style={gameDetailStyle}>
-                      <strong>Thumbnail:</strong>{' '}
+                      {/* <strong>Thumbnail:</strong>{' '} */}
                       <img
                         src={game.thumbnail}
                         alt={`${game.name} thumbnail`}
@@ -633,7 +629,7 @@ function Dashboard() {
                       />
                     </div>
                   )}
-                  <div style={gameDetailStyle}>
+                  {/* <div style={gameDetailStyle}>
                     <strong>Questions:</strong>
                     {game.questions.length > 0 ? (
                       <ul style={questionListStyle}>
@@ -650,20 +646,24 @@ function Dashboard() {
                     ) : (
                       <p style={noQuestionsStyle}>No questions available.</p>
                     )}
-                  </div>
-                  <div style={gameActionsStyle}>
+                  </div> */}
+                  <div style={editGameActionsStyle}>
                     <button
-                      style={buttonStyle}
+                      style={game.active ? disabledButtonStyle : buttonStyle}
                       onClick={() => handleEditGame(game.gameId)}
+                      disabled={game.active}
                     >
                       Edit Game
                     </button>
                     <button
-                      style={deleteButtonStyle}
+                      style={game.active ? disabledButtonStyle : buttonStyle}
                       onClick={() => handleDeleteGame(game.gameId)}
+                      disabled={game.active}
                     >
                       Delete Game
                     </button>
+                  </div>
+                  <div style = {sessionActionStyle}>
                     <button
                       style={game.active ? disabledButtonStyle : buttonStyle}
                       onClick={() => startGame(game.gameId)}

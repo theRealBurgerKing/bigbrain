@@ -55,8 +55,8 @@ function Login({ successJob, showError }) {
   };
 
   const loginBoxStyle = {
-    width: '20vw', // Fixed width relative to viewport
-    height: '50vh', // Fixed height relative to viewport
+    width: '30vw', // Fixed width relative to viewport
+    height: '40vh', // Fixed height relative to viewport
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -99,7 +99,7 @@ function Login({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '20vw', // Button width matches input group
+    width: '22.5vw', // Button width matches input group
     padding: '1.5vh 0', // Padding in viewport units
     fontSize: '1.8vh', // Font size in viewport units
     fontWeight: '500',

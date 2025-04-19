@@ -104,42 +104,106 @@ function Pages() {
     setOpen(true);
   };
 
+  // Define styles as named objects
+  const containerStyle = {
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#f0f2f5',
+    padding: '0px',
+    margin: '0px',
+  };
+
+  const navStyle = {
+    margin: '0px',
+    padding:'10px',
+    textAlign: 'center',
+  };
+
+  const linkStyle = {
+    fontSize: '1.8vh',
+    color: '#3b82f6',
+    textDecoration: 'none',
+    margin: '0 1vw',
+  };
+
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const disabledButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#a3bffa',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+  };
+
+  const hrStyle = {
+    margin: '2vh 0',
+    border: '0',
+    borderTop: '1px solid #ccc',
+  };
+
+  const contentStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+  };
+
   return (
-    <>
-      {token ? (
-        <>
-          <button onClick={logout} disabled={isLoading}>
+    
+    <div style={containerStyle}>
+      <nav style={navStyle}>
+        {token ? (
+          <button
+            style={isLoading ? disabledButtonStyle : buttonStyle}
+            onClick={logout}
+            disabled={isLoading}
+          >
             {isLoading ? 'Logging out...' : 'Logout'}
           </button>
-        </>
-      ) : (
-        <>
-          <Link to="/register">Register</Link> | <Link to="/login">Login</Link>
-        </>
-      )}
+        ) : (
+          <>
+            <Link to="/register" style={linkStyle}>Register</Link> |{' '}
+            <Link to="/login" style={linkStyle}>Login</Link>
+          </>
+        )}
+      </nav>
 
-      <hr />
-      <Routes>
-        <Route path="/" element={<h2>Home Page</h2>} />
-        <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
-        <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/game/:gameId" element={<GameEditor />} />
-        <Route path="/game/:gameId/questions" element={<QuestionEditor />} />
-        <Route path="/game/:gameId/oldSession" element={<OldSession />} />
-        <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
-        <Route path="/play" element={<NavigateToPlay />} />
-        <Route path="/play/:sessionId" element={<PlayGround />} />
-        <Route path="/session/:sessionId" element={<GameSession />} />
-        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-      </Routes>
+
+      <div style={contentStyle}>
+        <Routes>
+          <Route path="/" element={<h2>Home Page</h2>} />
+          <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
+          <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/game/:gameId" element={<GameEditor />} />
+          <Route path="/game/:gameId/questions" element={<QuestionEditor />} />
+          <Route path="/game/:gameId/oldSession" element={<OldSession />} />
+          <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
+          <Route path="/play" element={<NavigateToPlay />} />
+          <Route path="/play/:sessionId" element={<PlayGround />} />
+          <Route path="/session/:sessionId" element={<GameSession />} />
+          <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+        </Routes>
+      </div>
 
       <ErrorModal
         open={open}
         onClose={handleClose}
         message={errorMessage}
       />
-    </>
+    </div>
   );
 }
 
