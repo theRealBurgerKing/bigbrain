@@ -432,8 +432,9 @@ function Dashboard() {
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    height: '3vh',
+    width: '9vw',
+    fontSize: '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
@@ -445,8 +446,9 @@ function Dashboard() {
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    height: '3vh',
+    width: '9vw',
+    fontSize: '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
@@ -503,15 +505,6 @@ function Dashboard() {
     marginBottom: '0.5vh',
   };
 
-  const questionListStyle = {
-    paddingLeft: '2vw',
-    margin: '1vh 0',
-  };
-
-  const questionItemStyle = {
-    marginBottom: '1vh',
-  };
-
   const thumbnailStyle = {
     maxWidth: '10vw',
     marginTop: '0.5vh',
@@ -520,13 +513,11 @@ function Dashboard() {
   const editGameActionsStyle = {
     display: 'flex',
   };
+
   const sessionActionStyle = {
     display: 'flex',
   }
-  const noQuestionsStyle = {
-    fontSize: '1.8vh',
-    color: '#555',
-  };
+
   const noGamesStyle = {
     fontSize: '1.8vh',
     color: '#555',
@@ -655,14 +646,16 @@ function Dashboard() {
                   </div> */}
                   <div style={editGameActionsStyle}>
                     <button
-                      style={buttonStyle}
+                      style={game.active ? disabledButtonStyle : buttonStyle}
                       onClick={() => handleEditGame(game.gameId)}
+                      disabled={game.active}
                     >
                       Edit Game
                     </button>
                     <button
-                      style={deleteButtonStyle}
+                      style={game.active ? disabledButtonStyle : buttonStyle}
                       onClick={() => handleDeleteGame(game.gameId)}
+                      disabled={game.active}
                     >
                       Delete Game
                     </button>
