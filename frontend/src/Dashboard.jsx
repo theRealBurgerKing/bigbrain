@@ -692,7 +692,7 @@ function Dashboard() {
                       onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
                       disabled={!game.oldSessions.length}
                     >
-                      Old session
+                      Session Review
                     </button>
                   </div>
                 </li>
