@@ -249,6 +249,7 @@ function QuestionEditor() {
       }
     }
   };
+
   // Handle save question
   const handleSave = async () => {
     if (!token) {
@@ -256,34 +257,42 @@ function QuestionEditor() {
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
+  
     if (!text.trim()) {
       setError('Question text is required.');
       return;
     }
+  
     if (duration < 1) {
       setError('Time limit must be at least 1 second.');
       return;
     }
+  
     if (points < 1) {
       setError('Points must be at least 1.');
       return;
     }
+  
     if (type !== 'judgement' && (answers.length < 2 || answers.length > 6)) {
       setError('Answers must be between 2 and 6.');
       return;
     }
+  
     if (type === 'single choice' && correctAnswers.length !== 1) {
       setError('Single choice questions must have exactly one correct answer.');
       return;
     }
+  
     if (type === 'multiple choice' && correctAnswers.length < 1) {
       setError('Multiple choice questions must have at least one correct answer.');
       return;
     }
+  
     if (type === 'judgement' && correctAnswers.length !== 1) {
       setError('Judgement questions must have exactly one correct answer (True or False).');
       return;
     }
+  
     setIsLoading(true);
     setError('');
   
@@ -311,6 +320,7 @@ function QuestionEditor() {
             }
           : g
       );
+  
       await updateGames(updatedGames);
       navigate(`/game/${gameId}/questions`);
     } catch (err) {
@@ -331,6 +341,166 @@ function QuestionEditor() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Define styles as named objects
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    width: '100%',
+    padding: '0px',
+    margin: '0px',
+    // Removed backgroundColor since Pages.jsx now handles it
+  };
+
+  const editorStyle = {
+    width: '50vw',
+    padding: '2vh 3vw',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    margin: '2vh 0',
+  };
+
+  const titleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
+
+  const subtitleStyle = {
+    fontSize: '2.5vh',
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: '2vh',
+    textAlign: 'left',
+  };
+
+  const buttonContainerStyle = {
+    marginBottom: '2vh',
+    textAlign: 'center',
+  };
+
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const disabledButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#a3bffa',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+    margin: '0.5vh 1vw',
+  };
+
+  const deleteButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#dc2626',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const disabledDeleteButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#f87171',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+    margin: '0.5vh 1vw',
+  };
+
+  const loadingStyle = {
+    textAlign: 'center',
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const errorStyle = {
+    color: 'red',
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+    textAlign: 'center',
+  };
+
+  const gameNotFoundStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    textAlign: 'center',
+  };
+
+  const questionNotFoundStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    textAlign: 'center',
+  };
+
+  const questionListStyle = {
+    listStyle: 'none',
+    padding: '0',
+    margin: '0',
+  };
+
+  const questionItemStyle = {
+    padding: '1vh 1vw',
+    background: 'transparent',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '0.5vh',
+    borderBottom: '1px solid #eee',
+  };
+
+  const questionTextStyle = {
+    fontSize: '1.8vh',
+    color: '#333',
+  };
+
+  const noQuestionsStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const inputGroupStyle = {
+    marginBottom: '1.5vh',
+    textAlign: 'left',
+  };
+
+  const answerGroupStyle = {
+    marginBottom: '0.5vh',
+    display: 'flex',
+    alignItems: 'center',
+  };
+
+  const labelStyle = {
+    fontSize: '1.5vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+    display: 'block',
   };
 
   
@@ -541,6 +711,21 @@ function QuestionEditor() {
           )}
         </div>
   
+        <div style={buttonContainerStyle}>
+          <button
+            style={isLoading ? disabledButtonStyle : buttonStyle}
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Saving...' : 'Save'}
+          </button>
+          <button
+            style={buttonStyle}
+            onClick={() => navigate(`/game/${gameId}/questions`)}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
