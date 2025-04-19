@@ -392,7 +392,205 @@ function Dashboard() {
   }, []);
 
   // Define all styles as named objects
-  
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    padding: '0px',
+    margin: '0px',
+    backgroundColor: '#f0f2f5',
+  };
+  const dashboardStyle = {
+    width: '50vw',
+    padding: '2vh 3vw',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    margin: '2vh 0',
+  };
+  const titleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
+  const subtitleStyle = {
+    fontSize: '2.5vh',
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: '2vh',
+    textAlign: 'left',
+  };
+
+  const buttonContainerStyle = {
+    marginBottom: '2vh',
+    textAlign: 'center',
+  };
+
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const disabledButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#a3bffa',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+    margin: '0.5vh 1vw',
+  };
+
+  const deleteButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#dc2626',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
+
+  const loadingStyle = {
+    textAlign: 'center',
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const errorStyle = {
+    color: 'red',
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+    textAlign: 'center',
+  };
+
+  const gameListStyle = {
+    listStyle: 'none',
+    padding: '0',
+    margin: '0',
+  };
+
+  const gameItemStyle = {
+    border: '1px solid #ccc',
+    padding: '2vh 3vw',
+    marginBottom: '1vh',
+    borderRadius: '5px',
+    backgroundColor: '#fafafa',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+  };
+
+  const gameDetailStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+  };
+
+  const questionListStyle = {
+    paddingLeft: '2vw',
+    margin: '1vh 0',
+  };
+
+  const questionItemStyle = {
+    marginBottom: '1vh',
+  };
+
+  const thumbnailStyle = {
+    maxWidth: '10vw',
+    marginTop: '0.5vh',
+  };
+
+  const gameActionsStyle = {
+    marginTop: '1vh',
+  };
+
+  const noQuestionsStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const noGamesStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    textAlign: 'center',
+  };
+
+  const modalStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+    padding: '2vh 3vw',
+    border: '1px solid #ccc',
+    zIndex: '1000',
+    width: '30vw',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    borderRadius: '8px',
+  };
+
+  const modalTitleStyle = {
+    fontSize: '2.5vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+    textAlign: 'center',
+  };
+
+  const inputGroupStyle = {
+    marginBottom: '1.5vh',
+    textAlign: 'left',
+  };
+
+  const labelStyle = {
+    fontSize: '1.5vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+    display: 'block',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+  };
+
+  const fileInputStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+  };
+
+  const modalButtonContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '2vh',
+  };
+
+  const sessionModalContentStyle = {
+    textAlign: 'center',
+  };
+
+  const sessionModalTextStyle = {
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+  };
 
   return (
     <div style={containerStyle}>
