@@ -8,22 +8,9 @@ Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement
 
 const processData = (results,question) => {
 
-  const scores = results.map((user) => {
-    let score = 0;
+  
 
-    user.answers.forEach((ans, index) => {
-      if (ans.correct) {
-        console.log(question[index])
-        score += question[index].points;
-      }
-    });
-    return {
-      name: user.name,
-      score,
-    };
-  });
-
-  const maxQuestions = Math.max(...results.map(u => u.answers.length));
+  const maxQuestions = Math.max(0,...results.map(u => u.answers.length));
 
   const questionCorrectCounts = Array(maxQuestions).fill(0);
   const questionAnswerTimes = Array(maxQuestions).fill([]);
@@ -38,6 +25,20 @@ const processData = (results,question) => {
         questionAnswerTimes[idx] = [...(questionAnswerTimes[idx] || []), time];
       }
     });
+  });
+
+  const scores = results.map((user) => {
+    let score = 0;
+
+    user.answers.forEach((ans, index) => {
+      if (ans.correct) {
+        score += Math.log10(1 + questionAnswerTimes[index])*question[index].points;
+      }
+    });
+    return {
+      name: user.name,
+      score,
+    };
   });
 
   const totalUsers = results.length;
@@ -59,19 +60,19 @@ const Results = ({ data, question }) => {
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="border p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Top 5 用户得分</h2>
+        <h2 className="text-xl font-bold mb-4">Top 5</h2>
         <table className="w-full text-left">
           <thead>
             <tr>
-              <th>用户</th>
-              <th>分数</th>
+              <th>User</th>
+              <th>Score</th>
             </tr>
           </thead>
           <tbody>
             {top5.map((user, idx) => (
               <tr key={idx}>
                 <td>{user.name}</td>
-                <td>{user.score}</td>
+                <td>{user.score.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
@@ -79,15 +80,17 @@ const Results = ({ data, question }) => {
       </div>
 
       <div className="border p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-4">答对人数百分比（每题）</h2>
-        <Bar
+        <h2 className="text-xl font-bold mb-4">Accuracy</h2>
+        <Line
           data={{
-            labels: correctPercentages.map((_, i) => `问题 ${i + 1}`),
+            labels: correctPercentages.map((_, i) => `Question ${i + 1}`),
             datasets: [
               {
-                label: "% 正确率",
+                label: "% Accuracy",
                 data: correctPercentages,
-                backgroundColor: "#3b82f6",
+                fill: false,
+                borderColor: "#10b981",
+                tension: 0.3,
               },
             ],
           }}
@@ -96,17 +99,15 @@ const Results = ({ data, question }) => {
       </div>
 
       <div className="border p-4 rounded-lg shadow-lg md:col-span-2">
-        <h2 className="text-xl font-bold mb-4">平均回答时间（秒）</h2>
-        <Line
+        <h2 className="text-xl font-bold mb-4">Average response time (seconds)</h2>
+        <Bar
           data={{
-            labels: averageResponseTimes.map((_, i) => `问题 ${i + 1}`),
+            labels: averageResponseTimes.map((_, i) => `Question ${i + 1}`),
             datasets: [
               {
-                label: "平均响应时间 (s)",
+                label: "Average response time (s)",
                 data: averageResponseTimes,
-                fill: false,
-                borderColor: "#10b981",
-                tension: 0.3,
+                backgroundColor: "#3b82f6"
               },
             ],
           }}
