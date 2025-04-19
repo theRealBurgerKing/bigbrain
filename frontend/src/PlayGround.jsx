@@ -5,7 +5,6 @@ import axios from 'axios';
 function PlayGround() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-
     const { sessionId } = useParams();
     const [error, setError] = useState('');
     const [player, setPlayer] = useState('');
@@ -21,7 +20,6 @@ function PlayGround() {
     const [results, setResults] = useState([]);
     const [total, setTotal] = useState(null);
 
-
     const attendGame = async () => {
         try {
             const response = await axios.post(
@@ -29,14 +27,14 @@ function PlayGround() {
                 { "name": player }
             );
             if (response.status === 200) {
-                console.log(response.data)
-                setPlayerId(response.data.playerId)
+                console.log(response.data);
+                setPlayerId(response.data.playerId);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             if (err.response) {
                 if (err.response.status === 400) {
-                    setError(err.response.data.error)
+                    setError(err.response.data.error);
                     setTimeout(() => navigate('/play'), 2000);
                     return () => clearTimeout(timeout);
                 } else {
@@ -44,7 +42,7 @@ function PlayGround() {
                 }
             }
         }
-    }
+    };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
@@ -59,11 +57,10 @@ function PlayGround() {
                 `http://localhost:5005/play/${playerId}/status`
             );
             if (response.status === 200) {
-                setActive(response.data.started)
+                setActive(response.data.started);
             }
-        }
-        catch (err) {
-            console.log(err)
+        } catch (err) {
+            console.log(err);
             if (err.response) {
                 if (err.response.data.error === "Session ID is not an active session") {
                     setActive(false);
@@ -77,16 +74,16 @@ function PlayGround() {
         }
     };
 
-    const fetchanswer = async () => {
+    const fetchAnswer = async () => {
         try {
             const response = await axios.get(
                 `http://localhost:5005/play/${playerId}/answer`
             );
             if (response.status === 200) {
-                setCorrectAnswers(response.data.answers)
+                setCorrectAnswers(response.data.answers);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             if (err.response) {
                 setError(err.response.data.error);
             }
@@ -112,17 +109,17 @@ function PlayGround() {
                 const now = Date.now();
                 const remainingTime = Math.max(0, Math.floor((startTime + duration - now) / 1000));
                 setTimeLeft(remainingTime);
-                if (remainingTime == 0) {
-                    fetchanswer();
+                if (remainingTime === 0) {
+                    fetchAnswer();
                 }
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             if (err.response) {
                 setError(err.response.data.error);
             }
         }
-    }
+    };
 
     const handleAnswerSelect = (index) => {
         const strIndex = index.toString();
@@ -142,7 +139,7 @@ function PlayGround() {
     };
 
     const submitQuestion = async () => {
-        setError('')
+        setError('');
         try {
             const q = await axios.put(
                 `http://localhost:5005/play/${playerId}/answer`,
@@ -154,14 +151,14 @@ function PlayGround() {
                 console.log('ok');
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             if (err.response) {
                 setError(err.response.data.error);
             }
         }
     };
 
-    const fetchscore = async () => {
+    const fetchScore = async () => {
         setResults('');
         try {
             const response = await axios.get(
@@ -172,8 +169,8 @@ function PlayGround() {
                 response.data.forEach((ans, index) => {
                     const questionStartTime = new Date(ans.questionStartedAt);
                     const answerTime = new Date(ans.answeredAt);
-                    const timeDifference = ((answerTime - questionStartTime)/ 1000).toFixed(2);
-                    const score=Math.log10(1 + timeDifference)*questions[index].points;
+                    const timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
+                    const score = Math.log10(1 + timeDifference) * questions[index].points;
 
                     const result = {
                         questionId: questions[index].id,
@@ -182,20 +179,19 @@ function PlayGround() {
                         correct: ans.correct,
                     };
                     if (ans.correct) {
-                    sumScore += score;
+                        sumScore += score;
                     }
                     setResults(prevResults => [...prevResults, result]);
                 });
                 setTotal(sumScore.toFixed(2));
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
             if (err.response) {
                 setError(err.response.data.error);
             }
         }
     };
-
 
     useEffect(() => {
         if (!playerId || finish) return;
@@ -220,7 +216,7 @@ function PlayGround() {
         if (prevActiveRef.current && !active) {
             console.log("Game ended.");
             setError('');
-            fetchscore();
+            fetchScore();
         }
         prevActiveRef.current = active;
     }, [active]);
@@ -232,99 +228,166 @@ function PlayGround() {
         }
     }, [question.id]);
 
+    // Define styles as named objects
+    const containerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        minHeight: '40vh',
+        width: '100%',
+        padding: '0px',
+        margin: '0px',
+        // Removed backgroundColor since Pages.jsx now handles it
+    };
+
+    const boxStyle = {
+        width: '40vw',
+        padding: '2vh 3vw',
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        margin: '2vh 0',
+    };
+
+    const titleStyle = {
+        fontSize: '3vh',
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: '2vh',
+    };
+
+    const subtitleStyle = {
+        fontSize: '2.5vh',
+        fontWeight: '500',
+        color: '#333',
+        marginBottom: '2vh',
+        textAlign: 'left',
+    };
+
+    const textStyle = {
+        fontSize: '1.8vh',
+        color: '#555',
+        marginBottom: '0.5vh',
+    };
+
+    const errorStyle = {
+        color: 'red',
+        fontSize: '1.8vh',
+        marginBottom: '1vh',
+        textAlign: 'center',
+    };
+
 
 
     return (
-        <div>
-            {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>} <br />
-            <h1>Play Ground</h1>
-            {!playerId && (
-                <>
-                    <div>
-                        <h2>Game:{sessionId}</h2>
-                        Name: <input
-                            value={player}
-                            onChange={(e) => setPlayer(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            type="text"
-                        /><br />
+        <div style={containerStyle}>
+            <div style={boxStyle}>
+                <h1 style={titleStyle}>Play Ground</h1>
+                {error && <div style={errorStyle}>{error}</div>}
+
+                {!playerId && (
+                    <div style={inputGroupStyle}>
+                        <h2 style={subtitleStyle}>Game: {sessionId}</h2>
+                        <label style={labelStyle}>
+                            Name:
+                            <input
+                                value={player}
+                                onChange={(e) => setPlayer(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                type="text"
+                                style={inputStyle}
+                            />
+                        </label>
+                        <div style={buttonContainerStyle}>
+                            <button style={buttonStyle} onClick={attendGame}>
+                                Attend the game!
+                            </button>
+                        </div>
                     </div>
-                    <button onClick={attendGame}>Attend the game!</button>
-                </>
-            )}
-            {playerId && question && !finish && (
-                <>
-                    <h2>{active ? question.text : 'Waiting'}</h2>
-                </>
+                )}
 
-            )}
-            {playerId && active && question && question.answers && (
-                <>
-                    <p>url:<a href={question.youtubeUrl}></a></p>
-                    <p>score:{question.points}</p>
-                    <p>Time:{timeLeft}</p>
-                    {question.answers.length > 0 ? (
-                        <ul style={{ listStyle: 'none', padding: 0 }}>
-                            {question.answers.map((ans, index) => {
-                                const indexStr = index.toString();
-                                let isCorrect = correctAnswers?.includes(indexStr);
+                {playerId && question && !finish && (
+                    <>
+                        <h2 style={subtitleStyle}>{active ? question.text : 'Waiting'}</h2>
+                    </>
+                )}
 
-                                return (
-                                    <li
-                                        key={index}
-                                        style={{
-                                            backgroundColor: isCorrect ? 'lightgreen' : 'transparent',
-                                            padding: '5px',
-                                            borderRadius: '5px',
-                                        }}
-                                    >
-                                        {index}:{ans}
-                                        <input
-                                            type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
-                                            name="ans"
-                                            checked={selectedAnswers.includes(indexStr)}
-                                            onChange={() => handleAnswerSelect(indexStr)}
-                                            disabled={timeLeft <= 0}
-                                        />
+                {playerId && active && question && question.answers && (
+                    <>
+                        <div style={textStyle}>
+                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
+                        </div>
+                        <div style={textStyle}>
+                            Score: {question.points}
+                        </div>
+                        <div style={textStyle}>
+                            Time: {timeLeft}
+                        </div>
+                        {question.answers.length > 0 ? (
+                            <ul style={answerListStyle}>
+                                {question.answers.map((ans, index) => {
+                                    const indexStr = index.toString();
+                                    const isCorrect = correctAnswers?.includes(indexStr);
+                                    return (
+                                        <li
+                                            key={index}
+                                            style={{
+                                                ...answerItemStyle,
+                                                ...(isCorrect ? correctAnswerStyle : {}),
+                                            }}
+                                        >
+                                            {index}: {ans}
+                                            <input
+                                                type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
+                                                name="ans"
+                                                checked={selectedAnswers.includes(indexStr)}
+                                                onChange={() => handleAnswerSelect(indexStr)}
+                                                disabled={timeLeft <= 0}
+                                                style={{ marginLeft: '1vw' }}
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <p style={textStyle}>No questions yet.</p>
+                        )}
+                        <div style={buttonContainerStyle}>
+                            <button
+                                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
+                                onClick={() => submitQuestion()}
+                                disabled={timeLeft <= 0}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </>
+                )}
+
+                {finish && (
+                    <>
+                        <h2 style={subtitleStyle}>Result</h2>
+                        <p style={textStyle}>
+                            <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
+                        </p>
+                        {Array.isArray(results) && results.length > 0 ? (
+                            <ul style={resultListStyle}>
+                                {results.map((r, index) => (
+                                    <li key={index} style={resultItemStyle}>
+                                        Question: {index + 1} : {r.correct ? 'True' : 'False'}
+                                        <br />
+                                        Time cost: {r.timeDifference}s
+                                        <br />
+                                        Your score is {r.score}
                                     </li>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <p>No questions yet.</p>
-                    )}
-                    <button
-                        onClick={() => submitQuestion()}
-                        disabled={timeLeft <= 0}
-                    >
-                        Submit
-                    </button>
-                </>
-
-            )}
-            {finish && (
-                <>
-                    <h2>Result</h2>
-                    <p><strong>Your score=Σ(lg(1+timelimit-time tha you use)*socre)</strong></p>
-                    {Array.isArray(results) && results.length > 0 ? (
-                        <ul style={{ paddingLeft: '20px' }}>
-                            {results.map((r, index) => (
-                                <li key={index}>
-                                    Question:{index+1}
-                                    :{r.correct ? 'True':'False'}
-                                    <br />
-                                    Time cost:{r.timeDifference}s
-                                    <br />
-                                    Your score is{r.score}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No results available.</p>
-                    )}
-                    <p>total:{total}</p>
-                </>
-            )}
+                                ))}
+                            </ul>
+                        ) : (
+                            <p style={textStyle}>No results available.</p>
+                        )}
+                        <p style={textStyle}>Total: {total}</p>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
