@@ -5,6 +5,7 @@ import {
   Route,
   Link,
   useNavigate,
+  useLocation, // 引入 useLocation 用于获取当前路由
 } from "react-router-dom";
 import Register from './Register1';
 import Login from './Login';
@@ -23,7 +24,10 @@ function Pages() {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation(); // 获取当前路由信息
 
+  // Check if the current route is a play route
+  const isPlayRoute = location.pathname.startsWith('/play');
 
   useEffect(() => {
     if (token) {
@@ -34,7 +38,6 @@ function Pages() {
     }
   }, [token]);
 
-
   const successJob = (token, email) => {
     if (!token) {
       setErrorMessage('Invalid token received.');
@@ -42,7 +45,7 @@ function Pages() {
       return;
     }
     localStorage.setItem('token', token);
-    localStorage.setItem('email', email)
+    localStorage.setItem('email', email);
     setToken(token);
     navigate('/dashboard');
   };
@@ -109,13 +112,13 @@ function Pages() {
     minHeight: '100vh',
     width: '100%',
     backgroundColor: '#f0f2f5',
-    padding: '0px',
-    margin: '0px',
+    padding: '2vh 3vw',
+    margin: '0',
+    boxSizing: 'border-box',
   };
 
   const navStyle = {
-    margin: '0px',
-    padding:'10px',
+    marginBottom: '2vh',
     textAlign: 'center',
   };
 
@@ -161,25 +164,29 @@ function Pages() {
   };
 
   return (
-    
     <div style={containerStyle}>
-      <nav style={navStyle}>
-        {token ? (
-          <button
-            style={isLoading ? disabledButtonStyle : buttonStyle}
-            onClick={logout}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging out...' : 'Logout'}
-          </button>
-        ) : (
-          <>
-            <Link to="/register" style={linkStyle}>Register</Link> |{' '}
-            <Link to="/login" style={linkStyle}>Login</Link>
-          </>
-        )}
-      </nav>
-
+      {/* Conditionally render the navbar and hr based on the route */}
+      {!isPlayRoute && (
+        <>
+          <nav style={navStyle}>
+            {token ? (
+              <button
+                style={isLoading ? disabledButtonStyle : buttonStyle}
+                onClick={logout}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Logging out...' : 'Logout'}
+              </button>
+            ) : (
+              <>
+                <Link to="/register" style={linkStyle}>Register</Link> |{' '}
+                <Link to="/login" style={linkStyle}>Login</Link>
+              </>
+            )}
+          </nav>
+          <hr style={hrStyle} />
+        </>
+      )}
 
       <div style={contentStyle}>
         <Routes>
