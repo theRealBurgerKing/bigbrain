@@ -32,6 +32,7 @@ function Dashboard() {
 
       const gamesData = response.data.games
         ? Object.values(response.data.games).map((game) => ({
+            oldSessions: game.oldSessions || [],
             gameId: game.id ? Number(game.id) : null,
             owner: game.owner ? game.owner : null,
             name: game.name || 'Untitled Game',
@@ -46,6 +47,8 @@ function Dashboard() {
                   text: q.text || '',
                   answers: Array.isArray(q.answers) ? q.answers : ['', ''],
                   type: q.type || 'multiple choice',
+                  points: q.points || 1,
+                  img: q.image || ''
                 }))
               : [],
           }))
@@ -475,6 +478,12 @@ function Dashboard() {
                   <button onClick={() => stopGame(game.gameId)}>Stop Game</button>
                 )}
                 <button onClick={() => console.log(game)}>T</button>
+                <button
+                  onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
+                  disabled={!game.oldSessions.length}
+                >
+                  Old session
+                </button>
               </li>
             ))}
           </ul>

@@ -15,6 +15,7 @@ import QuestionEditor from './QuestionEditor';
 import GameSession from './GameSession';
 import PlayGround from './PlayGround';
 import NavigateToPlay from './NavigateToPlay';
+import OldSession from './OldSession';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -125,6 +126,7 @@ function Pages() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<GameEditor />} />
         <Route path="/game/:gameId/questions" element={<QuestionEditor />} />
+        <Route path="/game/:gameId/oldSession" element={<OldSession />} />
         <Route path="/game/:gameId/question/:questionId" element={<QuestionEditor />} />
         <Route path="/play" element={<NavigateToPlay />} />
         <Route path="/play/:sessionId" element={<PlayGround />} />

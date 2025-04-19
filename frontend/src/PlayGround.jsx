@@ -199,7 +199,6 @@ function PlayGround() {
         prevActiveRef.current = active;
     }, [active]);
 
-
     useEffect(() => {
         if (question && question.id) {
             setSelectedAnswers([]);
