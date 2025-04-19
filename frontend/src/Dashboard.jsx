@@ -16,6 +16,7 @@ function Dashboard() {
   const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+
   // GET request to fetch all games
   const fetchGames = async () => {
     if (!token) {
@@ -32,7 +33,6 @@ function Dashboard() {
 
       const gamesData = response.data.games
         ? Object.values(response.data.games).map((game) => ({
-            oldSessions: game.oldSessions || [],
             gameId: game.id ? Number(game.id) : null,
             owner: game.owner ? game.owner : null,
             name: game.name || 'Untitled Game',
@@ -47,8 +47,6 @@ function Dashboard() {
                   text: q.text || '',
                   answers: Array.isArray(q.answers) ? q.answers : ['', ''],
                   type: q.type || 'multiple choice',
-                  points: q.points || 1,
-                  img: q.image || ''
                 }))
               : [],
           }))
@@ -131,6 +129,7 @@ function Dashboard() {
       if (jsonData.length === 0) {
         throw new Error('JSON must contain at least one question.');
       }
+
       // Validate each question
       jsonData.forEach((q, index) => {
         // Required fields
@@ -146,6 +145,7 @@ function Dashboard() {
         if (!Number.isInteger(q.points) || q.points <= 0) {
           throw new Error(`Question ${index + 1}: Points must be a positive integer.`);
         }
+
         // Validate answers
         if (!Array.isArray(q.answers)) {
           throw new Error(`Question ${index + 1}: Answers must be an array.`);
@@ -174,6 +174,7 @@ function Dashboard() {
             throw new Error(`Question ${index + 1}: Single choice questions must have exactly one correct answer.`);
           }
         }
+
         // Validate optional fields
         if (q.youtubeUrl && typeof q.youtubeUrl !== 'string') {
           throw new Error(`Question ${index + 1}: youtubeUrl must be a string if provided.`);
@@ -299,6 +300,7 @@ function Dashboard() {
         type: q.type,
       })),
     })), newGame];
+
     updateGames(updatedGames);
   };
 
@@ -381,7 +383,7 @@ function Dashboard() {
 
   // Show game
   const showGame = async (targetId) => {
-    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId, questions: games.find(g => g.gameId === targetId).questions  } });
+    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
   };
 
   // Call fetchGames when the component mounts
@@ -389,179 +391,177 @@ function Dashboard() {
     fetchGames();
   }, []);
 
+  
+
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Admin Dashboard</h2>
+    <div style={containerStyle}>
+      <div style={dashboardStyle}>
+        <h2 style={titleStyle}>Admin Dashboard</h2>
 
-      <div style={{ marginBottom: '20px' }}>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          disabled={isLoading}
-          style={{ padding: '10px 20px' }}
-        >
-          Create Game
-        </button>
-      </div>
-      {isLoading && <div>Loading...</div>}
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-
-      {games.length > 0 ? (
-        <div>
-          <h3>Games List</h3>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {games.map((game) => (
-              <li
-                key={game.gameId ?? 'missing-id'}
-                style={{
-                  border: '1px solid #ccc',
-                  padding: '10px',
-                  marginBottom: '10px',
-                  borderRadius: '5px',
-                }}
-              >
-                <strong>Game ID:</strong> {game.gameId ?? 'N/A'} <br />
-                <strong>Owner:</strong> {game.owner ?? 'N/A'} <br />
-                <strong>Name:</strong> {game.name} <br />
-                <strong>Created At:</strong>{' '}
-                {new Date(game.createdAt).toLocaleString()} <br />
-                <strong>Active:</strong> {game.active ? 'Yes' : 'No'} <br />
-                {game.thumbnail && (
-                  <>
-                    <strong>Thumbnail:</strong>{' '}
-                    <img
-                      src={game.thumbnail}
-                      alt={`${game.name} thumbnail`}
-                      style={{ maxWidth: '100px', marginTop: '5px' }}
-                    />
-                  </>
-                )}
-                <strong>Questions:</strong>
-                {game.questions.length > 0 ? (
-                  <ul style={{ paddingLeft: '20px' }}>
-                    {game.questions.map((q) => (
-                      <li key={q.id}>
-                        <strong>Text:</strong> {q.text || 'Untitled Question'} <br />
-                        <strong>Duration:</strong> {q.duration ?? 'N/A'} seconds <br />
-                        <strong>Correct Answers:</strong>{' '}
-                        {q.correctAnswers.length > 0 ? q.correctAnswers.join(', ') : 'None'} <br />
-                        <strong>Type:</strong> {q.type} <br />
-                        <strong>Answers:</strong>{' '}
-                        {q.answers.length > 0 ? q.answers.join(', ') : 'None'}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No questions available.</p>
-                )}
-                <button
-                  onClick={() => handleEditGame(game.gameId)}
-                  style={{ padding: '5px 10px', marginTop: '10px', marginRight: '10px' }}
-                >
-                  Edit Game
-                </button>
-                <button
-                  onClick={() => handleDeleteGame(game.gameId)}
-                  style={{ padding: '5px 10px', marginTop: '10px', color: 'red' }}
-                >
-                  Delete Game
-                </button>
-                <button
-                  onClick={() => startGame(game.gameId)}
-                  disabled={game.active}
-                >
-                  Start Game
-                </button>
-                {game.active && (
-                  <button onClick={() => showGame(game.gameId)}>Show Game</button>
-                )}
-                {game.active && (
-                  <button onClick={() => stopGame(game.gameId)}>Stop Game</button>
-                )}
-                <button onClick={() => console.log(game)}>T</button>
-                <button
-                  onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
-                  disabled={!game.oldSessions.length}
-                >
-                  Old session
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div style={buttonContainerStyle}>
+          <button
+            style={isLoading ? disabledButtonStyle : buttonStyle}
+            onClick={() => setShowCreateModal(true)}
+            disabled={isLoading}
+          >
+            Create Game
+          </button>
         </div>
-      ) : (
-        <p>No games available.</p>
-      )}
-      {showCreateModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #ccc',
-            zIndex: '1000',
-            width: '300px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-          }}
-        >
-          <h3>Create New Game</h3>
-          <div style={{ marginBottom: '10px' }}>
-            <label>
-              Game Name (required):
+
+        {isLoading && <div style={loadingStyle}>Loading...</div>}
+        {error && <div style={errorStyle}>{error}</div>}
+
+        {games.length > 0 ? (
+          <div>
+            <h3 style={subtitleStyle}>Games List</h3>
+            <ul style={gameListStyle}>
+              {games.map((game) => (
+                <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
+                  <div style={gameDetailStyle}><strong>Game ID:</strong> {game.gameId ?? 'N/A'}</div>
+                  <div style={gameDetailStyle}><strong>Owner:</strong> {game.owner ?? 'N/A'}</div>
+                  <div style={gameDetailStyle}><strong>Name:</strong> {game.name}</div>
+                  <div style={gameDetailStyle}><strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}</div>
+                  <div style={gameDetailStyle}><strong>Active:</strong> {game.active ? 'Yes' : 'No'}</div>
+                  {game.thumbnail && (
+                    <div style={gameDetailStyle}>
+                      <strong>Thumbnail:</strong>{' '}
+                      <img
+                        src={game.thumbnail}
+                        alt={`${game.name} thumbnail`}
+                        style={thumbnailStyle}
+                      />
+                    </div>
+                  )}
+                  <div style={gameDetailStyle}>
+                    <strong>Questions:</strong>
+                    {game.questions.length > 0 ? (
+                      <ul style={questionListStyle}>
+                        {game.questions.map((q) => (
+                          <li key={q.id} style={questionItemStyle}>
+                            <div style={gameDetailStyle}><strong>Text:</strong> {q.text || 'Untitled Question'}</div>
+                            <div style={gameDetailStyle}><strong>Duration:</strong> {q.duration ?? 'N/A'} seconds</div>
+                            <div style={gameDetailStyle}><strong>Correct Answers:</strong> {q.correctAnswers.length > 0 ? q.correctAnswers.join(', ') : 'None'}</div>
+                            <div style={gameDetailStyle}><strong>Type:</strong> {q.type}</div>
+                            <div style={gameDetailStyle}><strong>Answers:</strong> {q.answers.length > 0 ? q.answers.join(', ') : 'None'}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p style={noQuestionsStyle}>No questions available.</p>
+                    )}
+                  </div>
+                  <div style={gameActionsStyle}>
+                    <button
+                      style={buttonStyle}
+                      onClick={() => handleEditGame(game.gameId)}
+                    >
+                      Edit Game
+                    </button>
+                    <button
+                      style={deleteButtonStyle}
+                      onClick={() => handleDeleteGame(game.gameId)}
+                    >
+                      Delete Game
+                    </button>
+                    <button
+                      style={game.active ? disabledButtonStyle : buttonStyle}
+                      onClick={() => startGame(game.gameId)}
+                      disabled={game.active}
+                    >
+                      Start Game
+                    </button>
+                    {game.active && (
+                      <button
+                        style={buttonStyle}
+                        onClick={() => showGame(game.gameId)}
+                      >
+                        Show Game
+                      </button>
+                    )}
+                    {game.active && (
+                      <button
+                        style={buttonStyle}
+                        onClick={() => stopGame(game.gameId)}
+                      >
+                        Stop Game
+                      </button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p style={noGamesStyle}>No games available.</p>
+        )}
+
+        {showCreateModal && (
+          <div style={modalStyle}>
+            <h3 style={modalTitleStyle}>Create New Game</h3>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Game Name (required):</label>
               <input
                 type="text"
                 value={newGameName}
                 onChange={(e) => setNewGameName(e.target.value)}
                 placeholder="Enter game name"
-                style={{ marginLeft: '10px', width: '200px' }}
+                style={inputStyle}
               />
-            </label>
-          </div>
-          <div style={{ marginBottom: '10px' }}><label>
-              Upload JSON (optional):
+            </div>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Upload JSON (optional):</label>
               <input
                 type="file"
                 accept=".json"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
-                style={{ marginLeft: '10px', display: 'block' }}
+                style={fileInputStyle}
               />
-            </label>
+            </div>
+            <div style={modalButtonContainerStyle}>
+              <button
+                style={isLoading ? disabledButtonStyle : buttonStyle}
+                onClick={handleCreateGame}
+                disabled={isLoading}
+              >
+                Create
+              </button>
+              <button
+                style={buttonStyle}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setNewGameName('');
+                  setSelectedFile(null);
+                  setError('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          <div>
-            <button
-              onClick={handleCreateGame}
-              disabled={isLoading}
-              style={{ padding: '5px 10px', marginRight: '10px' }}
-            >
-              Create
-            </button>
-            <button
-              onClick={() => {
-                setShowCreateModal(false);
-                setNewGameName('');
-                setSelectedFile(null);
-                setError('');
-              }}
-              style={{ padding: '5px 10px' }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-      {showGameSession && (
-        <Modal onClose={() => setShowGameSession(false)}>
-          <p>Session ID: {showGameSessionId}</p>
-          <button onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
-          }}>
-            Copy Link
-          </button>
-          <button onClick={() => showGame(showGameGameId)}>Show Game</button>
-        </Modal>
-      )}
+        )}
+
+        {showGameSession && (
+          <Modal onClose={() => setShowGameSession(false)}>
+            <div style={sessionModalContentStyle}>
+              <p style={sessionModalTextStyle}>Session ID: {showGameSessionId}</p>
+              <button
+                style={buttonStyle}
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
+                }}
+              >
+                Copy Link
+              </button>
+              <button
+                style={buttonStyle}
+                onClick={() => showGame(showGameGameId)}
+              >
+                Show Game
+              </button>
+            </div>
+          </Modal>
+        )}
+      </div>
     </div>
   );
 }
