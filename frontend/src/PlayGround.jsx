@@ -12,12 +12,15 @@ function PlayGround() {
     const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
     const [active, setActive] = useState(false);
     const [finish, setFinish] = useState(false);
+    const [questions, setQuestions] = useState([]);
     const [question, setQuestion] = useState({});
     const [timeLeft, setTimeLeft] = useState(-1);
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     const [correctAnswers, setCorrectAnswers] = useState([]);
     const prevActiveRef = useRef(active);
     const [results, setResults] = useState([]);
+    const [total, setTotal] = useState(null);
+
 
     const attendGame = async () => {
         try {
@@ -64,9 +67,9 @@ function PlayGround() {
             if (err.response) {
                 if (err.response.data.error === "Session ID is not an active session") {
                     setActive(false);
-                    setFinish(true); 
+                    setFinish(true);
                 }
-            }else{
+            } else {
                 setError(err.response.data.error);
                 setTimeout(() => navigate('/play'), 2000);
                 return () => clearTimeout(timeout);
@@ -96,7 +99,14 @@ function PlayGround() {
                 `http://localhost:5005/play/${playerId}/question`
             );
             if (q.status === 200) {
+                setQuestions(prevQuestions => {
+                    if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
+                        return [...prevQuestions, q.data.question];
+                    }
+                    return prevQuestions;
+                });
                 setQuestion(q.data.question);
+
                 const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
                 const duration = q.data.question.duration * 1000;
                 const now = Date.now();
@@ -110,8 +120,6 @@ function PlayGround() {
             console.log(err)
             if (err.response) {
                 setError(err.response.data.error);
-                // setTimeout(() => navigate('/play'), 2000);
-                // return () => clearTimeout(timeout);
             }
         }
     }
@@ -153,14 +161,32 @@ function PlayGround() {
         }
     };
 
-    const fetchscore = async () =>{
+    const fetchscore = async () => {
+        setResults('');
         try {
             const response = await axios.get(
                 `http://localhost:5005/play/${playerId}/results`
             );
             if (response.status === 200) {
-                setResults(response.data)
-                console.log(response.data)
+                let sumScore = 0;
+                response.data.forEach((ans, index) => {
+                    const questionStartTime = new Date(ans.questionStartedAt);
+                    const answerTime = new Date(ans.answeredAt);
+                    const timeDifference = ((answerTime - questionStartTime)/ 1000).toFixed(2);
+                    const score=Math.log10(1 + timeDifference)*questions[index].points;
+
+                    const result = {
+                        questionId: questions[index].id,
+                        timeDifference: timeDifference,
+                        score: score.toFixed(2),
+                        correct: ans.correct,
+                    };
+                    if (ans.correct) {
+                    sumScore += score;
+                    }
+                    setResults(prevResults => [...prevResults, result]);
+                });
+                setTotal(sumScore.toFixed(2));
             }
         } catch (err) {
             console.log(err)
@@ -178,15 +204,15 @@ function PlayGround() {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [playerId,finish]);
-    
+    }, [playerId, finish]);
+
     useEffect(() => {
         if (!active) return;
         const intervalId = setInterval(() => {
             setError('');
             fetchQuestion();
         }, 1000);
-    
+
         return () => clearInterval(intervalId);
     }, [active]);
 
@@ -226,7 +252,7 @@ function PlayGround() {
                     <button onClick={attendGame}>Attend the game!</button>
                 </>
             )}
-            {playerId && question && !finish &&(
+            {playerId && question && !finish && (
                 <>
                     <h2>{active ? question.text : 'Waiting'}</h2>
                 </>
@@ -235,6 +261,7 @@ function PlayGround() {
             {playerId && active && question && question.answers && (
                 <>
                     <p>url:<a href={question.youtubeUrl}></a></p>
+                    <p>score:{question.points}</p>
                     <p>Time:{timeLeft}</p>
                     {question.answers.length > 0 ? (
                         <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -242,7 +269,7 @@ function PlayGround() {
                                 const indexStr = index.toString();
                                 let isCorrect = correctAnswers?.includes(indexStr);
 
-                                return(
+                                return (
                                     <li
                                         key={index}
                                         style={{
@@ -251,13 +278,14 @@ function PlayGround() {
                                             borderRadius: '5px',
                                         }}
                                     >
-                                    {index}:{ans}
-                                    <input
-                                        type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
-                                        name="ans"
-                                        checked={selectedAnswers.includes(indexStr)}
-                                        onChange={() => handleAnswerSelect(indexStr)}
-                                    />
+                                        {index}:{ans}
+                                        <input
+                                            type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
+                                            name="ans"
+                                            checked={selectedAnswers.includes(indexStr)}
+                                            onChange={() => handleAnswerSelect(indexStr)}
+                                            disabled={timeLeft <= 0}
+                                        />
                                     </li>
                                 );
                             })}
@@ -267,17 +295,34 @@ function PlayGround() {
                     )}
                     <button
                         onClick={() => submitQuestion()}
-                    // disabled={timeLeft <= 0}
+                        disabled={timeLeft <= 0}
                     >
                         Submit
                     </button>
                 </>
 
             )}
-            {finish &&(
+            {finish && (
                 <>
                     <h2>Result</h2>
-
+                    <p><strong>Your score=Σ(lg(1+timelimit-time tha you use)*socre)</strong></p>
+                    {Array.isArray(results) && results.length > 0 ? (
+                        <ul style={{ paddingLeft: '20px' }}>
+                            {results.map((r, index) => (
+                                <li key={index}>
+                                    Question:{index+1}
+                                    :{r.correct ? 'True':'False'}
+                                    <br />
+                                    Time cost:{r.timeDifference}s
+                                    <br />
+                                    Your score is{r.score}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No results available.</p>
+                    )}
+                    <p>total:{total}</p>
                 </>
             )}
         </div>
