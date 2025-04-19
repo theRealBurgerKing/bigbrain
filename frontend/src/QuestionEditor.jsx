@@ -503,7 +503,57 @@ function QuestionEditor() {
     display: 'block',
   };
 
-  
+  const inputStyle = {
+    width: '25vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1vw',
+  };
+
+  const selectStyle = {
+    width: '25vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1vw',
+  };
+
+  const numberInputStyle = {
+    width: '10vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1vw',
+  };
+
+  const answerInputStyle = {
+    width: '20vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1vw',
+    marginRight: '1vw',
+  };
+
+  const fileInputStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    marginLeft: '1vw',
+  };
+
+  const thumbnailStyle = {
+    maxWidth: '10vw',
+    marginTop: '0.5vh',
+  };
 
   if (isLoading) return <div style={loadingStyle}>Loading...</div>;
   if (error) return <div style={errorStyle}>{error}</div>;
