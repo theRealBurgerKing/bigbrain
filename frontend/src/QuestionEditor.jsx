@@ -592,17 +592,21 @@ function QuestionEditor() {
 
     return (
       <div style={containerStyle}>
+        
         <div style={editorStyle}>
           <h2 style={titleStyle}>Questions for Game: {game.name}</h2>
           {error && <div style={errorStyle}>{error}</div>}
-
-          <div style={inputGroupStyle}>
+          <div >
             <button
               style={buttonStyle}
-              onClick={handleAddQuestion}
+              onClick={() => navigate(`/game/${gameId}`)}
             >
-              Add Question
+              Back to Game Editor
             </button>
+          </div>
+
+          <div style={inputGroupStyle}>
+            
             {game.questions.length > 0 ? (
               <ul style={questionListStyle}>
                 {game.questions.map((q) => (
@@ -628,16 +632,15 @@ function QuestionEditor() {
             ) : (
               <p style={noQuestionsStyle}>No questions yet. Click "Add Question" to start.</p>
             )}
-          </div>
-
-          <div style={buttonContainerStyle}>
             <button
               style={buttonStyle}
-              onClick={() => navigate(`/game/${gameId}`)}
+              onClick={handleAddQuestion}
             >
-              Back to Game Editor
+              Add Question
             </button>
           </div>
+
+          
         </div>
       </div>
     );
