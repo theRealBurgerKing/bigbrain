@@ -33,23 +33,26 @@ function Dashboard() {
 
       const gamesData = response.data.games
         ? Object.values(response.data.games).map((game) => ({
-            gameId: game.id ? Number(game.id) : null,
-            owner: game.owner ? game.owner : null,
-            name: game.name || 'Untitled Game',
-            thumbnail: game.thumbnail || '',
-            createdAt: game.createdAt || new Date().toISOString(),
-            active: game.active || null,
-            questions: Array.isArray(game.questions)
-              ? game.questions.map((q, index) => ({
-                  id: q.id || `${Date.now()}-${index}`,
-                  duration: q.duration ? Number(q.duration) : null,
-                  correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
-                  text: q.text || '',
-                  answers: Array.isArray(q.answers) ? q.answers : ['', ''],
-                  type: q.type || 'multiple choice',
-                }))
-              : [],
-          }))
+          oldSessions: game.oldSessions || [],
+          gameId: game.id ? Number(game.id) : null,
+          owner: game.owner ? game.owner : null,
+          name: game.name || 'Untitled Game',
+          thumbnail: game.thumbnail || '',
+          createdAt: game.createdAt || new Date().toISOString(),
+          active: game.active || null,
+          questions: Array.isArray(game.questions)
+            ? game.questions.map((q, index) => ({
+              id: q.id || `${Date.now()}-${index}`,
+              duration: q.duration ? Number(q.duration) : null,
+              correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
+              text: q.text || '',
+              answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+              type: q.type || 'multiple choice',
+              points: q.points || 1,
+              img: q.image || ''
+            }))
+            : [],
+        }))
         : [];
 
       if (response.status === 200) {
@@ -684,6 +687,13 @@ function Dashboard() {
                         Stop Game
                       </button>
                     )}
+                    <button
+                      style={buttonStyle}
+                      onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
+                      disabled={!game.oldSessions.length}
+                    >
+                      Old session
+                    </button>
                   </div>
                 </li>
               ))}
