@@ -276,7 +276,86 @@ function PlayGround() {
         textAlign: 'center',
     };
 
+    const inputGroupStyle = {
+        marginBottom: '1.5vh',
+        textAlign: 'left',
+    };
 
+    const labelStyle = {
+        fontSize: '1.5vh',
+        color: '#555',
+        marginBottom: '0.5vh',
+        marginTop: '5vh',
+        display: 'block',
+    };
+
+    const inputStyle = {
+        width: '25vw',
+        padding: '1vh 1vw',
+        fontSize: '1.8vh',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        backgroundColor: '#fff',
+        marginLeft: '1vw',
+    };
+
+    const answerListStyle = {
+        listStyle: 'none',
+        padding: '0',
+        margin: '0',
+    };
+
+    const answerItemStyle = {
+        padding: '1vh 1vw',
+        borderRadius: '5px',
+        marginBottom: '0.5vh',
+    };
+
+    const correctAnswerStyle = {
+        backgroundColor: 'lightgreen',
+    };
+
+    const buttonContainerStyle = {
+        marginTop: '2vh',
+        textAlign: 'center',
+    };
+
+    const buttonStyle = {
+        padding: '1vh 2vw',
+        fontSize: '1.8vh',
+        fontWeight: '500',
+        color: '#fff',
+        backgroundColor: '#3b82f6',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        margin: '0.5vh 1vw',
+        transition: 'background-color 0.3s, transform 0.1s',
+    };
+
+    const disabledButtonStyle = {
+        padding: '1vh 2vw',
+        fontSize: '1.8vh',
+        fontWeight: '500',
+        color: '#fff',
+        backgroundColor: '#a3bffa',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'not-allowed',
+        margin: '0.5vh 1vw',
+    };
+
+    const resultListStyle = {
+        listStyle: 'none',
+        padding: '0',
+        margin: '0',
+    };
+
+    const resultItemStyle = {
+        padding: '1vh 1vw',
+        marginBottom: '0.5vh',
+        borderBottom: '1px solid #eee',
+    };
 
     return (
         <div style={containerStyle}>
