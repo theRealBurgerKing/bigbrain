@@ -98,12 +98,16 @@ function PlayGround() {
             if (q.status === 200) {
                 setQuestions(prevQuestions => {
                     if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
-                        return [...prevQuestions, q.data.question];
+                        const updatedQuestions = [...prevQuestions, q.data.question];
+                        // Find the index of the current question in the updated questions array
+                        const questionIndex = updatedQuestions.findIndex(qn => qn.id === q.data.question.id);
+                        // Add question number to the question object
+                        setQuestion({ ...q.data.question, questionNumber: questionIndex + 1 });
+                        return updatedQuestions;
                     }
                     return prevQuestions;
                 });
-                setQuestion(q.data.question);
-
+    
                 const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
                 const duration = q.data.question.duration * 1000;
                 const now = Date.now();
@@ -386,14 +390,16 @@ function PlayGround() {
 
                 {playerId && question && !finish && (
                     <>
-                        <h2 style={subtitleStyle}>{active ? question.text : 'Waiting'}</h2>
+                        <h2 style={subtitleStyle}>
+                            {active ? `Question ${question.questionNumber}: ${question.text}` : 'Waiting'}
+                        </h2>
                     </>
                 )}
 
                 {playerId && active && question && question.answers && (
                     <>
                         <div style={textStyle}>
-                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
+                            URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
                         </div>
                         <div style={textStyle}>
                             Score: {question.points}
@@ -414,7 +420,7 @@ function PlayGround() {
                                                 ...(isCorrect ? correctAnswerStyle : {}),
                                             }}
                                         >
-                                            {index}: {ans}
+                                            
                                             <input
                                                 type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
                                                 name="ans"
@@ -423,6 +429,7 @@ function PlayGround() {
                                                 disabled={timeLeft <= 0}
                                                 style={{ marginLeft: '1vw' }}
                                             />
+                                             {ans}
                                         </li>
                                     );
                                 })}
