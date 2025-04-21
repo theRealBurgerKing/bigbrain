@@ -41,27 +41,27 @@ function QuestionEditor() {
 
       const gamesData = response.data.games
         ? Object.values(response.data.games).map((game) => ({
-            gameId: game.id ? String(game.id) : null,
-            owner: game.owner || null,
-            name: game.name || 'Untitled Game',
-            thumbnail: game.thumbnail || '',
-            createdAt: game.createdAt || new Date().toISOString(),
-            active: game.active || null,
-            questions: Array.isArray(game.questions)
-              ? game.questions.map((q, index) => ({
-                  id: q.id ? String(q.id) : `${Date.now()}-${index}`,
-                  duration: q.duration ? Number(q.duration) : null,
-                  points: q.points ? Number(q.points) : 10,
-                  correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
-                  isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
-                  text: q.text || '',
-                  answers: Array.isArray(q.answers) ? q.answers : ['', ''],
-                  type: q.type || 'multiple choice',
-                  youtubeUrl: q.youtubeUrl || '',
-                  image: q.image || '',
-                }))
-              : [],
-          }))
+          gameId: game.id ? String(game.id) : null,
+          owner: game.owner || null,
+          name: game.name || 'Untitled Game',
+          thumbnail: game.thumbnail || '',
+          createdAt: game.createdAt || new Date().toISOString(),
+          active: game.active || null,
+          questions: Array.isArray(game.questions)
+            ? game.questions.map((q, index) => ({
+              id: q.id ? String(q.id) : `${Date.now()}-${index}`,
+              duration: q.duration ? Number(q.duration) : null,
+              points: q.points ? Number(q.points) : 10,
+              correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
+              isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
+              text: q.text || '',
+              answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+              type: q.type || 'multiple choice',
+              youtubeUrl: q.youtubeUrl || '',
+              image: q.image || '',
+            }))
+            : [],
+        }))
         : [];
 
       if (response.status === 200) {
@@ -145,9 +145,9 @@ function QuestionEditor() {
     const updatedGames = games.map((g) =>
       g.gameId === gameId
         ? {
-            ...g,
-            questions: g.questions.filter((q) => q.id !== questionId),
-          }
+          ...g,
+          questions: g.questions.filter((q) => q.id !== questionId),
+        }
         : g
     );
     setGames(updatedGames);
@@ -318,24 +318,24 @@ function QuestionEditor() {
       const updatedGames = games.map((g) =>
         g.gameId === gameId
           ? {
-              ...g,
-              questions: g.questions.map((q) =>
-                q.id === questionId
-                  ? {
-                      id: q.id,
-                      text: text,
-                      type: type,
-                      duration: Number(duration),
-                      points: Number(points),
-                      youtubeUrl: youtubeUrl,
-                      image: image,
-                      answers: type === 'judgement' ? ['True', 'False'] : answers, // Ensure fixed answers for judgement
-                      correctAnswers: type !== 'judgement' ? correctAnswers : correctAnswers,
-                      isCorrect: false, // Judgement type no longer uses isCorrect
-                    }
-                  : q
-              ),
-            }
+            ...g,
+            questions: g.questions.map((q) =>
+              q.id === questionId
+                ? {
+                  id: q.id,
+                  text: text,
+                  type: type,
+                  duration: Number(duration),
+                  points: Number(points),
+                  youtubeUrl: youtubeUrl,
+                  image: image,
+                  answers: type === 'judgement' ? ['True', 'False'] : answers, // Ensure fixed answers for judgement
+                  correctAnswers: type !== 'judgement' ? correctAnswers : correctAnswers,
+                  isCorrect: false, // Judgement type no longer uses isCorrect
+                }
+                : q
+            ),
+          }
           : g
       );
   
