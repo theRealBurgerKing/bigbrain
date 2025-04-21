@@ -15,7 +15,6 @@ function Dashboard() {
   const [showGameSessionId, setShowGameSessionId] = useState(null);
   const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
   const [copySuccess, setCopySuccess] = useState(false); // New state for copy success message
@@ -327,7 +326,6 @@ function Dashboard() {
   // Start game
   const startGame = async (id) => {
     setError('');
-    setIsStarting(true);
     try {
       const response = await axios.post(
         `http://localhost:5005/admin/game/${id}/mutate`,
@@ -359,8 +357,6 @@ function Dashboard() {
         console.log(err);
         setError('Failed to connect to the server. Please try again.');
       }
-    } finally {
-      setIsStarting(false);
     }
   };
 
@@ -485,19 +481,6 @@ function Dashboard() {
     borderRadius: '4px',
     cursor: 'not-allowed',
     margin: '0.5vh 1vw',
-  };
-
-  const deleteButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#dc2626',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    margin: '0.5vh 1vw',
-    transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const loadingStyle = {

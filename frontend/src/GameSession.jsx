@@ -24,7 +24,7 @@ function GameSession() {
   const fetchSession = async () => {
     if (!token) {
       setError('No token found. Please log in again.');
-      setTimeout(() => navigate('/login'), 2000);
+      const timeout = setTimeout(() => navigate('/login'), 2000);
       return () => clearTimeout(timeout);
     }
     try {
@@ -51,7 +51,7 @@ function GameSession() {
       if (err.response) {
         if (err.response.status === 500) {
           setError('No such session is ON.');
-          setTimeout(() => navigate('/dashboard'), 2000);
+          const timeout = setTimeout(() => navigate('/dashboard'), 2000);
           return () => clearTimeout(timeout);
         } else {
           setError(err.response.data.error);

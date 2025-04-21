@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Modal from './Modal'; // 引入 Modal 组件
+import Modal from './Modal';
 
 function NavigateToPlay() {
   const [error, setError] = useState('');
@@ -53,13 +52,6 @@ function NavigateToPlay() {
     fontWeight: '500',
     color: '#333',
     marginBottom: '2vh',
-  };
-
-  const errorStyle = {
-    color: 'red',
-    fontSize: '1.8vh',
-    marginBottom: '1vh',
-    textAlign: 'center',
   };
 
   const inputGroupStyle = {

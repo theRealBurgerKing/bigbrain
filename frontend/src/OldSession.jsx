@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
 import Results from './Results';
@@ -79,11 +79,6 @@ function OldSession() {
   const sessionTextStyle = {
     fontSize: '1.8vh',
     color: '#333',
-  };
-
-  const buttonContainerStyle = {
-    marginTop: '2vh',
-    textAlign: 'center',
   };
 
   const buttonStyle = {

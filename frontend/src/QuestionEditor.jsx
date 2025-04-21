@@ -22,9 +22,7 @@ function QuestionEditor() {
   const [image, setImage] = useState('');
   const [answers, setAnswers] = useState(['', '']);
   const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [isCorrect, setIsCorrect] = useState(false);
 
-  // Fetch all games on mount
   const fetchGames = async () => {
     if (!token) {
       setError('No token found. Please log in again.');
@@ -81,7 +79,6 @@ function QuestionEditor() {
               setImage(questionData.image);
               setAnswers(questionData.answers);
               setCorrectAnswers(questionData.correctAnswers);
-              setIsCorrect(questionData.isCorrect);
             } else {
               setError('Question not found.');
             }
@@ -630,7 +627,7 @@ function QuestionEditor() {
                 ))}
               </ul>
             ) : (
-              <p style={noQuestionsStyle}>No questions yet. Click "Add Question" to start.</p>
+              <p style={noQuestionsStyle}>No questions yet. Click &quot;Add Question&quot; to start.</p>
             )}
             <button
               style={buttonStyle}
@@ -663,7 +660,6 @@ function QuestionEditor() {
               onChange={(e) => {
                 setType(e.target.value);
                 setCorrectAnswers([]);
-                setIsCorrect(false);
                 if (e.target.value === 'judgement') {
                   setAnswers(['True', 'False']); // Set fixed answers for judgement
                 } else if (e.target.value === 'multiple choice') {

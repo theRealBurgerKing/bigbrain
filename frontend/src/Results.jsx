@@ -1,4 +1,3 @@
-import React from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElement } from 'chart.js';
 

@@ -38,7 +38,7 @@ function PlayGround() {
       if (err.response) {
         if (err.response.status === 400) {
           setError(err.response.data.error);
-          setTimeout(() => navigate('/play'), 2000);
+          const timeout = setTimeout(() => navigate('/play'), 2000);
           return () => clearTimeout(timeout);
         } else {
           setError(err.response);
@@ -71,7 +71,7 @@ function PlayGround() {
         }
       } else {
         setError(err.response.data.error);
-        setTimeout(() => navigate('/play'), 2000);
+        const timeout = setTimeout(() => navigate('/play'), 2000);
         return () => clearTimeout(timeout);
       }
     }
