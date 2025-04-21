@@ -104,7 +104,7 @@ function OldSession() {
     return (
         <div style={containerStyle}>
             <div style={boxStyle}>
-                <h2 style={titleStyle}>Old Sessions</h2>
+                <h2 style={titleStyle}>Sessions Review</h2>
                 <div>
                     <button
                         style={buttonStyle}

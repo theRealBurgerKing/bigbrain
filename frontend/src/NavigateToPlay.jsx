@@ -43,7 +43,7 @@ function NavigateToPlay() {
 
     const handleCloseModal = () => {
         setShowErrorModal(false);
-        setError(''); // 关闭弹窗时清除错误信息
+        setError('');
     };
 
     // Define styles as named objects
@@ -107,6 +107,7 @@ function NavigateToPlay() {
         borderRadius: '4px',
         backgroundColor: '#fff',
         marginTop: '1vw',
+        marginLeft: '1vw',
     };
 
     const buttonContainerStyle = {

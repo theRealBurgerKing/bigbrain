@@ -445,7 +445,7 @@ function Dashboard() {
     borderRadius: '4px',
     cursor: 'pointer',
     margin: '0.5vh 1vw',
-    transition: 'background-color 0.3s, transform 0.1s'
+    transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledButtonStyle = {
@@ -504,7 +504,6 @@ function Dashboard() {
 
   const gameDetailStyle = {
     fontSize: '1.8vh',
-    // color: '#555',
     marginBottom: '0.5vh',
   };
 
@@ -519,13 +518,14 @@ function Dashboard() {
 
   const sessionActionStyle = {
     display: 'flex',
-  }
+  };
 
   const noGamesStyle = {
     fontSize: '1.8vh',
     color: '#555',
     textAlign: 'center',
   };
+
   const modalStyle = {
     position: 'fixed',
     top: '50%',
@@ -539,6 +539,7 @@ function Dashboard() {
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     borderRadius: '8px',
   };
+
   const modalTitleStyle = {
     fontSize: '2.5vh',
     fontWeight: '600',
@@ -587,10 +588,12 @@ function Dashboard() {
     fontSize: '1.8vh',
     marginBottom: '1vh',
   };
+
   const gameNameStyle = {
     fontSize: '2.2vh',
     marginBottom: '20px',
   };
+
   return (
     <div style={containerStyle}>
       <div style={dashboardStyle}>
@@ -613,90 +616,90 @@ function Dashboard() {
           <div>
             <h3 style={subtitleStyle}>Games List</h3>
             <ul style={gameListStyle}>
-              {games.map((game) => (
-                <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
-                  <div style={gameNameStyle}><strong>Game name:</strong> {game.name}</div>
-                  <div style={gameDetailStyle}><strong>Owner:</strong> {game.owner ?? 'N/A'}</div>
-                  <div style={gameDetailStyle}><strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}</div>
-                  <div style={gameDetailStyle}><strong>Active:</strong> {game.active ? 'Yes' : 'No'}</div>
-                  {game.thumbnail && (
-                    <div style={gameDetailStyle}>
-                      {/* <strong>Thumbnail:</strong>{' '} */}
-                      <img
-                        src={game.thumbnail}
-                        alt={`${game.name} thumbnail`}
-                        style={thumbnailStyle}
-                      />
+              {games.map((game) => {
+                // Calculate total duration (sum of all question durations)
+                const totalDuration = game.questions.reduce((sum, q) => sum + (q.duration || 0), 0);
+
+                return (
+                  <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
+                    <div style={gameNameStyle}>
+                      <strong>Game Name:</strong> {game.name}
                     </div>
-                  )}
-                  {/* <div style={gameDetailStyle}>
-                    <strong>Questions:</strong>
-                    {game.questions.length > 0 ? (
-                      <ul style={questionListStyle}>
-                        {game.questions.map((q) => (
-                          <li key={q.id} style={questionItemStyle}>
-                            <div style={gameDetailStyle}><strong>Text:</strong> {q.text || 'Untitled Question'}</div>
-                            <div style={gameDetailStyle}><strong>Duration:</strong> {q.duration ?? 'N/A'} seconds</div>
-                            <div style={gameDetailStyle}><strong>Correct Answers:</strong> {q.correctAnswers.length > 0 ? q.correctAnswers.join(', ') : 'None'}</div>
-                            <div style={gameDetailStyle}><strong>Type:</strong> {q.type}</div>
-                            <div style={gameDetailStyle}><strong>Answers:</strong> {q.answers.length > 0 ? q.answers.join(', ') : 'None'}</div>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p style={noQuestionsStyle}>No questions available.</p>
+                    <div style={gameDetailStyle}>
+                      <strong>Owner:</strong> {game.owner ?? 'N/A'}
+                    </div>
+                    <div style={gameDetailStyle}>
+                      <strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}
+                    </div>
+                    <div style={gameDetailStyle}>
+                      <strong>Active:</strong> {game.active ? 'Yes' : 'No'}
+                    </div>
+                    <div style={gameDetailStyle}>
+                      <strong>Number of Questions:</strong> {game.questions.length}
+                    </div>
+                    <div style={gameDetailStyle}>
+                      <strong>Total Duration:</strong> {totalDuration} seconds
+                    </div>
+                    {game.thumbnail && (
+                      <div style={gameDetailStyle}>
+                        <img
+                          src={game.thumbnail}
+                          alt={`${game.name} thumbnail`}
+                          style={thumbnailStyle}
+                        />
+                      </div>
                     )}
-                  </div> */}
-                  <div style={editGameActionsStyle}>
-                    <button
-                      style={game.active ? disabledButtonStyle : buttonStyle}
-                      onClick={() => handleEditGame(game.gameId)}
-                      disabled={game.active}
-                    >
-                      Edit Game
-                    </button>
-                    <button
-                      style={game.active ? disabledButtonStyle : buttonStyle}
-                      onClick={() => handleDeleteGame(game.gameId)}
-                      disabled={game.active}
-                    >
-                      Delete Game
-                    </button>
-                  </div>
-                  <div style = {sessionActionStyle}>
-                    <button
-                      style={game.active ? disabledButtonStyle : buttonStyle}
-                      onClick={() => startGame(game.gameId)}
-                      disabled={game.active}
-                    >
-                      Start Game
-                    </button>
-                    {game.active && (
+                    <div style={editGameActionsStyle}>
                       <button
-                        style={buttonStyle}
-                        onClick={() => showGame(game.gameId)}
+                        style={game.active ? disabledButtonStyle : buttonStyle}
+                        onClick={() => handleEditGame(game.gameId)}
+                        disabled={game.active}
                       >
-                        Show Game
+                        Edit Game
                       </button>
-                    )}
-                    {game.active && (
                       <button
-                        style={buttonStyle}
-                        onClick={() => stopGame(game.gameId)}
+                        style={game.active ? disabledButtonStyle : buttonStyle}
+                        onClick={() => handleDeleteGame(game.gameId)}
+                        disabled={game.active}
                       >
-                        Stop Game
+                        Delete Game
                       </button>
-                    )}
-                    <button
-                      style={!game.oldSessions.length ? disabledButtonStyle : buttonStyle}
-                      onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
-                      disabled={!game.oldSessions.length}
-                    >
-                      Session Review
-                    </button>
-                  </div>
-                </li>
-              ))}
+                    </div>
+                    <div style={sessionActionStyle}>
+                      <button
+                        style={game.active ? disabledButtonStyle : buttonStyle}
+                        onClick={() => startGame(game.gameId)}
+                        disabled={game.active}
+                      >
+                        Start Game
+                      </button>
+                      {game.active && (
+                        <button
+                          style={buttonStyle}
+                          onClick={() => showGame(game.gameId)}
+                        >
+                          Show Game
+                        </button>
+                      )}
+                      {game.active && (
+                        <button
+                          style={buttonStyle}
+                          onClick={() => stopGame(game.gameId)}
+                        >
+                          Stop Game
+                        </button>
+                      )}
+                      <button
+                        style={!game.oldSessions.length ? disabledButtonStyle : buttonStyle}
+                        onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
+                        disabled={!game.oldSessions.length}
+                      >
+                        Session Review
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : (
