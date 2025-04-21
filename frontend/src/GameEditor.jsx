@@ -31,27 +31,27 @@ function GameEditor() {
 
         const gamesData = response.data.games
           ? Object.values(response.data.games).map((game) => ({
-              gameId: game.id ? Number(game.id) : null,
-              owner: game.owner || null,
-              name: game.name || 'Untitled Game',
-              thumbnail: game.thumbnail || '',
-              createdAt: game.createdAt || new Date().toISOString(),
-              active: game.active || null,
-              questions: Array.isArray(game.questions)
-                ? game.questions.map((q, index) => ({
-                    id: q.id || `${Date.now()}-${index}`,
-                    duration: q.duration ? Number(q.duration) : null,
-                    points: q.points ? Number(q.points) : 10,
-                    correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
-                    isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
-                    text: q.text || '',
-                    answers: Array.isArray(q.answers) ? q.answers : ['', ''],
-                    type: q.type || 'multiple choice',
-                    youtubeUrl: q.youtubeUrl || '',
-                    image: q.image || '',
-                  }))
-                : [],
-            }))
+            gameId: game.id ? Number(game.id) : null,
+            owner: game.owner || null,
+            name: game.name || 'Untitled Game',
+            thumbnail: game.thumbnail || '',
+            createdAt: game.createdAt || new Date().toISOString(),
+            active: game.active || null,
+            questions: Array.isArray(game.questions)
+              ? game.questions.map((q, index) => ({
+                id: q.id || `${Date.now()}-${index}`,
+                duration: q.duration ? Number(q.duration) : null,
+                points: q.points ? Number(q.points) : 10,
+                correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
+                isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
+                text: q.text || '',
+                answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+                type: q.type || 'multiple choice',
+                youtubeUrl: q.youtubeUrl || '',
+                image: q.image || '',
+              }))
+              : [],
+          }))
           : [];
 
         if (response.status === 200) {
@@ -120,14 +120,14 @@ function GameEditor() {
       const updatedGames = games.map((g) =>
         g.gameId === Number(gameId)
           ? {
-              id: g.gameId,
-              owner: g.owner,
-              name: gameName,
-              thumbnail: thumbnail || '',
-              createdAt: g.createdAt,
-              active: g.active,
-              questions: g.questions,
-            }
+            id: g.gameId,
+            owner: g.owner,
+            name: gameName,
+            thumbnail: thumbnail || '',
+            createdAt: g.createdAt,
+            active: g.active,
+            questions: g.questions,
+          }
           : g
       );
 
