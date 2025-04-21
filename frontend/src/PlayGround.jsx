@@ -305,15 +305,15 @@ function PlayGround() {
         display: 'block',
     };
 
-    const inputStyle = {
-        width: '20vw',
-        padding: '1vh 1vw',
-        fontSize: '1.8vh',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        backgroundColor: '#fff',
-        marginLeft: '1.5vw',
-    };
+  const inputStyle = {
+    width: '20vw',
+    padding: '1vh 1vw',
+    fontSize: '1.8vh',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    backgroundColor: '#fff',
+    marginLeft: '1.5vw',
+  };
 
     const answerListStyle = {
         listStyle: 'none',
