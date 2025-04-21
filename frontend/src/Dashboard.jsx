@@ -378,10 +378,9 @@ function Dashboard() {
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setShowGameSessionId('');
         fetchGames();
-        navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id, questions: games.find(g => g.gameId === targetId).questions } });
+        navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id, questions: games.find(g => g.gameId === id).questions } });
       }
     } catch (err) {
       if (err.response) {
