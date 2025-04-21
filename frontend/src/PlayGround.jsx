@@ -4,168 +4,168 @@ import axios from 'axios';
 import Modal from './Modal';
 
 function PlayGround() {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const { sessionId } = useParams();
-    const [error, setError] = useState('');
-    const [player, setPlayer] = useState('');
-    const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
-    const [active, setActive] = useState(false);
-    const [finish, setFinish] = useState(false);
-    const [questions, setQuestions] = useState([]);
-    const [question, setQuestion] = useState({});
-    const [timeLeft, setTimeLeft] = useState(-1);
-    const [selectedAnswers, setSelectedAnswers] = useState([]);
-    const [correctAnswers, setCorrectAnswers] = useState([]);
-    const prevActiveRef = useRef(active);
-    const [results, setResults] = useState([]);
-    const [total, setTotal] = useState(null);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { sessionId } = useParams();
+  const [error, setError] = useState('');
+  const [player, setPlayer] = useState('');
+  const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
+  const [active, setActive] = useState(false);
+  const [finish, setFinish] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [question, setQuestion] = useState({});
+  const [timeLeft, setTimeLeft] = useState(-1);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const prevActiveRef = useRef(active);
+  const [results, setResults] = useState([]);
+  const [total, setTotal] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
-    const attendGame = async () => {
-        try {
-            const response = await axios.post(
-                `http://localhost:5005/play/join/${sessionId}/`,
-                { "name": player }
-            );
-            if (response.status === 200) {
-                console.log(response.data);
-                setPlayerId(response.data.playerId);
-            }
-        } catch (err) {
-            console.log(err);
-            if (err.response) {
-                if (err.response.status === 400) {
-                    setError(err.response.data.error);
-                    setTimeout(() => navigate('/play'), 2000);
-                    return () => clearTimeout(timeout);
-                } else {
-                    setError(err.response);
-                }
-            }
-        }
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            attendGame();
-        }
-    };
-
-    const fetchActive = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5005/play/${playerId}/status`
-            );
-            if (response.status === 200) {
-                setActive(response.data.started);
-            }
-        } catch (err) {
-            console.log(err);
-            if (err.response) {
-                if (err.response.data.error === "Session ID is not an active session") {
-                    setActive(false);
-                    setFinish(true);
-                }
-            } else {
-                setError(err.response.data.error);
-                setTimeout(() => navigate('/play'), 2000);
-                return () => clearTimeout(timeout);
-            }
-        }
-    };
-
-    const fetchAnswer = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5005/play/${playerId}/answer`
-            );
-            if (response.status === 200) {
-                setCorrectAnswers(response.data.answers);
-            }
-        } catch (err) {
-            console.log(err);
-            if (err.response) {
-                setError(err.response.data.error);
-            }
-        }
-    };
-
-    const fetchQuestion = async () => {
-        try {
-            console.log('Fetching question for sessionId:', sessionId);
-            const q = await axios.get(
-                `http://localhost:5005/play/${playerId}/question`
-            );
-            console.log('Fetched question:', q.data);
-            if (q.status === 200) {
-                setQuestions(prevQuestions => {
-                    if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
-                        const updatedQuestions = [...prevQuestions, q.data.question];
-                        console.log('Updated questions:', updatedQuestions);
-                        setQuestion(q.data.question);
-                        return updatedQuestions;
-                    } else {
-                        setQuestion(q.data.question);
-                        return prevQuestions;
-                    }
-                });
-
-                const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
-                const duration = q.data.question.duration * 1000;
-                const now = Date.now();
-                const remainingTime = Math.max(0, Math.floor((startTime + duration - now) / 1000));
-                setTimeLeft(remainingTime);
-                if (remainingTime === 0) {
-                    fetchAnswer();
-                }
-            }
-        } catch (err) {
-            console.log('Error fetching question:', err);
-            if (err.response) {
-                setError(err.response.data.error);
-            }
-        }
-    };
-
-    const handleAnswerSelect = (index) => {
-        const strIndex = index.toString();
-        if (question.type === 'multiple choice') {
-            setSelectedAnswers((prev) => {
-                let updated;
-                if (prev.includes(strIndex)) {
-                    updated = prev.filter((i) => i !== strIndex);
-                } else {
-                    updated = [...prev, strIndex];
-                }
-                return updated.sort((a, b) => Number(a) - Number(b));
-            });
+  const attendGame = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/play/join/${sessionId}/`,
+        { "name": player }
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+        setPlayerId(response.data.playerId);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        if (err.response.status === 400) {
+          setError(err.response.data.error);
+          setTimeout(() => navigate('/play'), 2000);
+          return () => clearTimeout(timeout);
         } else {
-            setSelectedAnswers([index.toString()]);
+          setError(err.response);
         }
-    };
+      }
+    }
+  };
 
-    const submitQuestion = async () => {
-        setError('');
-        try {
-            const q = await axios.put(
-                `http://localhost:5005/play/${playerId}/answer`,
-                {
-                    "answers": selectedAnswers
-                }
-            );
-            if (q.status === 200) {
-                setSubmitSuccess(true);
-            }
-        } catch (err) {
-            console.log(err);
-            if (err.response) {
-                setError(err.response.data.error);
-            }
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      attendGame();
+    }
+  };
+
+  const fetchActive = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/play/${playerId}/status`
+      );
+      if (response.status === 200) {
+        setActive(response.data.started);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        if (err.response.data.error === "Session ID is not an active session") {
+          setActive(false);
+          setFinish(true);
         }
-    };
+      } else {
+        setError(err.response.data.error);
+        setTimeout(() => navigate('/play'), 2000);
+        return () => clearTimeout(timeout);
+      }
+    }
+  };
+
+  const fetchAnswer = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/play/${playerId}/answer`
+      );
+      if (response.status === 200) {
+        setCorrectAnswers(response.data.answers);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        setError(err.response.data.error);
+      }
+    }
+  };
+
+  const fetchQuestion = async () => {
+    try {
+      console.log('Fetching question for sessionId:', sessionId);
+      const q = await axios.get(
+        `http://localhost:5005/play/${playerId}/question`
+      );
+      console.log('Fetched question:', q.data);
+      if (q.status === 200) {
+        setQuestions(prevQuestions => {
+          if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
+            const updatedQuestions = [...prevQuestions, q.data.question];
+            console.log('Updated questions:', updatedQuestions);
+            setQuestion(q.data.question);
+            return updatedQuestions;
+          } else {
+            setQuestion(q.data.question);
+            return prevQuestions;
+          }
+        });
+
+        const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
+        const duration = q.data.question.duration * 1000;
+        const now = Date.now();
+        const remainingTime = Math.max(0, Math.floor((startTime + duration - now) / 1000));
+        setTimeLeft(remainingTime);
+        if (remainingTime === 0) {
+          fetchAnswer();
+        }
+      }
+    } catch (err) {
+      console.log('Error fetching question:', err);
+      if (err.response) {
+        setError(err.response.data.error);
+      }
+    }
+  };
+
+  const handleAnswerSelect = (index) => {
+    const strIndex = index.toString();
+    if (question.type === 'multiple choice') {
+      setSelectedAnswers((prev) => {
+        let updated;
+        if (prev.includes(strIndex)) {
+          updated = prev.filter((i) => i !== strIndex);
+        } else {
+          updated = [...prev, strIndex];
+        }
+        return updated.sort((a, b) => Number(a) - Number(b));
+      });
+    } else {
+      setSelectedAnswers([index.toString()]);
+    }
+  };
+
+  const submitQuestion = async () => {
+    setError('');
+    try {
+      const q = await axios.put(
+        `http://localhost:5005/play/${playerId}/answer`,
+        {
+          "answers": selectedAnswers
+        }
+      );
+      if (q.status === 200) {
+        setSubmitSuccess(true);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        setError(err.response.data.error);
+      }
+    }
+  };
 
     const fetchScore = async () => {
         setResults([]);
