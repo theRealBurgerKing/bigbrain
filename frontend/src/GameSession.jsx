@@ -185,7 +185,10 @@ function GameSession() {
                 {error && <div style={errorStyle}>{error}</div>}
 
                 {session ? (
-                    <>
+                    <>  
+                        <div style={textStyle}>
+                            <strong>Session ID:</strong> {sessionId}
+                        </div>
                         <div style={textStyle}>
                             <strong>Active:</strong> {session.active ? 'On going' : 'Game Finish'}
                         </div>
@@ -203,7 +206,6 @@ function GameSession() {
                         ) : (
                             <div style={textStyle}>Waiting for next question...</div>
                         )}
-                        
                     </>
                 ) : (
                     <p style={textStyle}>No status</p>

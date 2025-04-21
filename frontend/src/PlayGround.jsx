@@ -19,6 +19,7 @@ function PlayGround() {
     const prevActiveRef = useRef(active);
     const [results, setResults] = useState([]);
     const [total, setTotal] = useState(null);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Initialize to 0
 
     const attendGame = async () => {
         try {
@@ -92,22 +93,24 @@ function PlayGround() {
 
     const fetchQuestion = async () => {
         try {
+            console.log('Fetching question for sessionId:', sessionId);
             const q = await axios.get(
                 `http://localhost:5005/play/${playerId}/question`
             );
+            console.log('Fetched question:', q.data);
             if (q.status === 200) {
                 setQuestions(prevQuestions => {
                     if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
                         const updatedQuestions = [...prevQuestions, q.data.question];
-                        // Find the index of the current question in the updated questions array
-                        const questionIndex = updatedQuestions.findIndex(qn => qn.id === q.data.question.id);
-                        // Add question number to the question object
-                        setQuestion({ ...q.data.question, questionNumber: questionIndex + 1 });
+                        console.log('Updated questions:', updatedQuestions);
+                        setQuestion(q.data.question);
                         return updatedQuestions;
+                    } else {
+                        setQuestion(q.data.question);
+                        return prevQuestions;
                     }
-                    return prevQuestions;
                 });
-    
+
                 const startTime = new Date(q.data.question.isoTimeLastQuestionStarted).getTime();
                 const duration = q.data.question.duration * 1000;
                 const now = Date.now();
@@ -118,7 +121,7 @@ function PlayGround() {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.log('Error fetching question:', err);
             if (err.response) {
                 setError(err.response.data.error);
             }
@@ -227,10 +230,12 @@ function PlayGround() {
 
     useEffect(() => {
         if (question && question.id) {
+            // Update the current question index based on the questions array length
+            setCurrentQuestionIndex(questions.length + 1);
             setSelectedAnswers([]);
             setCorrectAnswers([]);
         }
-    }, [question.id]);
+    }, [question.id, questions]); // Trigger when question.id changes
 
     // Define styles as named objects
     const containerStyle = {
@@ -240,7 +245,6 @@ function PlayGround() {
         width: '100%',
         padding: '0px',
         margin: '0px',
-        // Removed backgroundColor since Pages.jsx now handles it
     };
 
     const boxStyle = {
@@ -369,7 +373,7 @@ function PlayGround() {
 
                 {!playerId && (
                     <div style={inputGroupStyle}>
-                        <h2 style={subtitleStyle}>Game: {sessionId}</h2>
+                        <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
                         <label style={labelStyle}>
                             Name:
                             <input
@@ -391,7 +395,7 @@ function PlayGround() {
                 {playerId && question && !finish && (
                     <>
                         <h2 style={subtitleStyle}>
-                            {active ? `Question ${question.questionNumber}: ${question.text}` : 'Waiting'}
+                            {active ? `Question ${currentQuestionIndex}: ${question.text}` : 'Waiting'}
                         </h2>
                     </>
                 )}
@@ -399,7 +403,7 @@ function PlayGround() {
                 {playerId && active && question && question.answers && (
                     <>
                         <div style={textStyle}>
-                            URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
+                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
                         </div>
                         <div style={textStyle}>
                             Score: {question.points}
@@ -420,7 +424,7 @@ function PlayGround() {
                                                 ...(isCorrect ? correctAnswerStyle : {}),
                                             }}
                                         >
-                                            
+                                            {index}: {ans}
                                             <input
                                                 type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
                                                 name="ans"
@@ -429,7 +433,6 @@ function PlayGround() {
                                                 disabled={timeLeft <= 0}
                                                 style={{ marginLeft: '1vw' }}
                                             />
-                                             {ans}
                                         </li>
                                     );
                                 })}

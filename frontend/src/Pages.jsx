@@ -5,7 +5,7 @@ import {
   Route,
   Link,
   useNavigate,
-  useLocation, // 引入 useLocation 用于获取当前路由
+  useLocation,
 } from "react-router-dom";
 import Register from './Register1';
 import Login from './Login';
@@ -17,6 +17,7 @@ import GameSession from './GameSession';
 import PlayGround from './PlayGround';
 import NavigateToPlay from './NavigateToPlay';
 import OldSession from './OldSession';
+import HomePage from './HomePage';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -24,7 +25,7 @@ function Pages() {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-  const location = useLocation(); // 获取当前路由信息
+  const location = useLocation();
 
   // Check if the current route is a play route
   const isPlayRoute = location.pathname.startsWith('/play');
@@ -165,7 +166,6 @@ function Pages() {
 
   return (
     <div style={containerStyle}>
-      {/* Conditionally render the navbar and hr based on the route */}
       {!isPlayRoute && (
         <>
           <nav style={navStyle}>
@@ -190,7 +190,7 @@ function Pages() {
 
       <div style={contentStyle}>
         <Routes>
-          <Route path="/" element={<h2>Home Page</h2>} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
           <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -23,7 +23,7 @@ function NavigateToPlay() {
     return (
         <div>
             {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>} <br />
-            <h1>Welocme To Play</h1>
+            <h1>Welcome To Play</h1>
             <h2>Please Enter the Game Session ID:</h2>
             SessionId: <input
                         value={sessionId}
