@@ -245,10 +245,11 @@ function PlayGround() {
         width: '100%',
         padding: '0px',
         margin: '0px',
+        marginTop: '20vh',
     };
 
     const boxStyle = {
-        width: '40vw',
+        width: '30vw',
         padding: '2vh 3vw',
         backgroundColor: '#fff',
         borderRadius: '8px',

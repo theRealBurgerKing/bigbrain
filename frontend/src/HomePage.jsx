@@ -50,7 +50,7 @@ function HomePage() {
         cursor: 'pointer',
         margin: '0.5vh 1vw',
         transition: 'background-color 0.3s, transform 0.1s',
-        textDecoration: 'none',
+        textDecoration: 'none', // Ensure Link buttons have no underline
     };
 
     return (
