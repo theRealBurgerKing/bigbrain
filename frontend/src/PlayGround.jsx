@@ -167,143 +167,143 @@ function PlayGround() {
     }
   };
 
-    const fetchScore = async () => {
-        setResults([]);
-        try {
-            const response = await axios.get(
-                `http://localhost:5005/play/${playerId}/results`
-            );
-            if (response.status === 200) {
-                let sumScore = 0;
-                console.log(questions)
-                response.data.forEach((ans, index) => {
-                    console.log(index)
-                    let timeDifference =questions[index].duration;
-                    if(ans.questionStartedAt && ans.answeredAt){
-                        const questionStartTime = new Date(ans.questionStartedAt);
-                        const answerTime = new Date(ans.answeredAt);
-                        timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
-                    };
-                    let score=0;
-                    if (ans.correct) {
-                        score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
-                        sumScore += score;
-                    };
-                    const result = {
-                        questionId: questions[index].id,
-                        timeDifference: timeDifference,
-                        score: score.toFixed(2),
-                        correct: ans.correct,
-                    };
-                    console.log(questions[index].id)
-                    console.log(result)
-                    setResults(prevResults => [...prevResults, result]);
-                });
-                setTotal(sumScore.toFixed(2));
-            }
-        } catch (err) {
-            console.log(err);
-            if (err.response) {
-                setError(err.response.data.error);
-            }
-        }
-    };
+  const fetchScore = async () => {
+    setResults([]);
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/play/${playerId}/results`
+      );
+      if (response.status === 200) {
+        let sumScore = 0;
+        console.log(questions)
+        response.data.forEach((ans, index) => {
+          console.log(index)
+          let timeDifference =questions[index].duration;
+          if(ans.questionStartedAt && ans.answeredAt){
+            const questionStartTime = new Date(ans.questionStartedAt);
+            const answerTime = new Date(ans.answeredAt);
+            timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
+          };
+          let score=0;
+          if (ans.correct) {
+            score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
+            sumScore += score;
+          };
+          const result = {
+            questionId: questions[index].id,
+            timeDifference: timeDifference,
+            score: score.toFixed(2),
+            correct: ans.correct,
+          };
+          console.log(questions[index].id)
+          console.log(result)
+          setResults(prevResults => [...prevResults, result]);
+        });
+        setTotal(sumScore.toFixed(2));
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        setError(err.response.data.error);
+      }
+    }
+  };
 
-    useEffect(() => {
-        if (!playerId || finish) return;
-        const intervalId = setInterval(() => {
-            fetchActive();
-        }, 10);
+  useEffect(() => {
+    if (!playerId || finish) return;
+    const intervalId = setInterval(() => {
+      fetchActive();
+    }, 10);
 
-        return () => clearInterval(intervalId);
-    }, [playerId, finish]);
+    return () => clearInterval(intervalId);
+  }, [playerId, finish]);
 
-    useEffect(() => {
-        if (!active) return;
-        const intervalId = setInterval(() => {
-            setError('');
-            fetchQuestion();
-        }, 100);
+  useEffect(() => {
+    if (!active) return;
+    const intervalId = setInterval(() => {
+      setError('');
+      fetchQuestion();
+    }, 100);
 
-        return () => clearInterval(intervalId);
-    }, [active]);
+    return () => clearInterval(intervalId);
+  }, [active]);
 
-    useEffect(() => {
-        if (prevActiveRef.current && !active) {
-            console.log("Game ended.");
-            setError('');
-            fetchScore();
-        }
-        prevActiveRef.current = active;
-    }, [active]);
+  useEffect(() => {
+    if (prevActiveRef.current && !active) {
+      console.log("Game ended.");
+      setError('');
+      fetchScore();
+    }
+    prevActiveRef.current = active;
+  }, [active]);
 
-    useEffect(() => {
-        if (question && question.id) {
-            setCurrentQuestionIndex(questions.length + 1);
-            setSelectedAnswers([]);
-            setCorrectAnswers([]);
-        }
-    }, [question.id, questions]);
+  useEffect(() => {
+    if (question && question.id) {
+      setCurrentQuestionIndex(questions.length + 1);
+      setSelectedAnswers([]);
+      setCorrectAnswers([]);
+    }
+  }, [question.id, questions]);
 
-    const containerStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        minHeight: '40vh',
-        width: '100%',
-        padding: '0px',
-        margin: '0px',
-        marginTop: '20vh',
-    };
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: '40vh',
+    width: '100%',
+    padding: '0px',
+    margin: '0px',
+    marginTop: '20vh',
+  };
 
-    const boxStyle = {
-        width: '30vw',
-        padding: '2vh 3vw',
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        margin: '2vh 0',
-    };
+  const boxStyle = {
+    width: '30vw',
+    padding: '2vh 3vw',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    margin: '2vh 0',
+  };
 
-    const titleStyle = {
-        fontSize: '4vh',
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: '2vh',
-    };
+  const titleStyle = {
+    fontSize: '4vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
 
-    const subtitleStyle = {
-        fontSize: '2.5vh',
-        fontWeight: '500',
-        color: '#333',
-        marginBottom: '2vh',
-        textAlign: 'left',
-    };
+  const subtitleStyle = {
+    fontSize: '2.5vh',
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: '2vh',
+    textAlign: 'left',
+  };
 
-    const textStyle = {
-        fontSize: '1.8vh',
-        color: '#555',
-        marginBottom: '0.5vh',
-    };
+  const textStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+  };
 
-    const errorStyle = {
-        color: 'red',
-        fontSize: '1.8vh',
-        marginBottom: '1vh',
-        textAlign: 'center',
-    };
+  const errorStyle = {
+    color: 'red',
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+    textAlign: 'center',
+  };
 
-    const inputGroupStyle = {
-        marginBottom: '1.5vh',
-        textAlign: 'left',
-    };
+  const inputGroupStyle = {
+    marginBottom: '1.5vh',
+    textAlign: 'left',
+  };
 
-    const labelStyle = {
-        fontSize: '1.5vh',
-        color: '#555',
-        marginBottom: '0.5vh',
-        marginTop: '5vh',
-        display: 'block',
-    };
+  const labelStyle = {
+    fontSize: '1.5vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+    marginTop: '5vh',
+    display: 'block',
+  };
 
   const inputStyle = {
     width: '20vw',
