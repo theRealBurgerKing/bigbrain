@@ -206,6 +206,7 @@ function GameSession() {
                         ) : (
                             <div style={textStyle}>Waiting for next question...</div>
                         )}
+                        <button onClick={()=>console.log(question)}>111</button>
                     </>
                 ) : (
                     <p style={textStyle}>No status</p>

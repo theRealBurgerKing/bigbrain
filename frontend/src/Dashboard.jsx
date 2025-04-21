@@ -381,7 +381,7 @@ function Dashboard() {
         console.log(response.data);
         setShowGameSessionId('');
         fetchGames();
-        navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id } });
+        navigate(`/session/${games.find(g => g.gameId === id).active}`, { state: { gameId: id, questions: games.find(g => g.gameId === targetId).questions } });
       }
     } catch (err) {
       if (err.response) {
@@ -403,7 +403,7 @@ function Dashboard() {
 
   // Show game
   const showGame = async (targetId) => {
-    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
+    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId,questions: games.find(g => g.gameId === targetId).questions} });
   };
 
   // Handle copy link with success message

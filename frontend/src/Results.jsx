@@ -4,11 +4,7 @@ import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElemen
 
 Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement);
 
-
-
 const processData = (results,question) => {
-
-  
 
   const maxQuestions = Math.max(0,...results.map(u => u.answers.length));
 
@@ -26,13 +22,13 @@ const processData = (results,question) => {
       }
     });
   });
-
-  const scores = results.map((user) => {
+  const scores = results.map((user, idx) => {
     let score = 0;
-
     user.answers.forEach((ans, index) => {
+      console.log(question[index].duration)
       if (ans.correct) {
-        score += Math.log10(1 + questionAnswerTimes[index])*question[index].points;
+        score += Math.log10(1 + question[index].duration- questionAnswerTimes[index][idx])*question[index].points;
+        console.log(Math.log10(1 + question[index].duration -questionAnswerTimes[index][idx])*question[index].points);
       }
     });
     return {
@@ -49,7 +45,7 @@ const processData = (results,question) => {
     return (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2);
   });
 
-  console.log(scores)
+  // console.log(scores)
   return { scores, correctPercentages, averageResponseTimes };
 };
 

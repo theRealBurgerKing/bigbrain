@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import Modal from './Modal';
 
 function PlayGround() {
     const [searchParams] = useSearchParams();
@@ -19,7 +20,8 @@ function PlayGround() {
     const prevActiveRef = useRef(active);
     const [results, setResults] = useState([]);
     const [total, setTotal] = useState(null);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Initialize to 0
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
 
     const attendGame = async () => {
         try {
@@ -155,7 +157,7 @@ function PlayGround() {
                 }
             );
             if (q.status === 200) {
-                console.log('ok');
+                setSubmitSuccess(true);
             }
         } catch (err) {
             console.log(err);
@@ -177,7 +179,7 @@ function PlayGround() {
                     const questionStartTime = new Date(ans.questionStartedAt);
                     const answerTime = new Date(ans.answeredAt);
                     const timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
-                    const score = Math.log10(1 + timeDifference) * questions[index].points;
+                    const score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
 
                     const result = {
                         questionId: questions[index].id,
@@ -230,14 +232,12 @@ function PlayGround() {
 
     useEffect(() => {
         if (question && question.id) {
-            // Update the current question index based on the questions array length
             setCurrentQuestionIndex(questions.length + 1);
             setSelectedAnswers([]);
             setCorrectAnswers([]);
         }
-    }, [question.id, questions]); // Trigger when question.id changes
+    }, [question.id, questions]);
 
-    // Define styles as named objects
     const containerStyle = {
         display: 'flex',
         justifyContent: 'center',
@@ -487,6 +487,12 @@ function PlayGround() {
                             </button>
                         </div>
                     </>
+                )}
+
+                {submitSuccess &&(
+                    <Modal onClose={() => setSubmitSuccess(false)}>
+                        <br/>Success!
+                    </Modal>
                 )}
             </div>
         </div>
