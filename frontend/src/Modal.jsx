@@ -2,38 +2,38 @@ import React, { useEffect } from "react";
 
 
 const modalWrapper = {
-    position: 'fixed',
-    inset: 0,
-    zIndex: 50,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
+  position: 'fixed',
+  inset: 0,
+  zIndex: 50,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
   
 const modalOverlay = {
-    position: 'absolute',
-    inset: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  };
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+};
   
 const modalContent = {
-    position: 'relative',
-    zIndex: 10,
-    backgroundColor: 'white',
-    borderRadius: '1rem',
-    boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
-    padding: '1.5rem',
-    maxWidth: '90%',
-  };
+  position: 'relative',
+  zIndex: 10,
+  backgroundColor: 'white',
+  borderRadius: '1rem',
+  boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
+  padding: '1.5rem',
+  maxWidth: '90%',
+};
   
 const modalClose = {
-    position: 'absolute',
-    top: '0.75rem',
-    right: '0.75rem',
-    color: '#6b7280',
-    fontSize: '1.25rem',
-    cursor: 'pointer',
-  };
+  position: 'absolute',
+  top: '0.75rem',
+  right: '0.75rem',
+  color: '#6b7280',
+  fontSize: '1.25rem',
+  cursor: 'pointer',
+};
 
 
 const Modal = ({ onClose, children }) => {
