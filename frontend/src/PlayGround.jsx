@@ -168,28 +168,35 @@ function PlayGround() {
     };
 
     const fetchScore = async () => {
-        setResults('');
+        setResults([]);
         try {
             const response = await axios.get(
                 `http://localhost:5005/play/${playerId}/results`
             );
             if (response.status === 200) {
                 let sumScore = 0;
+                console.log(questions)
                 response.data.forEach((ans, index) => {
-                    const questionStartTime = new Date(ans.questionStartedAt);
-                    const answerTime = new Date(ans.answeredAt);
-                    const timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
-                    const score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
-
+                    console.log(index)
+                    let timeDifference =questions[index].duration;
+                    if(ans.questionStartedAt && ans.answeredAt){
+                        const questionStartTime = new Date(ans.questionStartedAt);
+                        const answerTime = new Date(ans.answeredAt);
+                        timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
+                    };
+                    let score=0;
+                    if (ans.correct) {
+                        score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
+                        sumScore += score;
+                    };
                     const result = {
                         questionId: questions[index].id,
                         timeDifference: timeDifference,
                         score: score.toFixed(2),
                         correct: ans.correct,
                     };
-                    if (ans.correct) {
-                        sumScore += score;
-                    }
+                    console.log(questions[index].id)
+                    console.log(result)
                     setResults(prevResults => [...prevResults, result]);
                 });
                 setTotal(sumScore.toFixed(2));
@@ -206,7 +213,7 @@ function PlayGround() {
         if (!playerId || finish) return;
         const intervalId = setInterval(() => {
             fetchActive();
-        }, 1000);
+        }, 10);
 
         return () => clearInterval(intervalId);
     }, [playerId, finish]);
@@ -216,7 +223,7 @@ function PlayGround() {
         const intervalId = setInterval(() => {
             setError('');
             fetchQuestion();
-        }, 1000);
+        }, 100);
 
         return () => clearInterval(intervalId);
     }, [active]);
@@ -365,13 +372,13 @@ function PlayGround() {
         marginBottom: '0.5vh',
         borderBottom: '1px solid #eee',
     };
+    window.debugResults = results;
 
     return (
         <div style={containerStyle}>
             <div style={boxStyle}>
                 <h1 style={titleStyle}>Play Ground</h1>
                 {error && <div style={errorStyle}>{error}</div>}
-
                 {!playerId && (
                     <div style={inputGroupStyle}>
                         <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>

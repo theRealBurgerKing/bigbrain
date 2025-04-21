@@ -30,7 +30,6 @@ function OldSession() {
         setShowResults(true);
     };
 
-    // Define styles as named objects
     const containerStyle = {
         display: 'flex',
         justifyContent: 'center',
@@ -38,7 +37,6 @@ function OldSession() {
         width: '100%',
         padding: '0px',
         margin: '0px',
-        // Removed backgroundColor since Pages.jsx now handles it
     };
 
     const boxStyle = {

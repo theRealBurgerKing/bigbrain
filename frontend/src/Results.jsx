@@ -25,7 +25,6 @@ const processData = (results,question) => {
   const scores = results.map((user, idx) => {
     let score = 0;
     user.answers.forEach((ans, index) => {
-      console.log(question[index].duration)
       if (ans.correct) {
         score += Math.log10(1 + question[index].duration- questionAnswerTimes[index][idx])*question[index].points;
         console.log(Math.log10(1 + question[index].duration -questionAnswerTimes[index][idx])*question[index].points);
