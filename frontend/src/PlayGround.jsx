@@ -315,26 +315,26 @@ function PlayGround() {
     marginLeft: '1.5vw',
   };
 
-    const answerListStyle = {
-        listStyle: 'none',
-        padding: '0',
-        margin: '0',
-    };
+  const answerListStyle = {
+    listStyle: 'none',
+    padding: '0',
+    margin: '0',
+  };
 
-    const answerItemStyle = {
-        padding: '1vh 1vw',
-        borderRadius: '5px',
-        marginBottom: '0.5vh',
-    };
+  const answerItemStyle = {
+    padding: '1vh 1vw',
+    borderRadius: '5px',
+    marginBottom: '0.5vh',
+  };
 
-    const correctAnswerStyle = {
-        backgroundColor: 'lightgreen',
-    };
+  const correctAnswerStyle = {
+    backgroundColor: 'lightgreen',
+  };
 
-    const buttonContainerStyle = {
-        marginTop: '2vh',
-        textAlign: 'center',
-    };
+  const buttonContainerStyle = {
+    marginTop: '2vh',
+    textAlign: 'center',
+  };
 
     const buttonStyle = {
         padding: '1vh 2vw',
