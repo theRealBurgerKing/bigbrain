@@ -258,7 +258,7 @@ function PlayGround() {
     };
 
     const titleStyle = {
-        fontSize: '3vh',
+        fontSize: '4vh',
         fontWeight: '600',
         color: '#333',
         marginBottom: '2vh',
@@ -299,13 +299,13 @@ function PlayGround() {
     };
 
     const inputStyle = {
-        width: '25vw',
+        width: '20vw',
         padding: '1vh 1vw',
         fontSize: '1.8vh',
         border: '1px solid #ccc',
         borderRadius: '4px',
         backgroundColor: '#fff',
-        marginLeft: '1vw',
+        marginLeft: '1.5vw',
     };
 
     const answerListStyle = {
@@ -389,6 +389,9 @@ function PlayGround() {
                             <button style={buttonStyle} onClick={attendGame}>
                                 Attend the game!
                             </button>
+                            <button style={buttonStyle} onClick={() => navigate('/play')}>
+                                Back
+                            </button>
                         </div>
                     </div>
                 )}
@@ -449,6 +452,9 @@ function PlayGround() {
                             >
                                 Submit
                             </button>
+                            <button style={buttonStyle} onClick={() => navigate('/play')}>
+                                Back
+                            </button>
                         </div>
                     </>
                 )}
@@ -475,6 +481,11 @@ function PlayGround() {
                             <p style={textStyle}>No results available.</p>
                         )}
                         <p style={textStyle}>Total: {total}</p>
+                        <div style={buttonContainerStyle}>
+                            <button style={buttonStyle} onClick={() => navigate('/play')}>
+                                Back
+                            </button>
+                        </div>
                     </>
                 )}
             </div>

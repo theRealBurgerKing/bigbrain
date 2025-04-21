@@ -50,7 +50,7 @@ function NavigateToPlay() {
     const containerStyle = {
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '60vh',
+        minHeight: '40vh',
         width: '100%',
         padding: '0px',
         margin: '0px',
