@@ -336,174 +336,174 @@ function PlayGround() {
     textAlign: 'center',
   };
 
-    const buttonStyle = {
-        padding: '1vh 2vw',
-        fontSize: '1.8vh',
-        fontWeight: '500',
-        color: '#fff',
-        backgroundColor: '#3b82f6',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        margin: '0.5vh 1vw',
-        transition: 'background-color 0.3s, transform 0.1s',
-    };
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
 
-    const disabledButtonStyle = {
-        padding: '1vh 2vw',
-        fontSize: '1.8vh',
-        fontWeight: '500',
-        color: '#fff',
-        backgroundColor: '#a3bffa',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'not-allowed',
-        margin: '0.5vh 1vw',
-    };
+  const disabledButtonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#a3bffa',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'not-allowed',
+    margin: '0.5vh 1vw',
+  };
 
-    const resultListStyle = {
-        listStyle: 'none',
-        padding: '0',
-        margin: '0',
-    };
+  const resultListStyle = {
+    listStyle: 'none',
+    padding: '0',
+    margin: '0',
+  };
 
-    const resultItemStyle = {
-        padding: '1vh 1vw',
-        marginBottom: '0.5vh',
-        borderBottom: '1px solid #eee',
-    };
-    window.debugResults = results;
+  const resultItemStyle = {
+    padding: '1vh 1vw',
+    marginBottom: '0.5vh',
+    borderBottom: '1px solid #eee',
+  };
+  window.debugResults = results;
 
-    return (
-        <div style={containerStyle}>
-            <div style={boxStyle}>
-                <h1 style={titleStyle}>Play Ground</h1>
-                {error && <div style={errorStyle}>{error}</div>}
-                {!playerId && (
-                    <div style={inputGroupStyle}>
-                        <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
-                        <label style={labelStyle}>
+  return (
+    <div style={containerStyle}>
+      <div style={boxStyle}>
+        <h1 style={titleStyle}>Play Ground</h1>
+        {error && <div style={errorStyle}>{error}</div>}
+        {!playerId && (
+          <div style={inputGroupStyle}>
+            <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
+            <label style={labelStyle}>
                             Name:
-                            <input
-                                value={player}
-                                onChange={(e) => setPlayer(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                type="text"
-                                style={inputStyle}
-                            />
-                        </label>
-                        <div style={buttonContainerStyle}>
-                            <button style={buttonStyle} onClick={attendGame}>
+              <input
+                value={player}
+                onChange={(e) => setPlayer(e.target.value)}
+                onKeyDown={handleKeyDown}
+                type="text"
+                style={inputStyle}
+              />
+            </label>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={attendGame}>
                                 Attend the game!
-                            </button>
-                            <button style={buttonStyle} onClick={() => navigate('/play')}>
+              </button>
+              <button style={buttonStyle} onClick={() => navigate('/play')}>
                                 Back
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {playerId && question && !finish && (
-                    <>
-                        <h2 style={subtitleStyle}>
-                            {active ? `Question ${currentQuestionIndex}: ${question.text}` : 'Waiting'}
-                        </h2>
-                    </>
-                )}
-
-                {playerId && active && question && question.answers && (
-                    <>
-                        <div style={textStyle}>
-                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
-                        </div>
-                        <div style={textStyle}>
-                            Score: {question.points}
-                        </div>
-                        <div style={textStyle}>
-                            Time: {timeLeft}
-                        </div>
-                        {question.answers.length > 0 ? (
-                            <ul style={answerListStyle}>
-                                {question.answers.map((ans, index) => {
-                                    const indexStr = index.toString();
-                                    const isCorrect = correctAnswers?.includes(indexStr);
-                                    return (
-                                        <li
-                                            key={index}
-                                            style={{
-                                                ...answerItemStyle,
-                                                ...(isCorrect ? correctAnswerStyle : {}),
-                                            }}
-                                        >
-                                            {index}: {ans}
-                                            <input
-                                                type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
-                                                name="ans"
-                                                checked={selectedAnswers.includes(indexStr)}
-                                                onChange={() => handleAnswerSelect(indexStr)}
-                                                disabled={timeLeft <= 0}
-                                                style={{ marginLeft: '1vw' }}
-                                            />
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        ) : (
-                            <p style={textStyle}>No questions yet.</p>
-                        )}
-                        <div style={buttonContainerStyle}>
-                            <button
-                                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
-                                onClick={() => submitQuestion()}
-                                disabled={timeLeft <= 0}
-                            >
-                                Submit
-                            </button>
-                            <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
-                            </button>
-                        </div>
-                    </>
-                )}
-
-                {finish && (
-                    <>
-                        <h2 style={subtitleStyle}>Result</h2>
-                        <p style={textStyle}>
-                            <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
-                        </p>
-                        {Array.isArray(results) && results.length > 0 ? (
-                            <ul style={resultListStyle}>
-                                {results.map((r, index) => (
-                                    <li key={index} style={resultItemStyle}>
-                                        Question: {index + 1} : {r.correct ? 'True' : 'False'}
-                                        <br />
-                                        Time cost: {r.timeDifference}s
-                                        <br />
-                                        Your score is {r.score}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p style={textStyle}>No results available.</p>
-                        )}
-                        <p style={textStyle}>Total: {total}</p>
-                        <div style={buttonContainerStyle}>
-                            <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
-                            </button>
-                        </div>
-                    </>
-                )}
-
-                {submitSuccess &&(
-                    <Modal onClose={() => setSubmitSuccess(false)}>
-                        <br/>Success!
-                    </Modal>
-                )}
+              </button>
             </div>
-        </div>
-    );
+          </div>
+        )}
+
+        {playerId && question && !finish && (
+          <>
+            <h2 style={subtitleStyle}>
+              {active ? `Question ${currentQuestionIndex}: ${question.text}` : 'Waiting'}
+            </h2>
+          </>
+        )}
+
+        {playerId && active && question && question.answers && (
+          <>
+            <div style={textStyle}>
+                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
+            </div>
+            <div style={textStyle}>
+                            Score: {question.points}
+            </div>
+            <div style={textStyle}>
+                            Time: {timeLeft}
+            </div>
+            {question.answers.length > 0 ? (
+              <ul style={answerListStyle}>
+                {question.answers.map((ans, index) => {
+                  const indexStr = index.toString();
+                  const isCorrect = correctAnswers?.includes(indexStr);
+                  return (
+                    <li
+                      key={index}
+                      style={{
+                        ...answerItemStyle,
+                        ...(isCorrect ? correctAnswerStyle : {}),
+                      }}
+                    >
+                      {index}: {ans}
+                      <input
+                        type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
+                        name="ans"
+                        checked={selectedAnswers.includes(indexStr)}
+                        onChange={() => handleAnswerSelect(indexStr)}
+                        disabled={timeLeft <= 0}
+                        style={{ marginLeft: '1vw' }}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p style={textStyle}>No questions yet.</p>
+            )}
+            <div style={buttonContainerStyle}>
+              <button
+                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
+                onClick={() => submitQuestion()}
+                disabled={timeLeft <= 0}
+              >
+                                Submit
+              </button>
+              <button style={buttonStyle} onClick={() => navigate('/play')}>
+                                Back
+              </button>
+            </div>
+          </>
+        )}
+
+        {finish && (
+          <>
+            <h2 style={subtitleStyle}>Result</h2>
+            <p style={textStyle}>
+              <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
+            </p>
+            {Array.isArray(results) && results.length > 0 ? (
+              <ul style={resultListStyle}>
+                {results.map((r, index) => (
+                  <li key={index} style={resultItemStyle}>
+                                        Question: {index + 1} : {r.correct ? 'True' : 'False'}
+                    <br />
+                                        Time cost: {r.timeDifference}s
+                    <br />
+                                        Your score is {r.score}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style={textStyle}>No results available.</p>
+            )}
+            <p style={textStyle}>Total: {total}</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => navigate('/play')}>
+                                Back
+              </button>
+            </div>
+          </>
+        )}
+
+        {submitSuccess &&(
+          <Modal onClose={() => setSubmitSuccess(false)}>
+            <br/>Success!
+          </Modal>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default PlayGround;
