@@ -16,6 +16,8 @@ function Dashboard() {
   const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete confirmation modal
+  const [gameToDelete, setGameToDelete] = useState(null); // Store the gameId to delete
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -198,7 +200,7 @@ function Dashboard() {
     navigate(`/game/${gameId}`);
   };
 
-  // Handle delete game
+  // Handle delete game with confirmation modal
   const handleDeleteGame = (gameId) => {
     if (!token) {
       setError('No token found. Please log in again.');
@@ -212,9 +214,15 @@ function Dashboard() {
       return;
     }
 
-    // Filter out the game to delete
+    // Show confirmation modal
+    setGameToDelete(gameId);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm deletion
+  const confirmDeleteGame = () => {
     const updatedGames = games
-      .filter(game => game.gameId !== Number(gameId))
+      .filter(game => game.gameId !== Number(gameToDelete))
       .map(game => ({
         id: game.gameId,
         owner: game.owner,
@@ -232,6 +240,14 @@ function Dashboard() {
       }));
 
     updateGames(updatedGames);
+    setShowDeleteModal(false);
+    setGameToDelete(null);
+  };
+
+  // Cancel deletion
+  const cancelDeleteGame = () => {
+    setShowDeleteModal(false);
+    setGameToDelete(null);
   };
 
   // Handle create game with required name and optional JSON upload
@@ -769,6 +785,22 @@ function Dashboard() {
               >
                 Show Game
               </button>
+            </div>
+          </Modal>
+        )}
+
+        {showDeleteModal && (
+          <Modal onClose={cancelDeleteGame}>
+            <div style={sessionModalContentStyle}>
+              <p style={sessionModalTextStyle}>Are you sure you want to delete this game?</p>
+              <div style={modalButtonContainerStyle}>
+                <button style={buttonStyle} onClick={confirmDeleteGame}>
+                  Confirm
+                </button>
+                <button style={buttonStyle} onClick={cancelDeleteGame}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </Modal>
         )}
