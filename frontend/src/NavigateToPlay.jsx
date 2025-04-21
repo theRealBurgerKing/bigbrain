@@ -5,39 +5,14 @@ import Modal from './Modal'; // 引入 Modal 组件
 
 function NavigateToPlay() {
     const [error, setError] = useState('');
-    const [showErrorModal, setShowErrorModal] = useState(false); // 控制弹窗显示
+    const [showErrorModal, setShowErrorModal] = useState(false);
     const [sessionId, setSessionId] = useState('');
     const navigate = useNavigate();
-
-    const checkSession = async () => {
-        try {
-            // Use POST /play/join/{sessionid} to check if the session exists
-            const response = await axios.post(
-                `http://localhost:5005/play/join/${sessionId}`,
-                { name: "Anonymous Player" } // Use a placeholder name for validation
-            );
-            if (response.status === 200) {
-                // Session exists, navigate to the play page with playerId
-                navigate(`/play/${sessionId}`, { state: { playerId: response.data.playerId } });
-            }
-        } catch (err) {
-            if (err.response) {
-                if (err.response.status === 400) {
-                    setError('Invalid Session ID. Please enter a valid Session ID.');
-                } else {
-                    setError(err.response.data.error || 'An error occurred while checking the session.');
-                }
-            } else {
-                setError('Failed to connect to the server. Please try again.');
-            }
-            setShowErrorModal(true); // 显示错误弹窗
-        }
-    };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            checkSession();
+            navigate(`/play/${sessionId}`);
         }
     };
 
@@ -152,13 +127,12 @@ function NavigateToPlay() {
                     </label>
                 </div>
                 <div style={buttonContainerStyle}>
-                    <button style={buttonStyle} onClick={checkSession}>
+                    <button style={buttonStyle} onClick={() =>navigate(`/play/${sessionId}`)}>
                         Submit
                     </button>
                 </div>
             </div>
 
-            {/* Modal for displaying errors */}
             {showErrorModal && (
                 <Modal onClose={handleCloseModal}>
                     <p style={modalTextStyle}>{error}</p>
