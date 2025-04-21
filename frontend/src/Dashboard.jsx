@@ -16,8 +16,9 @@ function Dashboard() {
   const [showGameGameId, setShowGameGameId] = useState(null);
   const [showGameSession, setShowGameSession] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete confirmation modal
-  const [gameToDelete, setGameToDelete] = useState(null); // Store the gameId to delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [gameToDelete, setGameToDelete] = useState(null);
+  const [copySuccess, setCopySuccess] = useState(false); // New state for copy success message
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -405,6 +406,16 @@ function Dashboard() {
     navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId } });
   };
 
+  // Handle copy link with success message
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
+    setCopySuccess(true);
+    // Hide the message after 2 seconds
+    setTimeout(() => {
+      setCopySuccess(false);
+    }, 2000);
+  };
+
   // Call fetchGames when the component mounts
   useEffect(() => {
     fetchGames();
@@ -610,6 +621,13 @@ function Dashboard() {
     marginBottom: '20px',
   };
 
+  const copySuccessStyle = {
+    fontSize: '1vh',
+    color: '#28a745',
+    marginTop: '1vh',
+    textAlign: 'center',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={dashboardStyle}>
@@ -771,11 +789,12 @@ function Dashboard() {
           <Modal onClose={() => setShowGameSession(false)}>
             <div style={sessionModalContentStyle}>
               <p style={sessionModalTextStyle}>Session ID: {showGameSessionId}</p>
+              {copySuccess && (
+                <p style={copySuccessStyle}>Link copied to clipboard!</p>
+              )}
               <button
                 style={buttonStyle}
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
-                }}
+                onClick={handleCopyLink}
               >
                 Copy Link
               </button>
