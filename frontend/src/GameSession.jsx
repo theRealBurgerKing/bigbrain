@@ -115,141 +115,141 @@ function GameSession() {
     return () => clearInterval(intervalId);
   }, []);
 
-    // Define styles as named objects
-    const containerStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        minHeight: '70vh',
-        width: '100%',
-        padding: '0px',
-        margin: '0px',
-    };
+  // Define styles as named objects
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: '70vh',
+    width: '100%',
+    padding: '0px',
+    margin: '0px',
+  };
 
-    const boxStyle = {
-        width: '50vw',
-        padding: '2vh 3vw',
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        margin: '2vh 0',
-    };
+  const boxStyle = {
+    width: '50vw',
+    padding: '2vh 3vw',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    margin: '2vh 0',
+  };
 
-    const titleStyle = {
-        fontSize: '3vh',
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: '2vh',
-    };
+  const titleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
 
-    const textStyle = {
-        fontSize: '1.8vh',
-        color: '#555',
-        marginBottom: '0.5vh',
-    };
+  const textStyle = {
+    fontSize: '1.8vh',
+    color: '#555',
+    marginBottom: '0.5vh',
+  };
 
-    const errorStyle = {
-        color: 'red',
-        fontSize: '1.8vh',
-        marginBottom: '1vh',
-        textAlign: 'center',
-    };
+  const errorStyle = {
+    color: 'red',
+    fontSize: '1.8vh',
+    marginBottom: '1vh',
+    textAlign: 'center',
+  };
 
-    const buttonContainerStyle = {
-        marginTop: '2vh',
-        textAlign: 'center',
-    };
+  const buttonContainerStyle = {
+    marginTop: '2vh',
+    textAlign: 'center',
+  };
 
-    const buttonStyle = {
-        padding: '1vh 2vw',
-        fontSize: '1.8vh',
-        fontWeight: '500',
-        color: '#fff',
-        backgroundColor: '#3b82f6',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        margin: '0.5vh 1vw',
-        transition: 'background-color 0.3s, transform 0.1s',
-    };
+  const buttonStyle = {
+    padding: '1vh 2vw',
+    fontSize: '1.8vh',
+    fontWeight: '500',
+    color: '#fff',
+    backgroundColor: '#3b82f6',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0.5vh 1vw',
+    transition: 'background-color 0.3s, transform 0.1s',
+  };
 
-    const modalTextStyle = {
-        fontSize: '1.8vh',
-        color: '#333',
-        textAlign: 'center',
-    };
+  const modalTextStyle = {
+    fontSize: '1.8vh',
+    color: '#333',
+    textAlign: 'center',
+  };
 
-    return (
-        <div style={containerStyle}>
-            <div style={boxStyle}>
-                <h2 style={titleStyle}>Game Session</h2>
-                {error && <div style={errorStyle}>{error}</div>}
+  return (
+    <div style={containerStyle}>
+      <div style={boxStyle}>
+        <h2 style={titleStyle}>Game Session</h2>
+        {error && <div style={errorStyle}>{error}</div>}
 
-                {session ? (
-                    <>  
-                        <div style={textStyle}>
-                            <strong>Session ID:</strong> {sessionId}
-                        </div>
-                        <div style={textStyle}>
-                            <strong>Active:</strong> {session.active ? 'On going' : 'Game Finish'}
-                        </div>
-                        <div style={textStyle}>
-                            <strong>Total Questions:</strong> {Object.keys(session.questions).length}
-                        </div>
-                        <div style={textStyle}>
-                            <strong>Current Question:</strong> {session.position === -1 ? 'Waiting for start' : `Question ${session.position + 1}`}
-                        </div>
-                        <div style={textStyle}>
-                            <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}
-                        </div>
-                        {timeLeft !== 0 ? (
-                            <div style={textStyle}>Question Time Left: {timeLeft} sec</div>
-                        ) : (
-                            <div style={textStyle}>Waiting for next question...</div>
-                        )}
-                    </>
-                ) : (
-                    <p style={textStyle}>No status</p>
-                )}
-
-                <div style={buttonContainerStyle}>
-                    <button style={buttonStyle} onClick={() => nextQuestion(gameId)}>
-                        Next
-                    </button>
-                    <button style={buttonStyle} onClick={() => navigate('/dashboard')}>
-                        Back
-                    </button>
-                </div>
-
-                {showResultsOrNot && (
-                    <Modal onClose={() => setShowResultsOrNot(false)}>
-                        <p style={modalTextStyle}>Show Results?</p>
-                        <div style={buttonContainerStyle}>
-                            <button
-                                style={buttonStyle}
-                                onClick={() => {
-                                    getResults(sessionId);
-                                }}
-                            >
-                                Yes
-                            </button>
-                            <button
-                                style={buttonStyle}
-                                onClick={() => navigate('/dashboard')}
-                            >
-                                No
-                            </button>
-                        </div>
-                    </Modal>
-                )}
-
-                {showResults && (
-                    <Modal onClose={() => {setShowResults(false); setShowResultsOrNot(false);navigate('/dashboard')}}>
-                        <Results data={results} question={question} />
-                    </Modal>
-                )}
+        {session ? (
+          <>  
+            <div style={textStyle}>
+              <strong>Session ID:</strong> {sessionId}
             </div>
+            <div style={textStyle}>
+              <strong>Active:</strong> {session.active ? 'On going' : 'Game Finish'}
+            </div>
+            <div style={textStyle}>
+              <strong>Total Questions:</strong> {Object.keys(session.questions).length}
+            </div>
+            <div style={textStyle}>
+              <strong>Current Question:</strong> {session.position === -1 ? 'Waiting for start' : `Question ${session.position + 1}`}
+            </div>
+            <div style={textStyle}>
+              <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}
+            </div>
+            {timeLeft !== 0 ? (
+              <div style={textStyle}>Question Time Left: {timeLeft} sec</div>
+            ) : (
+              <div style={textStyle}>Waiting for next question...</div>
+            )}
+          </>
+        ) : (
+          <p style={textStyle}>No status</p>
+        )}
+
+        <div style={buttonContainerStyle}>
+          <button style={buttonStyle} onClick={() => nextQuestion(gameId)}>
+                        Next
+          </button>
+          <button style={buttonStyle} onClick={() => navigate('/dashboard')}>
+                        Back
+          </button>
         </div>
-    );
+
+        {showResultsOrNot && (
+          <Modal onClose={() => setShowResultsOrNot(false)}>
+            <p style={modalTextStyle}>Show Results?</p>
+            <div style={buttonContainerStyle}>
+              <button
+                style={buttonStyle}
+                onClick={() => {
+                  getResults(sessionId);
+                }}
+              >
+                                Yes
+              </button>
+              <button
+                style={buttonStyle}
+                onClick={() => navigate('/dashboard')}
+              >
+                                No
+              </button>
+            </div>
+          </Modal>
+        )}
+
+        {showResults && (
+          <Modal onClose={() => {setShowResults(false); setShowResultsOrNot(false);navigate('/dashboard')}}>
+            <Results data={results} question={question} />
+          </Modal>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default GameSession;
