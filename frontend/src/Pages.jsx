@@ -17,7 +17,7 @@ import GameSession from './GameSession';
 import PlayGround from './PlayGround';
 import NavigateToPlay from './NavigateToPlay';
 import OldSession from './OldSession';
-import HomePage from './HomePage';
+import Index from './Index';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -190,7 +190,8 @@ function Pages() {
 
       <div style={contentStyle}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* <Route path="/" element={<HomePage />} /> */}
+          <Route path="/" element={<Index token = {token} />} />
           <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
           <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
           <Route path="/dashboard" element={<Dashboard />} />
