@@ -549,7 +549,6 @@
         },
         "PlayerResults": {
           "description": "OK",
-          "description": "Successfully registered",
           "content": {
             "application/json": {
               "schema": {

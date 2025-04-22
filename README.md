@@ -2,13 +2,14 @@
 
 [Please see course website for full spec](https://cgi.cse.unsw.edu.au/~cs6080/NOW/assessments/assignments/ass4)
 
-This assignment is due Friday the 25th of April, 8pm.
+This assignment is due Friday the 25th of April, 11pm.
 
 ## Change Log
 
 * 09/04: Updated typos in spec (headers, bad sum of marks); removed custom.js to simplify; better defined a structure; made clearer what is and isn't required in the main game blob.
 * 11/04: Fix bug on backend where questions & answers were not being returned correctly.
 * 15/04: Fix bug on backend where gameId from frontend was not handled properly, game creation requirement, happy path requirement & swagger doc player can't GET/PUT answer.
+* 22/04: Due date extended 3 hours
 
 ## 1. Setup
 
