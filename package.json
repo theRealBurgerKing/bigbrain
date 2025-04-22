@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "animejs": "^4.0.1",
     "chart.js": "^4.4.9",
     "react-chartjs-2": "^5.3.0",
     "react-router-dom": "^6.30.0",
