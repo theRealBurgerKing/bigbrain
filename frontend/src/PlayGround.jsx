@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
+import { animate, stagger } from 'animejs';
 
 function PlayGround() {
   const [searchParams] = useSearchParams();
@@ -106,6 +107,9 @@ function PlayGround() {
             const updatedQuestions = [...prevQuestions, q.data.question];
             console.log('Updated questions:', updatedQuestions);
             setQuestion(q.data.question);
+            setCorrectAnswers([]);
+            setSelectedAnswers([]);
+            setCurrentQuestionIndex(updatedQuestions.length);
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -120,6 +124,8 @@ function PlayGround() {
         setTimeLeft(remainingTime);
         if (remainingTime === 0) {
           fetchAnswer();
+        } else {
+          setCorrectAnswers([]);
         }
       }
     } catch (err) {
@@ -175,28 +181,28 @@ function PlayGround() {
       );
       if (response.status === 200) {
         let sumScore = 0;
-        console.log(questions)
+        console.log(questions);
         response.data.forEach((ans, index) => {
-          console.log(index)
-          let timeDifference =questions[index].duration;
-          if(ans.questionStartedAt && ans.answeredAt){
+          console.log(index);
+          let timeDifference = questions[index].duration;
+          if (ans.questionStartedAt && ans.answeredAt) {
             const questionStartTime = new Date(ans.questionStartedAt);
             const answerTime = new Date(ans.answeredAt);
             timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
-          };
-          let score=0;
+          }
+          let score = 0;
           if (ans.correct) {
-            score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
+            score = Math.log10(1 + questions[index].duration - timeDifference) * questions[index].points;
             sumScore += score;
-          };
+          }
           const result = {
             questionId: questions[index].id,
             timeDifference: timeDifference,
             score: score.toFixed(2),
             correct: ans.correct,
           };
-          console.log(questions[index].id)
-          console.log(result)
+          console.log(questions[index].id);
+          console.log(result);
           setResults(prevResults => [...prevResults, result]);
         });
         setTotal(sumScore.toFixed(2));
@@ -239,11 +245,25 @@ function PlayGround() {
 
   useEffect(() => {
     if (question && question.id) {
-      setCurrentQuestionIndex(questions.length + 1);
       setSelectedAnswers([]);
       setCorrectAnswers([]);
     }
   }, [question.id, questions]);
+
+  // Trigger animejs animation when in waiting state
+  useEffect(() => {
+    if (playerId && !active && !finish) {
+      animate('.square', {
+        x: 320,
+        rotate: { from: -180 },
+        duration: 1250,
+        delay: stagger(65, { from: 'center' }),
+        ease: 'inOutQuint',
+        loop: true,
+        alternate: true
+      });
+    }
+  }, [playerId, active, finish]);
 
   const containerStyle = {
     display: 'flex',
@@ -372,18 +392,46 @@ function PlayGround() {
     marginBottom: '0.5vh',
     borderBottom: '1px solid #eee',
   };
-  window.debugResults = results;
+
+  const lobbyContainerStyle = {
+    textAlign: 'center',
+  };
+
+  const lobbyTitleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
+
+  const lobbyTextStyle = {
+    fontSize: '2vh',
+    color: '#555',
+    marginBottom: '1vh',
+  };
+
+  const squareContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '2vh',
+  };
+
+  const squareStyle = {
+    width: '30px',
+    height: '30px',
+    backgroundColor: '#3b82f6',
+    margin: '0 5px',
+  };
 
   return (
     <div style={containerStyle}>
       <div style={boxStyle}>
         <h1 style={titleStyle}>Play Ground</h1>
-        {error && <div style={errorStyle}>{error}</div>}
         {!playerId && (
           <div style={inputGroupStyle}>
             <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
             <label style={labelStyle}>
-                            Name:
+              Name:
               <input
                 value={player}
                 onChange={(e) => setPlayer(e.target.value)}
@@ -394,33 +442,47 @@ function PlayGround() {
             </label>
             <div style={buttonContainerStyle}>
               <button style={buttonStyle} onClick={attendGame}>
-                                Attend the game!
+                Attend the game!
               </button>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </div>
         )}
 
-        {playerId && question && !finish && (
-          <>
-            <h2 style={subtitleStyle}>
-              {active ? `Question ${currentQuestionIndex}: ${question.text}` : 'Waiting'}
-            </h2>
-          </>
+        {playerId && !active && !finish && (
+          <div style={lobbyContainerStyle}>
+            <h2 style={lobbyTitleStyle}>Welcome to the Game Lobby!</h2>
+            <div style={squareContainerStyle}>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+            </div>
+            <p style={lobbyTextStyle}>Please wait for the game to start...</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => navigate('/play')}>
+                Back
+              </button>
+            </div>
+          </div>
         )}
 
         {playerId && active && question && question.answers && (
           <>
+            <h2 style={subtitleStyle}>
+              Question {currentQuestionIndex}: {question.text}
+            </h2>
             <div style={textStyle}>
-                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
+              URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
             </div>
             <div style={textStyle}>
-                            Score: {question.points}
+              Score: {question.points}
             </div>
             <div style={textStyle}>
-                            Time: {timeLeft}
+              Time: {timeLeft}
             </div>
             {question.answers.length > 0 ? (
               <ul style={answerListStyle}>
@@ -435,7 +497,6 @@ function PlayGround() {
                         ...(isCorrect ? correctAnswerStyle : {}),
                       }}
                     >
-                      {index}: {ans}
                       <input
                         type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
                         name="ans"
@@ -444,6 +505,7 @@ function PlayGround() {
                         disabled={timeLeft <= 0}
                         style={{ marginLeft: '1vw' }}
                       />
+                      {ans}
                     </li>
                   );
                 })}
@@ -457,10 +519,10 @@ function PlayGround() {
                 onClick={() => submitQuestion()}
                 disabled={timeLeft <= 0}
               >
-                                Submit
+                Submit
               </button>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </>
@@ -476,11 +538,11 @@ function PlayGround() {
               <ul style={resultListStyle}>
                 {results.map((r, index) => (
                   <li key={index} style={resultItemStyle}>
-                                        Question: {index + 1} : {r.correct ? 'True' : 'False'}
+                    Question: {index + 1} : {r.correct ? 'True' : 'False'}
                     <br />
-                                        Time cost: {r.timeDifference}s
+                    Time cost: {r.timeDifference}s
                     <br />
-                                        Your score is {r.score}
+                    Your score is {r.score}
                   </li>
                 ))}
               </ul>
@@ -490,15 +552,15 @@ function PlayGround() {
             <p style={textStyle}>Total: {total}</p>
             <div style={buttonContainerStyle}>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </>
         )}
 
-        {submitSuccess &&(
+        {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
-            <br/>Success!
+            <br />Submission successful!
           </Modal>
         )}
       </div>
