@@ -30,13 +30,12 @@ function Register({ successJob, showError }) {
       showError('Passwords do not match.');
       return;
     }
-    // DON'T DELETE IT, JUST FOR TESTING CONVENIENCE
-    // // Check the email
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(email)) {
-    //   showError('Please enter a valid email address.');
-    //   return;
-    // }
+    // Check the email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError('Please enter a valid email address.');
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -73,11 +72,10 @@ function Register({ successJob, showError }) {
     }
   };
 
-  // Inline CSS styles
+  // Define CSS styles
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
-    // alignItems: 'center',
     height: '100%',
     width: '100%',
     padding: '0px',
@@ -85,8 +83,8 @@ function Register({ successJob, showError }) {
   };
 
   const registerBoxStyle = {
-    width: '30vw', // Fixed width relative to viewport
-    height: '60vh', // Taller than login to accommodate extra fields
+    width: '30vw',
+    height: '60vh',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -94,35 +92,35 @@ function Register({ successJob, showError }) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '2vh 3vw', // Padding in viewport units
+    padding: '2vh 3vw',
     margin: '0px',
     marginTop: '4vh',
   };
 
   const titleStyle = {
-    fontSize: '2.5vh', // Font size in viewport height units
+    fontSize: '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const inputGroupStyle = {
-    marginBottom: '1.5vh', // Reduced spacing for more fields
-    width: '25vw', // Input group width in viewport units
+    marginBottom: '1.5vh',
+    width: '25vw',
     textAlign: 'left',
   };
 
   const labelStyle = {
-    fontSize: '1.5vh', // Label font size in viewport units
+    fontSize: '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '80%', // Full width of input group
-    padding: '1.2vh 2vw', // Slightly smaller padding for compact layout
-    fontSize: '1.8vh', // Font size in viewport units
+    width: '80%',
+    padding: '1.2vh 2vw',
+    fontSize: '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: isLoading ? '#f5f5f5' : '#fff',
@@ -130,9 +128,9 @@ function Register({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '24vw', // Button width matches input group
-    padding: '1.2vh 0', // Padding in viewport units
-    fontSize: '1.8vh', // Font size in viewport units
+    width: '24vw',
+    padding: '1.2vh 0',
+    fontSize: '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
@@ -148,19 +146,21 @@ function Register({ successJob, showError }) {
       <div style={registerBoxStyle}>
         <h1 style={titleStyle}>Register</h1>
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>Email</label>
+          <label id = "emailText2" style={labelStyle}>Email</label>
           <input
             style={inputStyle}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
-            type="text" // Changed from commented type="email" for consistency
+            type="text"
             placeholder="Enter your email"
             disabled={isLoading}
+            required
+            aria-describedby="emailText2"
           />
         </div>
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>Username</label>
+          <label id = "usernameText" style={labelStyle}>Username</label>
           <input
             style={inputStyle}
             value={username}
@@ -169,10 +169,12 @@ function Register({ successJob, showError }) {
             type="text"
             placeholder="Enter your username"
             disabled={isLoading}
+            required
+            aria-describedby="usernameText"
           />
         </div>
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>Password</label>
+          <label id = "passwordText" style={labelStyle}>Password</label>
           <input
             style={inputStyle}
             value={password}
@@ -181,10 +183,12 @@ function Register({ successJob, showError }) {
             type="password"
             placeholder="Enter your password"
             disabled={isLoading}
+            required
+            aria-describedby="passwordText"
           />
         </div>
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>Confirm Password</label>
+          <label id = "confirmPasswordText" style={labelStyle}>Confirm Password</label>
           <input
             style={inputStyle}
             value={confirmPassword}
@@ -194,6 +198,8 @@ function Register({ successJob, showError }) {
             type="password"
             placeholder="Confirm your password"
             disabled={isLoading}
+            required
+            aria-describedby="confirmPasswordText"
           />
         </div>
         <button
