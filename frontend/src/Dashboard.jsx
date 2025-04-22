@@ -638,32 +638,32 @@ function Dashboard() {
 
                 return (
                   <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
-                    <div style={gameNameStyle}>
+                    <p style={gameNameStyle}>
                       <strong>Game Name:</strong> {game.name}
-                    </div>
-                    <div style={gameDetailStyle}>
+                    </p>
+                    <p style={gameDetailStyle}>
                       <strong>Owner:</strong> {game.owner ?? 'N/A'}
-                    </div>
-                    <div style={gameDetailStyle}>
+                    </p>
+                    <p style={gameDetailStyle}>
                       <strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}
-                    </div>
-                    <div style={gameDetailStyle}>
+                    </p>
+                    <p style={gameDetailStyle}>
                       <strong>Active:</strong> {game.active ? 'Yes' : 'No'}
-                    </div>
-                    <div style={gameDetailStyle}>
+                    </p>
+                    <p style={gameDetailStyle}>
                       <strong>Number of Questions:</strong> {game.questions.length}
-                    </div>
-                    <div style={gameDetailStyle}>
+                    </p>
+                    <p style={gameDetailStyle}>
                       <strong>Total Duration:</strong> {totalDuration} seconds
-                    </div>
+                    </p>
                     {game.thumbnail && (
-                      <div style={gameDetailStyle}>
+                      <figure style={gameDetailStyle}>
                         <img
                           src={game.thumbnail}
                           alt={`${game.name} thumbnail`}
                           style={thumbnailStyle}
                         />
-                      </div>
+                      </figure>
                     )}
                     <div style={editGameActionsStyle}>
                       <button

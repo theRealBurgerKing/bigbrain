@@ -300,9 +300,8 @@ function GameEditor() {
             Back to Dashboard
           </button>
         </div>
-        {/* Edit Game Metadata */}
         <div style={inputGroupStyle}>
-          <h3 style={subtitleStyle}>Game Metadata</h3>
+          <h3 style={subtitleStyle}>Edit</h3>
           <label style={labelStyle}>
             Game Name:
             <input
