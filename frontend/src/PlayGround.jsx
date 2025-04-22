@@ -106,6 +106,7 @@ function PlayGround() {
             const updatedQuestions = [...prevQuestions, q.data.question];
             console.log('Updated questions:', updatedQuestions);
             setQuestion(q.data.question);
+            setCorrectAnswers([]); // Clear correct answers when a new question is loaded
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -120,6 +121,8 @@ function PlayGround() {
         setTimeLeft(remainingTime);
         if (remainingTime === 0) {
           fetchAnswer();
+        } else {
+          setCorrectAnswers([]); // Ensure correct answers are cleared if the timer hasn't ended
         }
       }
     } catch (err) {
@@ -175,28 +178,28 @@ function PlayGround() {
       );
       if (response.status === 200) {
         let sumScore = 0;
-        console.log(questions)
+        console.log(questions);
         response.data.forEach((ans, index) => {
-          console.log(index)
-          let timeDifference =questions[index].duration;
-          if(ans.questionStartedAt && ans.answeredAt){
+          console.log(index);
+          let timeDifference = questions[index].duration;
+          if (ans.questionStartedAt && ans.answeredAt) {
             const questionStartTime = new Date(ans.questionStartedAt);
             const answerTime = new Date(ans.answeredAt);
             timeDifference = ((answerTime - questionStartTime) / 1000).toFixed(2);
-          };
-          let score=0;
+          }
+          let score = 0;
           if (ans.correct) {
-            score = Math.log10(1 +questions[index].duration - timeDifference) * questions[index].points;
+            score = Math.log10(1 + questions[index].duration - timeDifference) * questions[index].points;
             sumScore += score;
-          };
+          }
           const result = {
             questionId: questions[index].id,
             timeDifference: timeDifference,
             score: score.toFixed(2),
             correct: ans.correct,
           };
-          console.log(questions[index].id)
-          console.log(result)
+          console.log(questions[index].id);
+          console.log(result);
           setResults(prevResults => [...prevResults, result]);
         });
         setTotal(sumScore.toFixed(2));
@@ -241,7 +244,7 @@ function PlayGround() {
     if (question && question.id) {
       setCurrentQuestionIndex(questions.length + 1);
       setSelectedAnswers([]);
-      setCorrectAnswers([]);
+      setCorrectAnswers([]); // Clear correct answers when a new question is loaded
     }
   }, [question.id, questions]);
 
@@ -383,7 +386,7 @@ function PlayGround() {
           <div style={inputGroupStyle}>
             <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
             <label style={labelStyle}>
-                            Name:
+              Name:
               <input
                 value={player}
                 onChange={(e) => setPlayer(e.target.value)}
@@ -394,10 +397,10 @@ function PlayGround() {
             </label>
             <div style={buttonContainerStyle}>
               <button style={buttonStyle} onClick={attendGame}>
-                                Attend the game!
+                Attend the game!
               </button>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </div>
@@ -414,13 +417,13 @@ function PlayGround() {
         {playerId && active && question && question.answers && (
           <>
             <div style={textStyle}>
-                            URL: <a href={question.youtubeUrl} style={{ color: '#3b82f6' }}>{question.youtubeUrl}</a>
+              URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
             </div>
             <div style={textStyle}>
-                            Score: {question.points}
+              Score: {question.points}
             </div>
             <div style={textStyle}>
-                            Time: {timeLeft}
+              Time: {timeLeft}
             </div>
             {question.answers.length > 0 ? (
               <ul style={answerListStyle}>
@@ -457,10 +460,10 @@ function PlayGround() {
                 onClick={() => submitQuestion()}
                 disabled={timeLeft <= 0}
               >
-                                Submit
+                Submit
               </button>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </>
@@ -476,11 +479,11 @@ function PlayGround() {
               <ul style={resultListStyle}>
                 {results.map((r, index) => (
                   <li key={index} style={resultItemStyle}>
-                                        Question: {index + 1} : {r.correct ? 'True' : 'False'}
+                    Question: {index + 1} : {r.correct ? 'True' : 'False'}
                     <br />
-                                        Time cost: {r.timeDifference}s
+                    Time cost: {r.timeDifference}s
                     <br />
-                                        Your score is {r.score}
+                    Your score is {r.score}
                   </li>
                 ))}
               </ul>
@@ -490,15 +493,15 @@ function PlayGround() {
             <p style={textStyle}>Total: {total}</p>
             <div style={buttonContainerStyle}>
               <button style={buttonStyle} onClick={() => navigate('/play')}>
-                                Back
+                Back
               </button>
             </div>
           </>
         )}
 
-        {submitSuccess &&(
+        {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
-            <br/>Success!
+            <br />Submission Successful!
           </Modal>
         )}
       </div>
