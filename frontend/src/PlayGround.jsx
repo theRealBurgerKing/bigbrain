@@ -107,6 +107,8 @@ function PlayGround() {
             console.log('Updated questions:', updatedQuestions);
             setQuestion(q.data.question);
             setCorrectAnswers([]); // Clear correct answers when a new question is loaded
+            setSelectedAnswers([]); // Clear selected answers when a new question is loaded
+            setCurrentQuestionIndex(updatedQuestions.length); // Set question index to the current number of questions (1-based index after adding new question)
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -242,9 +244,9 @@ function PlayGround() {
 
   useEffect(() => {
     if (question && question.id) {
-      setCurrentQuestionIndex(questions.length + 1);
+      // Removed redundant index setting here since it's handled in fetchQuestion
       setSelectedAnswers([]);
-      setCorrectAnswers([]); // Clear correct answers when a new question is loaded
+      setCorrectAnswers([]);
     }
   }, [question.id, questions]);
 
@@ -501,7 +503,7 @@ function PlayGround() {
 
         {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
-            <br />Submission Successful!
+            <br />Submission successful!
           </Modal>
         )}
       </div>

@@ -20,6 +20,7 @@ function GameSession() {
   const [showResultsOrNot, setShowResultsOrNot] = useState(false);
   const resultsShownRef = useRef(false);
   const [results, setResults] = useState([]);
+  const [isLastQuestion, setIsLastQuestion] = useState(false); // New state to track if it's the last question
 
   const fetchSession = async () => {
     if (!token) {
@@ -35,6 +36,12 @@ function GameSession() {
       if (response.status === 200) {
         setSession(response.data.results);
         setActive(response.data.results.active);
+
+        // Check if the current question is the last one
+        const totalQuestions = Object.keys(response.data.results.questions).length;
+        const currentPosition = response.data.results.position;
+        setIsLastQuestion(currentPosition + 1 === totalQuestions);
+
         if (response.data.results.position >= 0 && response.data.results.active) {
           const startTime = new Date(response.data.results.isoTimeLastQuestionStarted).getTime();
           const duration = response.data.results.questions[response.data.results.position].duration * 1000;
@@ -185,7 +192,7 @@ function GameSession() {
         {error && <div style={errorStyle}>{error}</div>}
 
         {session ? (
-          <>  
+          <>
             <div style={textStyle}>
               <strong>Session ID:</strong> {sessionId}
             </div>
@@ -196,7 +203,9 @@ function GameSession() {
               <strong>Total Questions:</strong> {Object.keys(session.questions).length}
             </div>
             <div style={textStyle}>
-              <strong>Current Question:</strong> {session.position === -1 ? 'Waiting for start' : `Question ${session.position + 1}`}
+              <strong>Current Question:</strong> 
+              {session.position === -1 ? 'Waiting for start' : 
+               (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
             </div>
             <div style={textStyle}>
               <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}
@@ -213,10 +222,10 @@ function GameSession() {
 
         <div style={buttonContainerStyle}>
           <button style={buttonStyle} onClick={() => nextQuestion(gameId)}>
-                        Next
+            Next
           </button>
           <button style={buttonStyle} onClick={() => navigate('/dashboard')}>
-                        Back
+            Back
           </button>
         </div>
 
@@ -230,20 +239,20 @@ function GameSession() {
                   getResults(sessionId);
                 }}
               >
-                                Yes
+                Yes
               </button>
               <button
                 style={buttonStyle}
                 onClick={() => navigate('/dashboard')}
               >
-                                No
+                No
               </button>
             </div>
           </Modal>
         )}
 
         {showResults && (
-          <Modal onClose={() => {setShowResults(false); setShowResultsOrNot(false);navigate('/dashboard')}}>
+          <Modal onClose={() => { setShowResults(false); setShowResultsOrNot(false); navigate('/dashboard') }}>
             <Results data={results} question={question} />
           </Modal>
         )}
