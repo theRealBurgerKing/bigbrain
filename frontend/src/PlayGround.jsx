@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
+import { animate, stagger } from 'animejs';
 
 function PlayGround() {
   const [searchParams] = useSearchParams();
@@ -106,9 +107,9 @@ function PlayGround() {
             const updatedQuestions = [...prevQuestions, q.data.question];
             console.log('Updated questions:', updatedQuestions);
             setQuestion(q.data.question);
-            setCorrectAnswers([]); // Clear correct answers when a new question is loaded
-            setSelectedAnswers([]); // Clear selected answers when a new question is loaded
-            setCurrentQuestionIndex(updatedQuestions.length); // Set question index to the current number of questions (1-based index after adding new question)
+            setCorrectAnswers([]);
+            setSelectedAnswers([]);
+            setCurrentQuestionIndex(updatedQuestions.length);
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -124,7 +125,7 @@ function PlayGround() {
         if (remainingTime === 0) {
           fetchAnswer();
         } else {
-          setCorrectAnswers([]); // Ensure correct answers are cleared if the timer hasn't ended
+          setCorrectAnswers([]);
         }
       }
     } catch (err) {
@@ -244,11 +245,25 @@ function PlayGround() {
 
   useEffect(() => {
     if (question && question.id) {
-      // Removed redundant index setting here since it's handled in fetchQuestion
       setSelectedAnswers([]);
       setCorrectAnswers([]);
     }
   }, [question.id, questions]);
+
+  // Trigger animejs animation when in waiting state
+  useEffect(() => {
+    if (playerId && !active && !finish) {
+      animate('.square', {
+        x: 320,
+        rotate: { from: -180 },
+        duration: 1250,
+        delay: stagger(65, { from: 'center' }),
+        ease: 'inOutQuint',
+        loop: true,
+        alternate: true
+      });
+    }
+  }, [playerId, active, finish]);
 
   const containerStyle = {
     display: 'flex',
@@ -377,13 +392,41 @@ function PlayGround() {
     marginBottom: '0.5vh',
     borderBottom: '1px solid #eee',
   };
-  window.debugResults = results;
+
+  const lobbyContainerStyle = {
+    textAlign: 'center',
+  };
+
+  const lobbyTitleStyle = {
+    fontSize: '3vh',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: '2vh',
+  };
+
+  const lobbyTextStyle = {
+    fontSize: '2vh',
+    color: '#555',
+    marginBottom: '1vh',
+  };
+
+  const squareContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '2vh',
+  };
+
+  const squareStyle = {
+    width: '30px',
+    height: '30px',
+    backgroundColor: '#3b82f6',
+    margin: '0 5px',
+  };
 
   return (
     <div style={containerStyle}>
       <div style={boxStyle}>
         <h1 style={titleStyle}>Play Ground</h1>
-        {/* {error && <div style={errorStyle}>{error}</div>} */}
         {!playerId && (
           <div style={inputGroupStyle}>
             <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
@@ -408,16 +451,30 @@ function PlayGround() {
           </div>
         )}
 
-        {playerId && question && !finish && (
-          <>
-            <h2 style={subtitleStyle}>
-              {active ? `Question ${currentQuestionIndex}: ${question.text}` : 'Waiting'}
-            </h2>
-          </>
+        {playerId && !active && !finish && (
+          <div style={lobbyContainerStyle}>
+            <h2 style={lobbyTitleStyle}>Welcome to the Game Lobby!</h2>
+            <div style={squareContainerStyle}>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle}></div>
+            </div>
+            <p style={lobbyTextStyle}>Please wait for the game to start...</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => navigate('/play')}>
+                Back
+              </button>
+            </div>
+          </div>
         )}
 
         {playerId && active && question && question.answers && (
           <>
+            <h2 style={subtitleStyle}>
+              Question {currentQuestionIndex}: {question.text}
+            </h2>
             <div style={textStyle}>
               URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
             </div>
