@@ -378,7 +378,7 @@ function PlayGround() {
     <div style={containerStyle}>
       <div style={boxStyle}>
         <h1 style={titleStyle}>Play Ground</h1>
-        {error && <div style={errorStyle}>{error}</div>}
+        {/* {error && <div style={errorStyle}>{error}</div>} */}
         {!playerId && (
           <div style={inputGroupStyle}>
             <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
@@ -435,7 +435,6 @@ function PlayGround() {
                         ...(isCorrect ? correctAnswerStyle : {}),
                       }}
                     >
-                      {index}: {ans}
                       <input
                         type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
                         name="ans"
@@ -444,6 +443,7 @@ function PlayGround() {
                         disabled={timeLeft <= 0}
                         style={{ marginLeft: '1vw' }}
                       />
+                      {ans}
                     </li>
                   );
                 })}
