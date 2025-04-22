@@ -152,6 +152,16 @@
         "example": "hayden@unsw.edu.au",
         "description": "Email address"
       },
+      "GameName": {
+        "type": "string",
+        "example": "My cool game",
+        "description": "The name of a game"
+      },
+      "GameThumbnail": {
+        "type": "string",
+        "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=",
+        "description": "Base 64 image that is the thumbnail of the game"
+      },
       "Password": {
         "type": "string",
         "format": "password",
@@ -211,6 +221,11 @@
           "type": "string",
           "example": "Answer 1"
         }
+      },
+      "Answer": {
+        "type": "string",
+        "example": "Answer 1",
+        "description": "An answer to a question"
       },
       "AnswerCorrect": {
         "type": "boolean",
@@ -326,8 +341,8 @@
       "AdminGamePut": {
         "name": "List of questions",
         "description": "A list of question objects - schema determined by client",
-        "in": "body",
-        "schema": {
+        "type": "array",
+        "items": {
           "type": "object",
           "properties": {
             "questions": {
@@ -395,10 +410,14 @@
           }
         },
         "Empty": {
-          "description": "OK",
-          "schema": {
-            "type": "object",
-            "properties": {}
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
           }
         },
         "AdminGameGetAll": {
@@ -434,6 +453,19 @@
                       "$ref": "#/components/fields/GameInactiveSessions"
                     }
                   }
+                }
+              }
+            }
+          }
+        },
+        "PlayerAnswersAll": {
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/fields/Answer"
                 }
               }
             }
@@ -480,29 +512,33 @@
           }
         },
         "SessionResults": {
-          "description": "OK",
-          "schema": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "name": {
-                  "$ref": "#/components/fields/PlayerName"
-                },
-                "answers": {
-                  "type": "array",
-                  "items": {
-                    "properties": {
-                      "answers": {
-                        "$ref": "#/components/fields/Answers"
-                      },
-                      "correct": {
-                        "$ref": "#/components/fields/AnswerCorrect"
-                      },
-                      "answeredAt": {
-                        "$ref": "#/components/fields/Timestamp"
-                      },
-                      "questionStartedAt": {
-                        "$ref": "#/components/fields/Timestamp"
+          "description": "Successfully registered",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "name": {
+                      "$ref": "#/components/fields/PlayerName"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "answers": {
+                            "$ref": "#/components/fields/Answers"
+                          },
+                          "correct": {
+                            "$ref": "#/components/fields/AnswerCorrect"
+                          },
+                          "answeredAt": {
+                            "$ref": "#/components/fields/Timestamp"
+                          },
+                          "questionStartedAt": {
+                            "$ref": "#/components/fields/Timestamp"
+                          }
+                        }
                       }
                     }
                   }
@@ -513,54 +549,63 @@
         },
         "PlayerResults": {
           "description": "OK",
-          "schema": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "answers": {
-                  "$ref": "#/components/fields/Answers"
-                },
-                "correct": {
-                  "$ref": "#/components/fields/AnswerCorrect"
-                },
-                "answeredAt": {
-                  "$ref": "#/components/fields/Timestamp"
-                },
-                "questionStartedAt": {
-                  "$ref": "#/components/fields/Timestamp"
+          "description": "Successfully registered",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "answers": {
+                      "$ref": "#/components/fields/Answers"
+                    },
+                    "correct": {
+                      "$ref": "#/components/fields/AnswerCorrect"
+                    },
+                    "answeredAt": {
+                      "$ref": "#/components/fields/Timestamp"
+                    },
+                    "questionStartedAt": {
+                      "$ref": "#/components/fields/Timestamp"
+                    }
+                  }
                 }
               }
             }
           }
         },
         "SessionStatus": {
-          "description": "OK",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "results": {
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
                 "type": "object",
                 "properties": {
-                  "active": {
-                    "$ref": "#/components/fields/SessionActive"
-                  },
-                  "answerAvailable": {
-                    "$ref": "#/components/fields/SessionAnswerAvailable"
-                  },
-                  "isoTimeLastQuestionStarted": {
-                    "$ref": "#/components/fields/Timestamp"
-                  },
-                  "position": {
-                    "$ref": "#/components/fields/SessionPosition"
-                  },
-                  "questions": {
-                    "$ref": "#/components/fields/GameQuestions"
-                  },
-                  "numQuestions": {
-                    "$ref": "#/components/fields/GameNumQuestions"
-                  },
-                  "players": {
-                    "$ref": "#/components/fields/SessionPlayers"
+                  "results": {
+                    "type": "object",
+                    "properties": {
+                      "active": {
+                        "$ref": "#/components/fields/SessionActive"
+                      },
+                      "answerAvailable": {
+                        "$ref": "#/components/fields/SessionAnswerAvailable"
+                      },
+                      "isoTimeLastQuestionStarted": {
+                        "$ref": "#/components/fields/Timestamp"
+                      },
+                      "position": {
+                        "$ref": "#/components/fields/SessionPosition"
+                      },
+                      "questions": {
+                        "$ref": "#/components/fields/GameQuestions"
+                      },
+                      "numQuestions": {
+                        "$ref": "#/components/fields/GameNumQuestions"
+                      },
+                      "players": {
+                        "$ref": "#/components/fields/SessionPlayers"
+                      }
+                    }
                   }
                 }
               }
@@ -568,49 +613,65 @@
           }
         },
         "PlayerId": {
-          "description": "OK",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "playerId": {
-                "type": "integer",
-                "description": "ID of the player in this session",
-                "example": 2389498
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "playerId": {
+                    "type": "integer",
+                    "description": "ID of the player in this session",
+                    "example": 2389498
+                  }
+                }
               }
             }
           }
         },
         "PlayerStatus": {
-          "description": "OK",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "started": {
-                "type": "boolean",
-                "description": "True if the game has started, false otherwise",
-                "example": true
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "started": {
+                    "type": "boolean",
+                    "description": "True if the game has started, false otherwise",
+                    "example": true
+                  }
+                }
               }
             }
           }
         },
         "PlayerQuestion": {
-          "description": "OK - results of your custom.js 'gameQuestionPublicReturn', along with time that the question started!",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "isoTimeLastQuestionStarted": {
-                "$ref": "#/components/fields/Timestamp"
+          "description": "Successful",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isoTimeLastQuestionStarted": {
+                    "$ref": "#/components/fields/Timestamp"
+                  }
+                }
               }
             }
           }
         },
         "PlayerAnswers": {
           "description": "Answer IDs for a particular question",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "answers": {
-                "$ref": "#/components/fields/Answers"
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers": {
+                    "$ref": "#/components/fields/Answers"
+                  }
+                }
               }
             }
           }
@@ -864,20 +925,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
+            "description": "Successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": ["started", "advanced", "ended"]
-                    },
-                    "position": {
-                      "type": "number",
-                      "description": "Current question position (only for 'advanced' status)"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["started", "advanced", "ended"]
+                        },
+                        "position": {
+                          "type": "number",
+                          "description": "Current question position (only for 'advanced' status)"
+                        }
+                      }
                     }
                   }
                 }
