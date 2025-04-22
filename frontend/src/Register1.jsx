@@ -1,27 +1,24 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useMediaQuery } from '@mui/material';
 
 function Register({ successJob, showError }) {
+  const isMobile = useMediaQuery('(max-width:768px)');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Verify that the password matches when onblur
   const handleConfirmPasswordBlur = (e) => {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(newConfirmPassword);
-
-    // Performed only if neither field is empty
     if (password && newConfirmPassword && password !== newConfirmPassword) {
       showError('Passwords do not match.');
     }
   };
 
-  // Handle registration submission
   const register = async () => {
-    // Check whether the value is null
     if (!email || !username || !password || !confirmPassword) {
       showError('Please fill in all fields.');
       return;
@@ -30,7 +27,6 @@ function Register({ successJob, showError }) {
       showError('Passwords do not match.');
       return;
     }
-    // Check the email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       showError('Please enter a valid email address.');
@@ -40,9 +36,9 @@ function Register({ successJob, showError }) {
     setIsLoading(true);
     try {
       const response = await axios.post('http://localhost:5005/admin/auth/register', {
-        email: email,
-        username: username,
-        password: password,
+        email,
+        username,
+        password,
       });
       const token = response.data.token;
       if (!token) {
@@ -64,7 +60,6 @@ function Register({ successJob, showError }) {
     }
   };
 
-  // Handle Enter key press to trigger registration
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -72,19 +67,19 @@ function Register({ successJob, showError }) {
     }
   };
 
-  // Define CSS styles
+  // 响应式样式
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
     height: '100%',
     width: '100%',
-    padding: '0px',
-    margin:'0px',
+    padding: 0,
+    margin: 0,
   };
 
   const registerBoxStyle = {
-    width: '30vw',
-    height: '60vh',
+    width: isMobile ? '90vw' : '30vw',
+    height: isMobile ? 'auto' : '60vh',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -92,13 +87,12 @@ function Register({ successJob, showError }) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '2vh 3vw',
-    margin: '0px',
+    padding: isMobile ? '5vw' : '2vh 3vw',
     marginTop: '4vh',
   };
 
   const titleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '20px' : '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
@@ -106,21 +100,21 @@ function Register({ successJob, showError }) {
 
   const inputGroupStyle = {
     marginBottom: '1.5vh',
-    width: '25vw',
+    width: isMobile ? '100%' : '25vw',
     textAlign: 'left',
   };
 
   const labelStyle = {
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '14px' : '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '80%',
+    width: '100%',
     padding: '1.2vh 2vw',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '14px' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: isLoading ? '#f5f5f5' : '#fff',
@@ -128,9 +122,9 @@ function Register({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '24vw',
+    width: isMobile ? '100%' : '24vw',
     padding: '1.2vh 0',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '16px' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
@@ -146,7 +140,7 @@ function Register({ successJob, showError }) {
       <div style={registerBoxStyle}>
         <h1 style={titleStyle}>Register</h1>
         <div style={inputGroupStyle}>
-          <label id = "emailText2" style={labelStyle}>Email</label>
+          <label id="emailText2" style={labelStyle}>Email</label>
           <input
             style={inputStyle}
             value={email}
@@ -160,7 +154,7 @@ function Register({ successJob, showError }) {
           />
         </div>
         <div style={inputGroupStyle}>
-          <label id = "usernameText" style={labelStyle}>Username</label>
+          <label id="usernameText" style={labelStyle}>Username</label>
           <input
             style={inputStyle}
             value={username}
@@ -174,7 +168,7 @@ function Register({ successJob, showError }) {
           />
         </div>
         <div style={inputGroupStyle}>
-          <label id = "passwordText" style={labelStyle}>Password</label>
+          <label id="passwordText" style={labelStyle}>Password</label>
           <input
             style={inputStyle}
             value={password}
@@ -188,7 +182,7 @@ function Register({ successJob, showError }) {
           />
         </div>
         <div style={inputGroupStyle}>
-          <label id = "confirmPasswordText" style={labelStyle}>Confirm Password</label>
+          <label id="confirmPasswordText" style={labelStyle}>Confirm Password</label>
           <input
             style={inputStyle}
             value={confirmPassword}

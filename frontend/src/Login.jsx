@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function Login({ successJob, showError }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle login submission
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   const login = async () => {
     if (!email || !password) {
       showError('Please enter both email and password.');
@@ -34,7 +36,6 @@ function Login({ successJob, showError }) {
     }
   };
 
-  // Handle Enter key press to trigger login
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -42,7 +43,6 @@ function Login({ successJob, showError }) {
     }
   };
 
-  // Define CSS styles
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -52,8 +52,8 @@ function Login({ successJob, showError }) {
   };
 
   const loginBoxStyle = {
-    width: '30vw',
-    height: '40vh',
+    width: isMobile ? '90vw' : '30vw',
+    height: isMobile ? 'auto' : '40vh',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -66,7 +66,7 @@ function Login({ successJob, showError }) {
   };
 
   const titleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '2rem' : '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
@@ -74,21 +74,21 @@ function Login({ successJob, showError }) {
 
   const inputGroupStyle = {
     marginBottom: '2vh',
-    width: '23vw',
+    width: isMobile ? '80vw' : '23vw',
     textAlign: 'left',
   };
 
   const labelStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '80%',
+    width: '100%',
     padding: '1.5vh 2vw',
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '1rem' : '1.5vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: isLoading ? '#f5f5f5' : '#fff',
@@ -96,9 +96,9 @@ function Login({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '22.5vw',
+    width: isMobile ? '80vw' : '22.5vw',
     padding: '1.5vh 0',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
@@ -114,7 +114,7 @@ function Login({ successJob, showError }) {
       <div style={loginBoxStyle}>
         <h1 style={titleStyle}>Login</h1>
         <div style={inputGroupStyle}>
-          <label id = "emailText" style={labelStyle}>Email</label>
+          <label id="emailText" style={labelStyle}>Email</label>
           <input
             style={inputStyle}
             value={email}
@@ -128,7 +128,7 @@ function Login({ successJob, showError }) {
           />
         </div>
         <div style={inputGroupStyle}>
-          <label id = "passwordText" style={labelStyle}>Password</label>
+          <label id="passwordText" style={labelStyle}>Password</label>
           <input
             style={inputStyle}
             value={password}
