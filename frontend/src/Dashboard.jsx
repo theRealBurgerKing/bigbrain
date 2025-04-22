@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +18,9 @@ function Dashboard() {
   const [showGameSession, setShowGameSession] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
-  const [copySuccess, setCopySuccess] = useState(false); // New state for copy success message
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // GET request to fetch all games
   const fetchGames = async () => {
@@ -127,7 +130,6 @@ function Dashboard() {
   // Validate JSON content
   const validateJson = (jsonData) => {
     try {
-      // Ensure jsonData is an array of questions
       if (!Array.isArray(jsonData)) {
         throw new Error('JSON must be an array of questions.');
       }
@@ -135,9 +137,7 @@ function Dashboard() {
         throw new Error('JSON must contain at least one question.');
       }
 
-      // Validate each question
       jsonData.forEach((q, index) => {
-        // Required fields
         if (!q.text || typeof q.text !== 'string') {
           throw new Error(`Question ${index + 1}: Text is required and must be a string.`);
         }
@@ -151,7 +151,6 @@ function Dashboard() {
           throw new Error(`Question ${index + 1}: Points must be a positive integer.`);
         }
 
-        // Validate answers
         if (!Array.isArray(q.answers)) {
           throw new Error(`Question ${index + 1}: Answers must be an array.`);
         }
@@ -180,7 +179,6 @@ function Dashboard() {
           }
         }
 
-        // Validate optional fields
         if (q.youtubeUrl && typeof q.youtubeUrl !== 'string') {
           throw new Error(`Question ${index + 1}: youtubeUrl must be a string if provided.`);
         }
@@ -214,7 +212,6 @@ function Dashboard() {
       return;
     }
 
-    // Show confirmation modal
     setGameToDelete(gameId);
     setShowDeleteModal(true);
   };
@@ -277,7 +274,6 @@ function Dashboard() {
       active: null,
     };
 
-    // Handle JSON upload if a file is selected
     if (selectedFile) {
       try {
         const jsonContent = await selectedFile.text();
@@ -286,7 +282,6 @@ function Dashboard() {
           return;
         }
 
-        // Parse JSON to create questions
         newGame.questions = jsonData.map((q, index) => ({
           id: `${newGameId}-${index + 1}`,
           text: q.text,
@@ -398,14 +393,13 @@ function Dashboard() {
 
   // Show game
   const showGame = async (targetId) => {
-    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId,questions: games.find(g => g.gameId === targetId).questions} });
+    navigate(`/session/${games.find(g => g.gameId === targetId).active}`, { state: { gameId: targetId, questions: games.find(g => g.gameId === targetId).questions } });
   };
 
   // Handle copy link with success message
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/play/${showGameSessionId}`);
     setCopySuccess(true);
-    // Hide the message after 2 seconds
     setTimeout(() => {
       setCopySuccess(false);
     }, 2000);
@@ -416,7 +410,7 @@ function Dashboard() {
     fetchGames();
   }, []);
 
-  // Define all styles as named objects
+  // Define all styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -428,8 +422,8 @@ function Dashboard() {
   };
 
   const dashboardStyle = {
-    width: '50vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '50vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -437,14 +431,14 @@ function Dashboard() {
   };
 
   const titleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const subtitleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '1.5rem' : '2.5vh',
     fontWeight: '500',
     color: '#333',
     marginBottom: '2vh',
@@ -457,41 +451,41 @@ function Dashboard() {
   };
 
   const buttonStyle = {
-    height: '3vh',
-    width: '9vw',
-    fontSize: '1.3vh',
+    height: isMobile ? '5vh' : '3vh',
+    width: isMobile ? '30vw' : '9vw',
+    fontSize: isMobile ? '1rem' : '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
+    margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledButtonStyle = {
-    height: '3vh',
-    width: '9vw',
-    fontSize: '1.3vh',
+    height: isMobile ? '5vh' : '3vh',
+    width: isMobile ? '30vw' : '9vw',
+    fontSize: isMobile ? '1rem' : '1.3vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
     border: 'none',
     borderRadius: '4px',
     cursor: 'not-allowed',
-    margin: '0.5vh 1vw',
+    margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
   };
 
   const loadingStyle = {
     textAlign: 'center',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
   };
 
   const errorStyle = {
     color: 'red',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     marginBottom: '1vh',
     textAlign: 'center',
   };
@@ -504,7 +498,7 @@ function Dashboard() {
 
   const gameItemStyle = {
     border: '1px solid #ccc',
-    padding: '2vh 3vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     marginBottom: '1vh',
     borderRadius: '5px',
     backgroundColor: '#fafafa',
@@ -512,25 +506,30 @@ function Dashboard() {
   };
 
   const gameDetailStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     marginBottom: '0.5vh',
   };
 
   const thumbnailStyle = {
-    maxWidth: '10vw',
+    maxWidth: isMobile ? '50vw' : '10vw',
     marginTop: '0.5vh',
   };
 
   const editGameActionsStyle = {
     display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
   };
 
   const sessionActionStyle = {
     display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
+    marginTop: isMobile ? '1vh' : '0',
   };
 
   const noGamesStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     textAlign: 'center',
   };
@@ -541,16 +540,16 @@ function Dashboard() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     backgroundColor: 'white',
-    padding: '2vh 3vw',
+    padding: isMobile ? '3vh 5vw' : '2vh 3vw',
     border: '1px solid #ccc',
     zIndex: '1000',
-    width: '30vw',
+    width: isMobile ? '80vw' : '30vw',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     borderRadius: '8px',
   };
 
   const modalTitleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '1.5rem' : '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
@@ -560,10 +559,11 @@ function Dashboard() {
   const inputGroupStyle = {
     marginBottom: '1.5vh',
     textAlign: 'left',
+    width: '100%',
   };
 
   const labelStyle = {
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '1rem' : '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
@@ -571,15 +571,15 @@ function Dashboard() {
 
   const inputStyle = {
     width: '100%',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
   };
 
   const fileInputStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
   };
 
@@ -587,6 +587,7 @@ function Dashboard() {
     display: 'flex',
     justifyContent: 'center',
     marginTop: '2vh',
+    gap: isMobile ? '2vw' : '1vw',
   };
 
   const sessionModalContentStyle = {
@@ -594,17 +595,17 @@ function Dashboard() {
   };
 
   const sessionModalTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     marginBottom: '1vh',
   };
 
   const gameNameStyle = {
-    fontSize: '2.2vh',
+    fontSize: isMobile ? '1.5rem' : '2.2vh',
     marginBottom: '20px',
   };
 
   const copySuccessStyle = {
-    fontSize: '1vh',
+    fontSize: isMobile ? '0.9rem' : '1vh',
     color: '#28a745',
     marginTop: '1vh',
     textAlign: 'center',
@@ -620,6 +621,7 @@ function Dashboard() {
             style={isLoading ? disabledButtonStyle : buttonStyle}
             onClick={() => setShowCreateModal(true)}
             disabled={isLoading}
+            aria-label="Create a new game"
           >
             Create Game
           </button>
@@ -633,7 +635,6 @@ function Dashboard() {
             <h3 style={subtitleStyle}>Games List</h3>
             <ul style={gameListStyle}>
               {games.map((game) => {
-                // Calculate total duration (sum of all question durations)
                 const totalDuration = game.questions.reduce((sum, q) => sum + (q.duration || 0), 0);
 
                 return (
@@ -660,8 +661,9 @@ function Dashboard() {
                       <figure style={gameDetailStyle}>
                         <img
                           src={game.thumbnail}
-                          alt={`${game.name} thumbnail`}
+                          alt={`Thumbnail for ${game.name}`}
                           style={thumbnailStyle}
+                          loading="lazy"
                         />
                       </figure>
                     )}
@@ -670,6 +672,7 @@ function Dashboard() {
                         style={game.active ? disabledButtonStyle : buttonStyle}
                         onClick={() => handleEditGame(game.gameId)}
                         disabled={game.active}
+                        aria-label={`Edit game ${game.name}`}
                       >
                         Edit Game
                       </button>
@@ -677,6 +680,7 @@ function Dashboard() {
                         style={game.active ? disabledButtonStyle : buttonStyle}
                         onClick={() => handleDeleteGame(game.gameId)}
                         disabled={game.active}
+                        aria-label={`Delete game ${game.name}`}
                       >
                         Delete Game
                       </button>
@@ -686,6 +690,7 @@ function Dashboard() {
                         style={game.active ? disabledButtonStyle : buttonStyle}
                         onClick={() => startGame(game.gameId)}
                         disabled={game.active}
+                        aria-label={`Start game ${game.name}`}
                       >
                         Start Game
                       </button>
@@ -693,6 +698,7 @@ function Dashboard() {
                         <button
                           style={buttonStyle}
                           onClick={() => showGame(game.gameId)}
+                          aria-label={`Show game ${game.name}`}
                         >
                           Show Game
                         </button>
@@ -701,6 +707,7 @@ function Dashboard() {
                         <button
                           style={buttonStyle}
                           onClick={() => stopGame(game.gameId)}
+                          aria-label={`Stop game ${game.name}`}
                         >
                           Stop Game
                         </button>
@@ -709,6 +716,7 @@ function Dashboard() {
                         style={!game.oldSessions.length ? disabledButtonStyle : buttonStyle}
                         onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
                         disabled={!game.oldSessions.length}
+                        aria-label={`Review sessions for game ${game.name}`}
                       >
                         Session Review
                       </button>
@@ -726,22 +734,27 @@ function Dashboard() {
           <div style={modalStyle}>
             <h3 style={modalTitleStyle}>Create New Game</h3>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Game Name (required):</label>
+              <label id="gameNameLabel" style={labelStyle}>Game Name (required):</label>
               <input
                 type="text"
                 value={newGameName}
                 onChange={(e) => setNewGameName(e.target.value)}
                 placeholder="Enter game name"
                 style={inputStyle}
+                required
+                aria-label="Game Name"
+                aria-describedby="gameNameLabel"
               />
             </div>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Upload JSON (optional):</label>
+              <label id="jsonUploadLabel" style={labelStyle}>Upload JSON (optional):</label>
               <input
                 type="file"
                 accept=".json"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
                 style={fileInputStyle}
+                aria-label="Upload JSON file"
+                aria-describedby="jsonUploadLabel"
               />
             </div>
             <div style={modalButtonContainerStyle}>
@@ -749,6 +762,7 @@ function Dashboard() {
                 style={isLoading ? disabledButtonStyle : buttonStyle}
                 onClick={handleCreateGame}
                 disabled={isLoading}
+                aria-label="Create new game"
               >
                 Create
               </button>
@@ -760,6 +774,7 @@ function Dashboard() {
                   setSelectedFile(null);
                   setError('');
                 }}
+                aria-label="Cancel game creation"
               >
                 Cancel
               </button>
@@ -777,12 +792,14 @@ function Dashboard() {
               <button
                 style={buttonStyle}
                 onClick={handleCopyLink}
+                aria-label="Copy game session link"
               >
                 Copy Link
               </button>
               <button
                 style={buttonStyle}
                 onClick={() => showGame(showGameGameId)}
+                aria-label="Show current game session"
               >
                 Show Game
               </button>
@@ -795,10 +812,18 @@ function Dashboard() {
             <div style={sessionModalContentStyle}>
               <p style={sessionModalTextStyle}>Are you sure you want to delete this game?</p>
               <div style={modalButtonContainerStyle}>
-                <button style={buttonStyle} onClick={confirmDeleteGame}>
+                <button
+                  style={buttonStyle}
+                  onClick={confirmDeleteGame}
+                  aria-label="Confirm game deletion"
+                >
                   Confirm
                 </button>
-                <button style={buttonStyle} onClick={cancelDeleteGame}>
+                <button
+                  style={buttonStyle}
+                  onClick={cancelDeleteGame}
+                  aria-label="Cancel game deletion"
+                >
                   Cancel
                 </button>
               </div>

@@ -67,7 +67,7 @@ function Register({ successJob, showError }) {
     }
   };
 
-  // 响应式样式
+
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -137,7 +137,7 @@ function Register({ successJob, showError }) {
 
   return (
     <div style={containerStyle}>
-      <div style={registerBoxStyle}>
+      <div style={registerBoxStyle} aria-label="Registration form">
         <h1 style={titleStyle}>Register</h1>
         <div style={inputGroupStyle}>
           <label id="emailText2" style={labelStyle}>Email</label>
@@ -150,6 +150,7 @@ function Register({ successJob, showError }) {
             placeholder="Enter your email"
             disabled={isLoading}
             required
+            aria-label="Email address"
             aria-describedby="emailText2"
           />
         </div>
@@ -164,6 +165,7 @@ function Register({ successJob, showError }) {
             placeholder="Enter your username"
             disabled={isLoading}
             required
+            aria-label="Username"
             aria-describedby="usernameText"
           />
         </div>
@@ -178,6 +180,7 @@ function Register({ successJob, showError }) {
             placeholder="Enter your password"
             disabled={isLoading}
             required
+            aria-label="Password"
             aria-describedby="passwordText"
           />
         </div>
@@ -193,6 +196,7 @@ function Register({ successJob, showError }) {
             placeholder="Confirm your password"
             disabled={isLoading}
             required
+            aria-label="Confirm password"
             aria-describedby="confirmPasswordText"
           />
         </div>
@@ -201,6 +205,7 @@ function Register({ successJob, showError }) {
           type="submit"
           onClick={register}
           disabled={isLoading}
+          aria-label="Register now"
         >
           {isLoading ? 'Registering...' : 'Register'}
         </button>

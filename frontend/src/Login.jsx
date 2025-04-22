@@ -66,7 +66,7 @@ function Login({ successJob, showError }) {
   };
 
   const titleStyle = {
-    fontSize: isMobile ? '2rem' : '2.5vh',
+    fontSize: isMobile ? '20px' : '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
@@ -124,6 +124,7 @@ function Login({ successJob, showError }) {
             placeholder="Enter your email"
             disabled={isLoading}
             required
+            aria-label = "Email Address"
             aria-describedby="emailText"
           />
         </div>
@@ -138,6 +139,7 @@ function Login({ successJob, showError }) {
             placeholder="Enter your password"
             disabled={isLoading}
             required
+            aria-label = "Password"
             aria-describedby="passwordText"
           />
         </div>
