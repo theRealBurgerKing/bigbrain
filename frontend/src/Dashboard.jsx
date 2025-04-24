@@ -596,7 +596,182 @@ function Dashboard() {
     fetchGames();
   }, []);
 
-  
+  return (
+    <Container>
+      <DashboardContainer isMobile={isMobile}>
+        <Title isMobile={isMobile}>Admin Dashboard</Title>
+
+        <ButtonContainer>
+          <Button
+            isMobile={isMobile}
+            disabled={isLoading}
+            onClick={() => setShowCreateModal(true)}
+            aria-label="Create a new game"
+          >
+            Create Game
+          </Button>
+        </ButtonContainer>
+
+        {isLoading && <LoadingText isMobile={isMobile}>Loading...</LoadingText>}
+        {error && <ErrorText isMobile={isMobile}>{error}</ErrorText>}
+
+        {games.length > 0 ? (
+          <div>
+            <Subtitle isMobile={isMobile}>Games List</Subtitle>
+            <GameList>
+              {games.map((game) => {
+                const totalDuration = game.questions.reduce((sum, q) => sum + (q.duration || 0), 0);
+
+                return (
+                  <GameItem key={game.gameId ?? 'missing-id'} isMobile={isMobile}>
+                    <GameName isMobile={isMobile}>
+                      <strong>Game Name:</strong> {game.name}
+                    </GameName>
+                    <GameDetail isMobile={isMobile}>
+                      <strong>Owner:</strong> {game.owner ?? 'N/A'}
+                    </GameDetail>
+                    <GameDetail isMobile={isMobile}>
+                      <strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}
+                    </GameDetail>
+                    <GameDetail isMobile={isMobile}>
+                      <strong>Active:</strong> {game.active ? 'Yes' : 'No'}
+                    </GameDetail>
+                    <GameDetail isMobile={isMobile}>
+                      <strong>Number of Questions:</strong> {game.questions.length}
+                    </GameDetail>
+                    <GameDetail isMobile={isMobile}>
+                      <strong>Total Duration:</strong> {totalDuration} seconds
+                    </GameDetail>
+                    {game.thumbnail && (
+                      <figure>
+                        <Thumbnail
+                          src={game.thumbnail}
+                          alt={`Thumbnail for ${game.name}`}
+                          isMobile={isMobile}
+                          loading="lazy"
+                        />
+                      </figure>
+                    )}
+                    <EditGameActions isMobile={isMobile}>
+                      <Button
+                        isMobile={isMobile}
+                        disabled={game.active}
+                        onClick={() => handleEditGame(game.gameId)}
+                        aria-label={`Edit game ${game.name}`}
+                      >
+                        Edit Game
+                      </Button>
+                      <Button
+                        isMobile={isMobile}
+                        disabled={game.active}
+                        onClick={() => handleDeleteGame(game.gameId)}
+                        aria-label={`Delete game ${game.name}`}
+                      >
+                        Delete Game
+                      </Button>
+                    </EditGameActions>
+                    <SessionAction isMobile={isMobile}>
+                      <Button
+                        isMobile={isMobile}
+                        disabled={game.active}
+                        onClick={() => startGame(game.gameId)}
+                        aria-label={`Start game ${game.name}`}
+                      >
+                        Start Game
+                      </Button>
+                      {game.active && (
+                        <Button
+                          isMobile={isMobile}
+                          disabled={false}
+                          onClick={() => showGame(game.gameId)}
+                          aria-label={`Show game ${game.name}`}
+                        >
+                          Show Game
+                        </Button>
+                      )}
+                      {game.active && (
+                        <Button
+                          isMobile={isMobile}
+                          disabled={false}
+                          onClick={() => stopGame(game.gameId)}
+                          aria-label={`Stop game ${game.name}`}
+                        >
+                          Stop Game
+                        </Button>
+                      )}
+                      <Button
+                        isMobile={isMobile}
+                        disabled={!game.oldSessions.length}
+                        onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
+                        aria-label={`Review sessions for game ${game.name}`}
+                      >
+                        Session Review
+                      </Button>
+                    </SessionAction>
+                  </GameItem>
+                );
+              })}
+            </GameList>
+          </div>
+        ) : (
+          <NoGamesText isMobile={isMobile}>No games available.</NoGamesText>
+        )}
+
+        {showCreateModal && (
+          <ModalContainer isMobile={isMobile}>
+            <ModalTitle isMobile={isMobile}>Create New Game</ModalTitle>
+            <InputGroup>
+              <Label id="gameNameLabel" isMobile={isMobile}>Game Name (required):</Label>
+              <Input
+                type="text"
+                value={newGameName}
+                onChange={(e) => setNewGameName(e.target.value)}
+                placeholder="Enter game name"
+                isMobile={isMobile}
+                required
+                aria-label="Game Name"
+                aria-describedby="gameNameLabel"
+              />
+            </InputGroup>
+            <InputGroup>
+              <Label id="jsonUploadLabel" isMobile={isMobile}>Upload JSON (optional):</Label>
+              <FileInput
+                type="file"
+                accept=".json"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+                isMobile={isMobile}
+                aria-label="Upload JSON file"
+                aria-describedby="jsonUploadLabel"
+              />
+            </InputGroup>
+            <ModalButtonContainer isMobile={isMobile}>
+              <Button
+                isMobile={isMobile}
+                disabled={isLoading}
+                onClick={handleCreateGame}
+                aria-label="Create new game"
+              >
+                Create
+              </Button>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setNewGameName('');
+                  setSelectedFile(null);
+                  setError('');
+                }}
+                aria-label="Cancel game creation"
+              >
+                Cancel
+              </Button>
+            </ModalButtonContainer>
+          </ModalContainer>
+        )}
+
+        
+  );
 }
 
 export default Dashboard;
