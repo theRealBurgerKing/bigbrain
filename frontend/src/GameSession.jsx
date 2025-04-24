@@ -175,30 +175,36 @@ function GameSession() {
       <div style={boxStyle}>
         <h2 style={titleStyle}>Game Session</h2>
         {session ? (
-          <>
+          <dl style={textStyle}>
             <div style={textStyle}>
-              <strong>Session ID:</strong> {sessionId}
+              <dt><strong>Session ID:</strong></dt>
+              <dd>{sessionId}</dd>
             </div>
             <div style={textStyle}>
-              <strong>Active:</strong> {session.active ? 'On going' : 'Game Finish'}
+              <dt><strong>Active:</strong></dt>
+              <dd>{session.active ? 'On going' : 'Game Finish'}</dd>
             </div>
             <div style={textStyle}>
-              <strong>Total Questions:</strong> {Object.keys(session.questions).length}
+              <dt><strong>Total Questions:</strong></dt>
+              <dd>{Object.keys(session.questions).length}</dd>
             </div>
             <div style={textStyle}>
-              <strong>Current Question:</strong> 
-              {session.position === -1 ? 'Waiting for start' : 
-                (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
+              <dt><strong>Current Question:</strong></dt>
+              <dd>{session.position === -1 ? 'Waiting for start' : (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}</dd>
             </div>
             <div style={textStyle}>
-              <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}
+              <dt><strong>Answer Available:</strong></dt>
+              <dd>{session.answerAvailable ? 'Yes' : 'No'}</dd>
             </div>
             {timeLeft !== 0 ? (
-              <div style={textStyle}>Question Time Left: {timeLeft} sec</div>
+              <div style={textStyle}>
+                <dt>Question Time Left:</dt>
+                <dd>{timeLeft} sec</dd>
+              </div>
             ) : (
               <div style={textStyle}>Waiting for next question...</div>
             )}
-          </>
+          </dl>
         ) : (
           <p style={textStyle}>No status</p>
         )}

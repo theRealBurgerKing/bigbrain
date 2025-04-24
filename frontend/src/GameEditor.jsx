@@ -291,17 +291,16 @@ function GameEditor() {
       <div style={editorStyle}>
         <h2 style={titleStyle}>Edit Game: {game.name}</h2>
         {error && <div style={errorStyle}>{error}</div>}
-        <div style={buttonContainerStyle}>
+        <section style={buttonContainerStyle}>
           <button
             style={buttonStyle}
             onClick={() => navigate('/dashboard')}
           >
             Back to Dashboard
           </button>
-        </div>
-        {/* Edit Game Metadata */}
-        <div style={inputGroupStyle}>
-          <h3 style={subtitleStyle}>Game Metadata</h3>
+        </section>
+        <section style={inputGroupStyle}>
+          <h3 style={subtitleStyle}>Edit</h3>
           <label style={labelStyle}>
             Game Name:
             <input
@@ -348,7 +347,7 @@ function GameEditor() {
             </button>
           </div>
           
-        </div>
+        </section>
       </div>
     </div>
   );

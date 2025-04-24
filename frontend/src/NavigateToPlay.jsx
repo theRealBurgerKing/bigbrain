@@ -115,12 +115,17 @@ function NavigateToPlay() {
               onKeyDown={handleKeyDown}
               type="text"
               style={inputStyle}
+              aria-label="Game Session ID input"
             />
           </label>
         </div>
         <div style={buttonContainerStyle}>
-          <button style={buttonStyle} onClick={() =>navigate(`/play/${sessionId}`)}>
-                        Submit
+          <button
+            style={buttonStyle}
+            onClick={() =>navigate(`/play/${sessionId}`)}
+            aria-label="Submit session ID to join game"
+          >
+            Submit
           </button>
         </div>
       </div>

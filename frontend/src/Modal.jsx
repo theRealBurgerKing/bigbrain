@@ -50,20 +50,27 @@ const Modal = ({ onClose, children }) => {
       <div
         style={modalOverlay}
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {}
-      <div style={modalContent}>
+      <div
+        style={modalContent}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         {}
         <button
           onClick={onClose}
           style={modalClose}
+          aria-label="Close modal"
         >
           ×
         </button>
 
         {}
-        <div>{children}</div>
+        <div id="modal-title">{children}</div>
       </div>
     </div>
   );
