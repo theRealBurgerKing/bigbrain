@@ -10,6 +10,7 @@ function OldSession() {
   const question = location.state?.questions;
   const navigate = useNavigate();
   const [showResults, setShowResults] = useState(false);
+  const [error, setError] = useState('');
   const token = localStorage.getItem('token');
   const [results, setResults] = useState([]);
 
@@ -21,11 +22,13 @@ function OldSession() {
       );
       if (response.status === 200) {
         setResults(response.data);
+        setShowResults(true);
       }
     } catch (err) {
+      setError(
+        err.response?.data?.error || err.message || 'Failed to fetch results. Please try again.'
+      );
     }
-
-    setShowResults(true);
   };
 
   const containerStyle = {
@@ -92,6 +95,17 @@ function OldSession() {
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
+  const buttonContainerStyle = {
+    marginTop: '2vh',
+    textAlign: 'center',
+  };
+
+  const modalTextStyle = {
+    fontSize: '1.8vh',
+    color: '#333',
+    textAlign: 'center',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={boxStyle}>
@@ -101,7 +115,7 @@ function OldSession() {
             style={buttonStyle}
             onClick={() => navigate('/dashboard')}
           >
-                        Back to Dashboard
+            Back to Dashboard
           </button>
         </div>
         {Array.isArray(oldSessions) && oldSessions.length > 0 ? (
@@ -110,7 +124,7 @@ function OldSession() {
               <li key={index} style={sessionItemStyle}>
                 <span style={sessionTextStyle}>{q}</span>
                 <button style={buttonStyle} onClick={() => getResults(q)}>
-                                    Result
+                  Result
                 </button>
               </li>
             ))}
@@ -122,6 +136,17 @@ function OldSession() {
         {showResults && (
           <Modal onClose={() => setShowResults(false)}>
             <Results data={results} question={question} />
+          </Modal>
+        )}
+
+        {error && (
+          <Modal onClose={() => setError('')}>
+            <p style={modalTextStyle}>{error}</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => setError('')}>
+                OK
+              </button>
+            </div>
           </Modal>
         )}
       </div>

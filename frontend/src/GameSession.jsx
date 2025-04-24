@@ -8,7 +8,6 @@ function GameSession() {
   const location = useLocation();
   const gameId = location.state?.gameId;
   const question = location.state?.questions;
-
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -72,6 +71,9 @@ function GameSession() {
           },
         }
       );
+      if (response.status === 200) {
+        console.log('Next question advanced:', response.data);
+      }
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error);
@@ -93,6 +95,9 @@ function GameSession() {
         setResults(response.data);
       }
     } catch (err) {
+      setError(
+        err.response?.data?.error || err.message || 'Failed to fetch results. Please try again.'
+      );
     }
 
     setShowResults(true);
@@ -141,13 +146,6 @@ function GameSession() {
     marginBottom: '0.5vh',
   };
 
-  const errorStyle = {
-    color: 'red',
-    fontSize: '1.8vh',
-    marginBottom: '1vh',
-    textAlign: 'center',
-  };
-
   const buttonContainerStyle = {
     marginTop: '2vh',
     textAlign: 'center',
@@ -176,8 +174,6 @@ function GameSession() {
     <div style={containerStyle}>
       <div style={boxStyle}>
         <h2 style={titleStyle}>Game Session</h2>
-        {error && <div style={errorStyle}>{error}</div>}
-
         {session ? (
           <>
             <div style={textStyle}>
@@ -192,7 +188,7 @@ function GameSession() {
             <div style={textStyle}>
               <strong>Current Question:</strong> 
               {session.position === -1 ? 'Waiting for start' : 
-              (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
+                (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
             </div>
             <div style={textStyle}>
               <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}
@@ -241,6 +237,17 @@ function GameSession() {
         {showResults && (
           <Modal onClose={() => { setShowResults(false); setShowResultsOrNot(false); navigate('/dashboard') }}>
             <Results data={results} question={question} />
+          </Modal>
+        )}
+
+        {error && (
+          <Modal onClose={() => setError('')}>
+            <p style={modalTextStyle}>{error}</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => setError('')}>
+                OK
+              </button>
+            </div>
           </Modal>
         )}
       </div>
