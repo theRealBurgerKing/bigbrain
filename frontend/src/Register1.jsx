@@ -57,7 +57,7 @@ const Label = styled.label.withConfig({
 const Input = styled.input.withConfig({
   shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
 })(({ isMobile, isLoading }) => ({
-  width: '100%',
+  width: '80%',
   padding: '1.2vh 2vw',
   fontSize: isMobile ? '14px' : '1.8vh',
   border: '1px solid #ccc',
@@ -69,7 +69,7 @@ const Input = styled.input.withConfig({
 const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
 })(({ isMobile, isLoading }) => ({
-  width: isMobile ? '100%' : '24vw',
+  width: isMobile ? '30vw' : '24vw',
   padding: '1.2vh 0',
   fontSize: isMobile ? '16px' : '1.8vh',
   fontWeight: '500',

@@ -45,8 +45,8 @@ const ButtonContainer = styled.div(() => ({
 }));
 
 const Button = styled.button(({ isMobile, disabled }) => ({
-  height: isMobile ? '5vh' : '3vh',
-  width: isMobile ? '30vw' : '9vw',
+  height: isMobile ? '4vh' : '3vh',
+  width: isMobile ? '24vw' : '9vw',
   fontSize: isMobile ? '1rem' : '1.3vh',
   fontWeight: '500',
   color: '#fff',
@@ -54,7 +54,7 @@ const Button = styled.button(({ isMobile, disabled }) => ({
   border: 'none',
   borderRadius: '4px',
   cursor: disabled ? 'not-allowed' : 'pointer',
-  margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
+  margin: isMobile ? '0.2vh 0.8vw' : '0.5vh 1vw',
   transition: 'background-color 0.3s, transform 0.1s',
 }));
 

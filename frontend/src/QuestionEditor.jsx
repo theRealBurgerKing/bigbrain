@@ -8,7 +8,7 @@ import styled from 'styled-components';
 const Container = styled.div(() => ({
   display: 'flex',
   justifyContent: 'center',
-  minHeight: '100vh',
+  minHeight: '80vh',
   width: '100%',
   padding: '0px',
   margin: '0px',
@@ -72,7 +72,7 @@ const Button = styled.button.withConfig({
 const DeleteButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['isMobile', 'disabled'].includes(prop),
 })(({ isMobile, disabled }) => ({
-  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  padding: isMobile ? '1vh 4vw' : '1vh 2vw',
   fontSize: isMobile ? '1rem' : '1.8vh',
   fontWeight: '500',
   color: '#fff',
@@ -140,7 +140,7 @@ const QuestionItem = styled.li.withConfig({
 const QuestionText = styled.span.withConfig({
   shouldForwardProp: (prop) => !['isMobile'].includes(prop),
 })(({ isMobile }) => ({
-  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontSize: isMobile ? '1.4rem' : '1.8vh',
   color: '#333',
 }));
 

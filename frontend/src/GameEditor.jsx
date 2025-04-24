@@ -56,7 +56,7 @@ const ButtonContainer = styled.section.withConfig({
 const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
 })(({ isMobile, isLoading }) => ({
-  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  padding: isMobile ? '1.5vh 3vw' : '1vh 2vw',
   fontSize: isMobile ? '1rem' : '1.8vh',
   fontWeight: '500',
   color: '#fff',
