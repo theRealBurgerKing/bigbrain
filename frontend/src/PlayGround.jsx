@@ -4,6 +4,181 @@ import axios from 'axios';
 import Modal from './Modal';
 import { animate, stagger } from 'animejs';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import styled from 'styled-components';
+
+const Container = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  minHeight: '40vh',
+  width: '100%',
+  padding: '0px',
+  margin: '0px',
+  marginTop: '20vh',
+}));
+
+const Box = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '30vw',
+  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  backgroundColor: '#fff',
+  borderRadius: '8px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  margin: '2vh 0',
+}));
+
+const Title = styled.h1.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '2.5rem' : '4vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const Subtitle = styled.h2.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1.5rem' : '2.5vh',
+  fontWeight: '500',
+  color: '#333',
+  marginBottom: '2vh',
+  textAlign: 'left',
+}));
+
+const Text = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+}));
+
+const InputGroup = styled.div(() => ({
+  marginBottom: '1.5vh',
+  textAlign: 'left',
+}));
+
+const Label = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.5vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+  marginTop: '5vh',
+  display: 'block',
+}));
+
+const Input = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '80vw' : '20vw',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+  marginLeft: isMobile ? '0' : '1.5vw',
+}));
+
+const AnswerList = styled.ul(() => ({
+  listStyle: 'none',
+  padding: '0',
+  margin: '0',
+}));
+
+const AnswerItem = styled.li.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
+  borderRadius: '5px',
+  marginBottom: '0.5vh',
+}));
+
+const ButtonContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginTop: '2vh',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+  justifyContent: 'center',
+}));
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'disabled'].includes(prop),
+})(({ isMobile, disabled }) => ({
+  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: disabled ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  transition: 'background-color 0.3s, transform 0.1s',
+}));
+
+const ResultList = styled.ul(() => ({
+  listStyle: 'none',
+  padding: '0',
+  margin: '0',
+}));
+
+const ResultItem = styled.li.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
+  marginBottom: '0.5vh',
+  borderBottom: '1px solid #eee',
+}));
+
+const LobbyContainer = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  textAlign: 'center',
+}));
+
+const LobbyTitle = styled.h2.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '2rem' : '3vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const LobbyText = styled.p.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1.2rem' : '2vh',
+  color: '#555',
+  marginBottom: '1vh',
+}));
+
+const SquareContainer = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: '2vh',
+}));
+
+const Square = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '20px' : '30px',
+  height: isMobile ? '20px' : '30px',
+  backgroundColor: '#3b82f6',
+  margin: isMobile ? '0 3px' : '0 5px',
+}));
+
+const ModalText = styled.p.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#333',
+  textAlign: 'center',
+}));
 
 function PlayGround() {
   const [searchParams] = useSearchParams();
@@ -250,349 +425,48 @@ function PlayGround() {
     }
   }, [playerId, active, finish]);
 
-  // Define styles with mobile responsiveness
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: '40vh',
-    width: '100%',
-    padding: '0px',
-    margin: '0px',
-    marginTop: '20vh',
-  };
-
-  const boxStyle = {
-    width: isMobile ? '90vw' : '30vw',
-    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    margin: '2vh 0',
-  };
-
-  const titleStyle = {
-    fontSize: isMobile ? '2.5rem' : '4vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-  };
-
-  const subtitleStyle = {
-    fontSize: isMobile ? '1.5rem' : '2.5vh',
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: '2vh',
-    textAlign: 'left',
-  };
-
-  const textStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#555',
-    marginBottom: '0.5vh',
-  };
-
-  const inputGroupStyle = {
-    marginBottom: '1.5vh',
-    textAlign: 'left',
-  };
-
-  const labelStyle = {
-    fontSize: isMobile ? '1rem' : '1.5vh',
-    color: '#555',
-    marginBottom: '0.5vh',
-    marginTop: '5vh',
-    display: 'block',
-  };
-
-  const inputStyle = {
-    width: isMobile ? '80vw' : '20vw',
-    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    backgroundColor: '#fff',
-    marginLeft: isMobile ? '0' : '1.5vw',
-  };
-
-  const answerListStyle = {
-    listStyle: 'none',
-    padding: '0',
-    margin: '0',
-  };
-
-  const answerItemStyle = {
-    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
-    borderRadius: '5px',
-    marginBottom: '0.5vh',
-  };
-
-  const correctAnswerStyle = {
-    backgroundColor: 'lightgreen',
-  };
-
-  const buttonContainerStyle = {
-    marginTop: '2vh',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    gap: isMobile ? '1vh' : '1vw',
-    justifyContent: 'center',
-  };
-
-  const buttonStyle = {
-    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#3b82f6',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s, transform 0.1s',
-  };
-
-  const disabledButtonStyle = {
-    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#a3bffa',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'not-allowed',
-  };
-
-  const resultListStyle = {
-    listStyle: 'none',
-    padding: '0',
-    margin: '0',
-  };
-
-  const resultItemStyle = {
-    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
-    marginBottom: '0.5vh',
-    borderBottom: '1px solid #eee',
-  };
-
-  const lobbyContainerStyle = {
-    textAlign: 'center',
-  };
-
-  const lobbyTitleStyle = {
-    fontSize: isMobile ? '2rem' : '3vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-  };
-
-  const lobbyTextStyle = {
-    fontSize: isMobile ? '1.2rem' : '2vh',
-    color: '#555',
-    marginBottom: '1vh',
-  };
-
-  const squareContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '2vh',
-  };
-
-  const squareStyle = {
-    width: isMobile ? '20px' : '30px',
-    height: isMobile ? '20px' : '30px',
-    backgroundColor: '#3b82f6',
-    margin: isMobile ? '0 3px' : '0 5px',
-  };
-
-  const modalTextStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#333',
-    textAlign: 'center',
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={boxStyle}>
-        <h1 style={titleStyle}>Play Ground</h1>
+    <Container>
+      <Box isMobile={isMobile}>
+        <Title isMobile={isMobile}>Play Ground</Title>
         {!playerId && (
-          <div style={inputGroupStyle}>
-            <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
-            <label id="playerNameLabel" style={labelStyle}>
+          <InputGroup>
+            <Subtitle isMobile={isMobile}>Game: {sessionId || 'Unknown'}</Subtitle>
+            <Label id="playerNameLabel" isMobile={isMobile}>
               Name:
-              <input
+              <Input
+                isMobile={isMobile}
                 value={player}
                 onChange={(e) => setPlayer(e.target.value)}
                 onKeyDown={handleKeyDown}
                 type="text"
-                style={inputStyle}
                 required
                 aria-label="Player name"
                 aria-describedby="playerNameLabel"
               />
-            </label>
-            <div style={buttonContainerStyle}>
-              <button
-                style={buttonStyle}
+            </Label>
+            <ButtonContainer isMobile={isMobile}>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
                 onClick={attendGame}
                 aria-label="Join the game"
               >
                 Attend the game!
-              </button>
-              <button
-                style={buttonStyle}
+              </Button>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
                 onClick={() => navigate('/play')}
                 aria-label="Return to game selection screen"
               >
                 Back
-              </button>
-            </div>
-          </div>
+              </Button>
+            </ButtonContainer>
+          </InputGroup>
         )}
 
-        {playerId && !active && !finish && (
-          <section aria-labelledby="lobby-title" style={lobbyContainerStyle}>
-            <h2 style={lobbyTitleStyle}>Welcome to the Game Lobby!</h2>
-            <div style={squareContainerStyle}>
-              <div className="square" style={squareStyle} aria-hidden="true"></div>
-              <div className="square" style={squareStyle} aria-hidden="true"></div>
-              <div className="square" style={squareStyle} aria-hidden="true"></div>
-              <div className="square" style={squareStyle} aria-hidden="true"></div>
-              <div className="square" style={squareStyle} aria-hidden="true"></div>
-            </div>
-            <p style={lobbyTextStyle} aria-live="polite">Please wait for the game to start...</p>
-            <div style={buttonContainerStyle}>
-              <button
-                style={buttonStyle}
-                onClick={() => navigate('/play')}
-                aria-label="Return to game selection screen"
-              >
-                Back
-              </button>
-            </div>
-          </section>
-        )}
-
-        {playerId && active && question && question.answers && (
-          <>
-            <h2 style={subtitleStyle}>
-              Question {currentQuestionIndex + 1}: {question.text}
-            </h2>
-            <div style={textStyle}>
-              URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
-            </div>
-            <div style={textStyle}>
-              Score: {question.points}
-            </div>
-            <div style={textStyle}>
-              Time: {timeLeft}
-            </div>
-            {question.answers.length > 0 ? (
-              <ul style={answerListStyle}>
-                {question.answers.map((ans, index) => {
-                  const indexStr = index.toString();
-                  const isCorrect = correctAnswers?.includes(indexStr);
-                  return (
-                    <li
-                      key={index}
-                      style={{
-                        ...answerItemStyle,
-                        ...(isCorrect ? correctAnswerStyle : {}),
-                      }}
-                    >
-                      <input
-                        type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
-                        name="ans"
-                        checked={selectedAnswers.includes(indexStr)}
-                        onChange={() => handleAnswerSelect(indexStr)}
-                        disabled={timeLeft <= 0}
-                        style={{ marginLeft: '1vw' }}
-                        aria-label={`Option ${index + 1}: ${ans}`}
-                        id={`answer-${index}`}
-                      />
-                      <label htmlFor={`answer-${index}`} style={{ marginLeft: '0.5vw' }}>{ans}</label>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p style={textStyle}>No questions yet.</p>
-            )}
-            <div style={buttonContainerStyle}>
-              <button
-                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
-                onClick={() => submitQuestion()}
-                disabled={timeLeft <= 0}
-                aria-label="Submit your answer"
-              >
-                Submit
-              </button>
-              <button
-                style={buttonStyle}
-                onClick={() => navigate('/play')}
-                aria-label="Return to game selection screen"
-              >
-                Back
-              </button>
-            </div>
-          </>
-        )}
-
-        {finish && (
-          <>
-            <h2 style={subtitleStyle}>Result</h2>
-            <p style={textStyle}>
-              <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
-            </p>
-            {Array.isArray(results) && results.length > 0 ? (
-              <ul style={resultListStyle}>
-                {results.map((r, index) => (
-                  <li key={index} style={resultItemStyle}>
-                    Question: {index + 1} : {r.correct ? 'True' : 'False'}
-                    <br />
-                    Time cost: {r.timeDifference}s
-                    <br />
-                    Your score is {r.score}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p style={textStyle}>No results available.</p>
-            )}
-            <p style={textStyle}>Total: {total}</p>
-            <div style={buttonContainerStyle}>
-              <button
-                style={buttonStyle}
-                onClick={() => navigate('/play')}
-                aria-label="Return to game selection screen"
-              >
-                Back
-              </button>
-            </div>
-          </>
-        )}
-
-        {submitSuccess && (
-          <Modal onClose={() => setSubmitSuccess(false)}>
-            <p style={modalTextStyle}>Submission successful!</p>
-          </Modal>
-        )}
-
-        {error && (
-          <Modal onClose={() => setError('')}>
-            <p style={modalTextStyle}>{error}</p>
-            <div style={buttonContainerStyle}>
-              <button
-                style={buttonStyle}
-                onClick={() => setError('')}
-                aria-label="Close error message"
-              >
-                OK
-              </button>
-            </div>
-          </Modal>
-        )}
-      </div>
-    </div>
+        
   );
 }
 
