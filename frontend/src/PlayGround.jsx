@@ -17,10 +17,10 @@ const Container = styled.div(() => ({
 }));
 
 const Box = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  width: isMobile ? '90vw' : '30vw',
-  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  width: _isMobile ? '90vw' : '30vw',
+  padding: _isMobile ? '2vh 4vw' : '2vh 3vw',
   backgroundColor: '#fff',
   borderRadius: '8px',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -28,18 +28,18 @@ const Box = styled.div.withConfig({
 }));
 
 const Title = styled.h1.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '2.5rem' : '4vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '2.5rem' : '4vh',
   fontWeight: '600',
   color: '#333',
   marginBottom: '2vh',
 }));
 
 const Subtitle = styled.h2.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '1.5rem' : '2.5vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '1.5rem' : '2.5vh',
   fontWeight: '500',
   color: '#333',
   marginBottom: '2vh',
@@ -47,17 +47,17 @@ const Subtitle = styled.h2.withConfig({
 }));
 
 const Text = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '1rem' : '1.8vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '1rem' : '1.8vh',
   color: '#555',
   marginBottom: '0.5vh',
 }));
 
 const Thumbnail = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  maxWidth: isMobile ? '80vw' : '20vw',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  maxWidth: _isMobile ? '80vw' : '20vw',
   marginBottom: '1vh',
   borderRadius: '8px',
 }));
@@ -68,9 +68,9 @@ const InputGroup = styled.div(() => ({
 }));
 
 const Label = styled.label.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '1rem' : '1.5vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '1rem' : '1.5vh',
   color: '#555',
   marginBottom: '0.5vh',
   marginTop: '5vh',
@@ -78,15 +78,15 @@ const Label = styled.label.withConfig({
 }));
 
 const Input = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  width: isMobile ? '80vw' : '20vw',
-  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
-  fontSize: isMobile ? '1rem' : '1.8vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  width: _isMobile ? '80vw' : '20vw',
+  padding: _isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: _isMobile ? '1rem' : '1.8vh',
   border: '1px solid #ccc',
   borderRadius: '4px',
   backgroundColor: '#fff',
-  marginLeft: isMobile ? '0' : '1.5vw',
+  marginLeft: _isMobile ? '0' : '1.5vw',
 }));
 
 const AnswerList = styled.ul(() => ({
@@ -96,29 +96,29 @@ const AnswerList = styled.ul(() => ({
 }));
 
 const AnswerItem = styled.li.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  padding: _isMobile ? '1.5vh 2vw' : '1vh 1vw',
   borderRadius: '5px',
   marginBottom: '0.5vh',
 }));
 
 const ButtonContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
   marginTop: '2vh',
   textAlign: 'center',
   display: 'flex',
-  flexDirection: isMobile ? 'column' : 'row',
-  gap: isMobile ? '1vh' : '1vw',
+  flexDirection: _isMobile ? 'column' : 'row',
+  gap: _isMobile ? '1vh' : '1vw',
   justifyContent: 'center',
 }));
 
 const Button = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['isMobile', 'disabled'].includes(prop),
-})(({ isMobile, disabled }) => ({
-  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
-  fontSize: isMobile ? '1rem' : '1.8vh',
+  shouldForwardProp: (prop) => !['_isMobile', 'disabled'].includes(prop),
+})(({ _isMobile, disabled }) => ({
+  padding: _isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  fontSize: _isMobile ? '1rem' : '1.8vh',
   fontWeight: '500',
   color: '#fff',
   backgroundColor: disabled ? '#a3bffa' : '#3b82f6',
@@ -135,34 +135,34 @@ const ResultList = styled.ul(() => ({
 }));
 
 const ResultItem = styled.li.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  padding: _isMobile ? '1.5vh 2vw' : '1vh 1vw',
   marginBottom: '0.5vh',
   borderBottom: '1px solid #eee',
 }));
 
 const LobbyContainer = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
   textAlign: 'center',
 }));
 
 const LobbyTitle = styled.h2.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '2rem' : '3vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '2rem' : '3vh',
   fontWeight: '600',
   color: '#333',
   marginBottom: '2vh',
 }));
 
 const LobbyText = styled.p.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '1.2rem' : '2vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '1.2rem' : '2vh',
   color: '#555',
-  marginBottom: '1vh',
+  marginBottom: ' desaf1vh',
 }));
 
 const SquareContainer = styled.div(() => ({
@@ -172,18 +172,18 @@ const SquareContainer = styled.div(() => ({
 }));
 
 const Square = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  width: isMobile ? '20px' : '30px',
-  height: isMobile ? '20px' : '30px',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  width: _isMobile ? '20px' : '30px',
+  height: _isMobile ? '20px' : '30px',
   backgroundColor: '#3b82f6',
-  margin: isMobile ? '0 3px' : '0 5px',
+  margin: _isMobile ? '0 3px' : '0 5px',
 }));
 
 const ModalText = styled.p.withConfig({
-  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
-})(({ isMobile }) => ({
-  fontSize: isMobile ? '1rem' : '1.8vh',
+  shouldForwardProp: (prop) => !['_isMobile'].includes(prop),
+})(({ _isMobile }) => ({
+  fontSize: _isMobile ? '1rem' : '1.8vh',
   color: '#333',
   textAlign: 'center',
 }));
@@ -208,7 +208,7 @@ function PlayGround() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const _isMobile = useMediaQuery('(max-width: 768px)');
 
   const attendGame = async () => {
     try {
@@ -435,15 +435,15 @@ function PlayGround() {
 
   return (
     <Container>
-      <Box isMobile={isMobile}>
-        <Title isMobile={isMobile}>Play Ground</Title>
+      <Box _isMobile={_isMobile}>
+        <Title _isMobile={_isMobile}>Play Ground</Title>
         {!playerId && (
           <InputGroup>
-            <Subtitle isMobile={isMobile}>Game: {sessionId || 'Unknown'}</Subtitle>
-            <Label id="playerNameLabel" isMobile={isMobile}>
+            <Subtitle _isMobile={_isMobile}>Game: {sessionId || 'Unknown'}</Subtitle>
+            <Label id="playerNameLabel" _isMobile={_isMobile}>
               Name:
               <Input
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 value={player}
                 onChange={(e) => setPlayer(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -453,9 +453,9 @@ function PlayGround() {
                 aria-describedby="playerNameLabel"
               />
             </Label>
-            <ButtonContainer isMobile={isMobile}>
+            <ButtonContainer _isMobile={_isMobile}>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={false}
                 onClick={attendGame}
                 aria-label="Join the game"
@@ -463,7 +463,7 @@ function PlayGround() {
                 Attend the game!
               </Button>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={false}
                 onClick={() => navigate('/play')}
                 aria-label="Return to game selection screen"
@@ -475,19 +475,19 @@ function PlayGround() {
         )}
 
         {playerId && !active && !finish && (
-          <LobbyContainer isMobile={isMobile} aria-labelledby="lobby-title">
-            <LobbyTitle isMobile={isMobile}>Welcome to the Game Lobby!</LobbyTitle>
+          <LobbyContainer _isMobile={_isMobile} aria-labelledby="lobby-title">
+            <LobbyTitle _isMobile={_isMobile}>Welcome to the Game Lobby!</LobbyTitle>
             <SquareContainer>
-              <Square className="square" isMobile={isMobile} aria-hidden="true" />
-              <Square className="square" isMobile={isMobile} aria-hidden="true" />
-              <Square className="square" isMobile={isMobile} aria-hidden="true" />
-              <Square className="square" isMobile={isMobile} aria-hidden="true" />
-              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+              <Square className="square" _isMobile={_isMobile} aria-hidden="true" />
+              <Square className="square" _isMobile={_isMobile} aria-hidden="true" />
+              <Square className="square" _isMobile={_isMobile} aria-hidden="true" />
+              <Square className="square" _isMobile={_isMobile} aria-hidden="true" />
+              <Square className="square" _isMobile={_isMobile} aria-hidden="true" />
             </SquareContainer>
-            <LobbyText isMobile={isMobile} aria-live="polite">Please wait for the game to start...</LobbyText>
-            <ButtonContainer isMobile={isMobile}>
+            <LobbyText _isMobile={_isMobile} aria-live="polite">Please wait for the game to start...</LobbyText>
+            <ButtonContainer _isMobile={_isMobile}>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={false}
                 onClick={() => navigate('/play')}
                 aria-label="Return to game selection screen"
@@ -500,24 +500,24 @@ function PlayGround() {
 
         {playerId && active && question && question.answers && (
           <>
-            <Subtitle isMobile={isMobile}>
+            <Subtitle _isMobile={_isMobile}>
               Question {currentQuestionIndex + 1}: {question.text}
             </Subtitle>
             {question.image && (
               <Thumbnail
                 src={question.image}
                 alt={`Image for question ${currentQuestionIndex + 1}`}
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 loading="lazy"
               />
             )}
-            <Text isMobile={isMobile}>
+            <Text _isMobile={_isMobile}>
               URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
             </Text>
-            <Text isMobile={isMobile}>
+            <Text _isMobile={_isMobile}>
               Score: {question.points}
             </Text>
-            <Text isMobile={isMobile}>
+            <Text _isMobile={_isMobile}>
               Time: {timeLeft}
             </Text>
             {question.answers.length > 0 ? (
@@ -528,7 +528,7 @@ function PlayGround() {
                   return (
                     <AnswerItem
                       key={index}
-                      isMobile={isMobile}
+                      _isMobile={_isMobile}
                       style={isCorrect ? { backgroundColor: 'lightgreen' } : {}}
                     >
                       <input
@@ -546,11 +546,11 @@ function PlayGround() {
                 })}
               </AnswerList>
             ) : (
-              <Text isMobile={isMobile}>No questions yet.</Text>
+              <Text _isMobile={_isMobile}>No questions yet.</Text>
             )}
-            <ButtonContainer isMobile={isMobile}>
+            <ButtonContainer _isMobile={_isMobile}>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={timeLeft <= 0}
                 onClick={() => submitQuestion()}
                 aria-label="Submit your answer"
@@ -558,7 +558,7 @@ function PlayGround() {
                 Submit
               </Button>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={false}
                 onClick={() => navigate('/play')}
                 aria-label="Return to game selection screen"
@@ -571,14 +571,14 @@ function PlayGround() {
 
         {finish && (
           <>
-            <Subtitle isMobile={isMobile}>Result</Subtitle>
-            <Text isMobile={isMobile}>
+            <Subtitle _isMobile={_isMobile}>Result</Subtitle>
+            <Text _isMobile={_isMobile}>
               <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
             </Text>
             {Array.isArray(results) && results.length > 0 ? (
               <ResultList>
                 {results.map((r, index) => (
-                  <ResultItem key={index} isMobile={isMobile}>
+                  <ResultItem key={index} _isMobile={_isMobile}>
                     Question: {index + 1} : {r.correct ? 'True' : 'False'}
                     <br />
                     Time cost: {r.timeDifference}s
@@ -588,12 +588,12 @@ function PlayGround() {
                 ))}
               </ResultList>
             ) : (
-              <Text isMobile={isMobile}>No results available.</Text>
+              <Text _isMobile={_isMobile}>No results available.</Text>
             )}
-            <Text isMobile={isMobile}>Total: {total}</Text>
-            <ButtonContainer isMobile={isMobile}>
+            <Text _isMobile={_isMobile}>Total: {total}</Text>
+            <ButtonContainer _isMobile={_isMobile}>
               <Button
-                isMobile={isMobile}
+                _isMobile={_isMobile}
                 disabled={false}
                 onClick={() => navigate('/play')}
                 aria-label="Return to game selection screen"
@@ -606,7 +606,13 @@ function PlayGround() {
 
         {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
-            <ModalText isMobile={isMobile}>Submission successful!</ModalText>
+            <ModalText _isMobile={_isMobile}>Submission successful!</ModalText>
+          </Modal>
+        )}
+
+        {error && error !== "Answers are not available yet" && (
+          <Modal onClose={() => setError('')}>
+            <ModalText _isMobile={_isMobile}>{error}</ModalText>
           </Modal>
         )}
 
