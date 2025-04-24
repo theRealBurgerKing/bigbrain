@@ -1,23 +1,21 @@
-import {
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import styled from 'styled-components';
 import Pages from './Pages';
 
-function App() {
-  // Define styles as named objects
-  const appStyle = {
-    minHeight: '100%',
-    width: '100%',
-    margin: '0px',
-    padding: '0px',
-  };
+const AppContainer = styled.div(() => ({
+  minHeight: '100%',
+  width: '100%',
+  margin: '0px',
+  padding: '0px',
+}));
 
+function App() {
   return (
-    <div style={appStyle}>
+    <AppContainer>
       <Router>
         <Pages />
       </Router>
-    </div>
+    </AppContainer>
   );
 }
 
