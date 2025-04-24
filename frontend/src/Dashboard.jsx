@@ -3,6 +3,194 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import styled from 'styled-components';
+
+const Container = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  height: '100%',
+  width: '100%',
+  padding: '0px',
+  margin: '0px',
+  backgroundColor: '#f0f2f5',
+}));
+
+const DashboardContainer = styled.div(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '50vw',
+  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  backgroundColor: '#fff',
+  borderRadius: '8px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  margin: '2vh 0',
+}));
+
+const Title = styled.h2(({ isMobile }) => ({
+  fontSize: isMobile ? '2rem' : '3vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const Subtitle = styled.h3(({ isMobile }) => ({
+  fontSize: isMobile ? '1.5rem' : '2.5vh',
+  fontWeight: '500',
+  color: '#333',
+  marginBottom: '2vh',
+  textAlign: 'left',
+}));
+
+const ButtonContainer = styled.div(() => ({
+  marginBottom: '2vh',
+  textAlign: 'center',
+}));
+
+const Button = styled.button(({ isMobile, disabled }) => ({
+  height: isMobile ? '5vh' : '3vh',
+  width: isMobile ? '30vw' : '9vw',
+  fontSize: isMobile ? '1rem' : '1.3vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: disabled ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
+  transition: 'background-color 0.3s, transform 0.1s',
+}));
+
+const LoadingText = styled.div(({ isMobile }) => ({
+  textAlign: 'center',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+}));
+
+const ErrorText = styled.div(({ isMobile }) => ({
+  color: 'red',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  marginBottom: '1vh',
+  textAlign: 'center',
+}));
+
+const GameList = styled.ul(() => ({
+  listStyle: 'none',
+  padding: '0',
+  margin: '0',
+}));
+
+const GameItem = styled.li(({ isMobile }) => ({
+  border: '1px solid #ccc',
+  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  marginBottom: '1vh',
+  borderRadius: '5px',
+  backgroundColor: '#fafafa',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+}));
+
+const GameDetail = styled.p(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  marginBottom: '0.5vh',
+}));
+
+const Thumbnail = styled.img(({ isMobile }) => ({
+  maxWidth: isMobile ? '50vw' : '10vw',
+  marginTop: '0.5vh',
+}));
+
+const EditGameActions = styled.div(({ isMobile }) => ({
+  display: 'flex',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+}));
+
+const SessionAction = styled.div(({ isMobile }) => ({
+  display: 'flex',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+  marginTop: isMobile ? '1vh' : '0',
+}));
+
+const NoGamesText = styled.p(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  textAlign: 'center',
+}));
+
+const ModalContainer = styled.div(({ isMobile }) => ({
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'white',
+  padding: isMobile ? '3vh 5vw' : '2vh 3vw',
+  border: '1px solid #ccc',
+  zIndex: '1000',
+  width: isMobile ? '80vw' : '30vw',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  borderRadius: '8px',
+}));
+
+const ModalTitle = styled.h3(({ isMobile }) => ({
+  fontSize: isMobile ? '1.5rem' : '2.5vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+  textAlign: 'center',
+}));
+
+const InputGroup = styled.div(() => ({
+  marginBottom: '1.5vh',
+  textAlign: 'left',
+  width: '100%',
+}));
+
+const Label = styled.label(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.5vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+  display: 'block',
+}));
+
+const Input = styled.input(({ isMobile }) => ({
+  width: '100%',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+}));
+
+const FileInput = styled.input(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+}));
+
+const ModalButtonContainer = styled.div(({ isMobile }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '2vh',
+  gap: isMobile ? '2vw' : '1vw',
+}));
+
+const SessionModalContent = styled.div(() => ({
+  textAlign: 'center',
+}));
+
+const SessionModalText = styled.p(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  marginBottom: '1vh',
+}));
+
+const GameName = styled.p(({ isMobile }) => ({
+  fontSize: isMobile ? '1.5rem' : '2.2vh',
+  marginBottom: '20px',
+}));
+
+const CopySuccessText = styled.p(({ isMobile }) => ({
+  fontSize: isMobile ? '0.9rem' : '1vh',
+  color: '#28a745',
+  marginTop: '1vh',
+  textAlign: 'center',
+}));
 
 function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -408,429 +596,7 @@ function Dashboard() {
     fetchGames();
   }, []);
 
-  // Define all styles with mobile responsiveness
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    height: '100%',
-    width: '100%',
-    padding: '0px',
-    margin: '0px',
-    backgroundColor: '#f0f2f5',
-  };
-
-  const dashboardStyle = {
-    width: isMobile ? '90vw' : '50vw',
-    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    margin: '2vh 0',
-  };
-
-  const titleStyle = {
-    fontSize: isMobile ? '2rem' : '3vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-  };
-
-  const subtitleStyle = {
-    fontSize: isMobile ? '1.5rem' : '2.5vh',
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: '2vh',
-    textAlign: 'left',
-  };
-
-  const buttonContainerStyle = {
-    marginBottom: '2vh',
-    textAlign: 'center',
-  };
-
-  const buttonStyle = {
-    height: isMobile ? '5vh' : '3vh',
-    width: isMobile ? '30vw' : '9vw',
-    fontSize: isMobile ? '1rem' : '1.3vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#3b82f6',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
-    transition: 'background-color 0.3s, transform 0.1s',
-  };
-
-  const disabledButtonStyle = {
-    height: isMobile ? '5vh' : '3vh',
-    width: isMobile ? '30vw' : '9vw',
-    fontSize: isMobile ? '1rem' : '1.3vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#a3bffa',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'not-allowed',
-    margin: isMobile ? '0.5vh 2vw' : '0.5vh 1vw',
-  };
-
-  const loadingStyle = {
-    textAlign: 'center',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#555',
-  };
-
-  const errorStyle = {
-    color: 'red',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    marginBottom: '1vh',
-    textAlign: 'center',
-  };
-
-  const gameListStyle = {
-    listStyle: 'none',
-    padding: '0',
-    margin: '0',
-  };
-
-  const gameItemStyle = {
-    border: '1px solid #ccc',
-    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
-    marginBottom: '1vh',
-    borderRadius: '5px',
-    backgroundColor: '#fafafa',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-  };
-
-  const gameDetailStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    marginBottom: '0.5vh',
-  };
-
-  const thumbnailStyle = {
-    maxWidth: isMobile ? '50vw' : '10vw',
-    marginTop: '0.5vh',
-  };
-
-  const editGameActionsStyle = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    gap: isMobile ? '1vh' : '1vw',
-  };
-
-  const sessionActionStyle = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    gap: isMobile ? '1vh' : '1vw',
-    marginTop: isMobile ? '1vh' : '0',
-  };
-
-  const noGamesStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#555',
-    textAlign: 'center',
-  };
-
-  const modalStyle = {
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'white',
-    padding: isMobile ? '3vh 5vw' : '2vh 3vw',
-    border: '1px solid #ccc',
-    zIndex: '1000',
-    width: isMobile ? '80vw' : '30vw',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    borderRadius: '8px',
-  };
-
-  const modalTitleStyle = {
-    fontSize: isMobile ? '1.5rem' : '2.5vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-    textAlign: 'center',
-  };
-
-  const inputGroupStyle = {
-    marginBottom: '1.5vh',
-    textAlign: 'left',
-    width: '100%',
-  };
-
-  const labelStyle = {
-    fontSize: isMobile ? '1rem' : '1.5vh',
-    color: '#555',
-    marginBottom: '0.5vh',
-    display: 'block',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    backgroundColor: '#fff',
-  };
-
-  const fileInputStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#555',
-  };
-
-  const modalButtonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '2vh',
-    gap: isMobile ? '2vw' : '1vw',
-  };
-
-  const sessionModalContentStyle = {
-    textAlign: 'center',
-  };
-
-  const sessionModalTextStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    marginBottom: '1vh',
-  };
-
-  const gameNameStyle = {
-    fontSize: isMobile ? '1.5rem' : '2.2vh',
-    marginBottom: '20px',
-  };
-
-  const copySuccessStyle = {
-    fontSize: isMobile ? '0.9rem' : '1vh',
-    color: '#28a745',
-    marginTop: '1vh',
-    textAlign: 'center',
-  };
-
-  return (
-    <div style={containerStyle}>
-      <div style={dashboardStyle}>
-        <h2 style={titleStyle}>Admin Dashboard</h2>
-
-        <div style={buttonContainerStyle}>
-          <button
-            style={isLoading ? disabledButtonStyle : buttonStyle}
-            onClick={() => setShowCreateModal(true)}
-            disabled={isLoading}
-            aria-label="Create a new game"
-          >
-            Create Game
-          </button>
-        </div>
-
-        {isLoading && <div style={loadingStyle}>Loading...</div>}
-        {error && <div style={errorStyle}>{error}</div>}
-
-        {games.length > 0 ? (
-          <div>
-            <h3 style={subtitleStyle}>Games List</h3>
-            <ul style={gameListStyle}>
-              {games.map((game) => {
-                const totalDuration = game.questions.reduce((sum, q) => sum + (q.duration || 0), 0);
-
-                return (
-                  <li key={game.gameId ?? 'missing-id'} style={gameItemStyle}>
-                    <p style={gameNameStyle}>
-                      <strong>Game Name:</strong> {game.name}
-                    </p>
-                    <p style={gameDetailStyle}>
-                      <strong>Owner:</strong> {game.owner ?? 'N/A'}
-                    </p>
-                    <p style={gameDetailStyle}>
-                      <strong>Created At:</strong> {new Date(game.createdAt).toLocaleString()}
-                    </p>
-                    <p style={gameDetailStyle}>
-                      <strong>Active:</strong> {game.active ? 'Yes' : 'No'}
-                    </p>
-                    <p style={gameDetailStyle}>
-                      <strong>Number of Questions:</strong> {game.questions.length}
-                    </p>
-                    <p style={gameDetailStyle}>
-                      <strong>Total Duration:</strong> {totalDuration} seconds
-                    </p>
-                    {game.thumbnail && (
-                      <figure style={gameDetailStyle}>
-                        <img
-                          src={game.thumbnail}
-                          alt={`Thumbnail for ${game.name}`}
-                          style={thumbnailStyle}
-                          loading="lazy"
-                        />
-                      </figure>
-                    )}
-                    <div style={editGameActionsStyle}>
-                      <button
-                        style={game.active ? disabledButtonStyle : buttonStyle}
-                        onClick={() => handleEditGame(game.gameId)}
-                        disabled={game.active}
-                        aria-label={`Edit game ${game.name}`}
-                      >
-                        Edit Game
-                      </button>
-                      <button
-                        style={game.active ? disabledButtonStyle : buttonStyle}
-                        onClick={() => handleDeleteGame(game.gameId)}
-                        disabled={game.active}
-                        aria-label={`Delete game ${game.name}`}
-                      >
-                        Delete Game
-                      </button>
-                    </div>
-                    <div style={sessionActionStyle}>
-                      <button
-                        style={game.active ? disabledButtonStyle : buttonStyle}
-                        onClick={() => startGame(game.gameId)}
-                        disabled={game.active}
-                        aria-label={`Start game ${game.name}`}
-                      >
-                        Start Game
-                      </button>
-                      {game.active && (
-                        <button
-                          style={buttonStyle}
-                          onClick={() => showGame(game.gameId)}
-                          aria-label={`Show game ${game.name}`}
-                        >
-                          Show Game
-                        </button>
-                      )}
-                      {game.active && (
-                        <button
-                          style={buttonStyle}
-                          onClick={() => stopGame(game.gameId)}
-                          aria-label={`Stop game ${game.name}`}
-                        >
-                          Stop Game
-                        </button>
-                      )}
-                      <button
-                        style={!game.oldSessions.length ? disabledButtonStyle : buttonStyle}
-                        onClick={() => navigate(`/game/${game.gameId}/oldSession`, { state: { old: game.oldSessions, questions: game.questions } })}
-                        disabled={!game.oldSessions.length}
-                        aria-label={`Review sessions for game ${game.name}`}
-                      >
-                        Session Review
-                      </button>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ) : (
-          <p style={noGamesStyle}>No games available.</p>
-        )}
-
-        {showCreateModal && (
-          <div style={modalStyle}>
-            <h3 style={modalTitleStyle}>Create New Game</h3>
-            <div style={inputGroupStyle}>
-              <label id="gameNameLabel" style={labelStyle}>Game Name (required):</label>
-              <input
-                type="text"
-                value={newGameName}
-                onChange={(e) => setNewGameName(e.target.value)}
-                placeholder="Enter game name"
-                style={inputStyle}
-                required
-                aria-label="Game Name"
-                aria-describedby="gameNameLabel"
-              />
-            </div>
-            <div style={inputGroupStyle}>
-              <label id="jsonUploadLabel" style={labelStyle}>Upload JSON (optional):</label>
-              <input
-                type="file"
-                accept=".json"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-                style={fileInputStyle}
-                aria-label="Upload JSON file"
-                aria-describedby="jsonUploadLabel"
-              />
-            </div>
-            <div style={modalButtonContainerStyle}>
-              <button
-                style={isLoading ? disabledButtonStyle : buttonStyle}
-                onClick={handleCreateGame}
-                disabled={isLoading}
-                aria-label="Create new game"
-              >
-                Create
-              </button>
-              <button
-                style={buttonStyle}
-                onClick={() => {
-                  setShowCreateModal(false);
-                  setNewGameName('');
-                  setSelectedFile(null);
-                  setError('');
-                }}
-                aria-label="Cancel game creation"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-
-        {showGameSession && (
-          <Modal onClose={() => setShowGameSession(false)}>
-            <div style={sessionModalContentStyle}>
-              <p style={sessionModalTextStyle}>Session ID: {showGameSessionId}</p>
-              {copySuccess && (
-                <p style={copySuccessStyle}>Link copied to clipboard!</p>
-              )}
-              <button
-                style={buttonStyle}
-                onClick={handleCopyLink}
-                aria-label="Copy game session link"
-              >
-                Copy Link
-              </button>
-              <button
-                style={buttonStyle}
-                onClick={() => showGame(showGameGameId)}
-                aria-label="Show current game session"
-              >
-                Show Game
-              </button>
-            </div>
-          </Modal>
-        )}
-
-        {showDeleteModal && (
-          <Modal onClose={cancelDeleteGame}>
-            <div style={sessionModalContentStyle}>
-              <p style={sessionModalTextStyle}>Are you sure you want to delete this game?</p>
-              <div style={modalButtonContainerStyle}>
-                <button
-                  style={buttonStyle}
-                  onClick={confirmDeleteGame}
-                  aria-label="Confirm game deletion"
-                >
-                  Confirm
-                </button>
-                <button
-                  style={buttonStyle}
-                  onClick={cancelDeleteGame}
-                  aria-label="Cancel game deletion"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </Modal>
-        )}
-      </div>
-    </div>
-  );
+  
 }
 
 export default Dashboard;
