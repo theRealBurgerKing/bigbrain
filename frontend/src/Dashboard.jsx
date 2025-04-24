@@ -800,7 +800,7 @@ function Dashboard() {
         {showDeleteModal && (
           <Modal onClose={cancelDeleteGame}>
             <SessionModalContent>
-              <SessionModalText isMobile={isMobile}>Are you sure you want to delete>this game?</SessionModalText>
+              <SessionModalText isMobile={isMobile}>Are you sure you want to delete this game?</SessionModalText>
               <ModalButtonContainer isMobile={isMobile}>
                 <Button
                   isMobile={isMobile}
