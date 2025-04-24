@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function QuestionEditor() {
   const { gameId, questionId } = useParams();
@@ -22,6 +23,8 @@ function QuestionEditor() {
   const [image, setImage] = useState('');
   const [answers, setAnswers] = useState(['', '']);
   const [correctAnswers, setCorrectAnswers] = useState([]);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const fetchGames = async () => {
     if (!token) {
@@ -116,7 +119,7 @@ function QuestionEditor() {
     const newQuestion = {
       id: Date.now().toString(),
       text: '',
-      answers: type === 'judgement' ? ['True', 'False'] : ['', ''], // Set fixed answers for judgement type
+      answers: type === 'judgement' ? ['True', 'False'] : ['', ''],
       type: 'multiple choice',
       duration: 30,
       points: 10,
@@ -125,13 +128,13 @@ function QuestionEditor() {
       correctAnswers: [],
       isCorrect: false,
     };
-  
+
     const updatedGames = games.map((g) =>
       g.gameId === gameId
         ? { ...g, questions: [...g.questions, newQuestion] }
         : g
     );
-  
+
     setGames(updatedGames);
     updateGames(updatedGames);
     navigate(`/game/${gameId}/question/${newQuestion.id}`);
@@ -159,7 +162,7 @@ function QuestionEditor() {
 
   // Handle answer change
   const handleAnswerChange = (index, value) => {
-    if (type !== 'judgement') { // Prevent modifying answers for judgement type
+    if (type !== 'judgement') {
       const newAnswers = [...answers];
       newAnswers[index] = value;
       setAnswers(newAnswers);
@@ -168,7 +171,7 @@ function QuestionEditor() {
 
   // Add new answer option
   const addAnswer = () => {
-    if (type !== 'judgement' && answers.length < 6) { // Prevent adding answers for judgement type
+    if (type !== 'judgement' && answers.length < 6) {
       setAnswers([...answers, '']);
     } else if (answers.length >= 6) {
       setModalError('Maximum 6 answers allowed.');
@@ -178,7 +181,7 @@ function QuestionEditor() {
 
   // Remove answer option
   const removeAnswer = (index) => {
-    if (type !== 'judgement' && answers.length > 2) { // Prevent removing answers for judgement type
+    if (type !== 'judgement' && answers.length > 2) {
       const newAnswers = answers.filter((_, i) => i !== index);
       setAnswers(newAnswers);
       setCorrectAnswers(correctAnswers.filter((answerIndex) => answerIndex !== index.toString()));
@@ -191,7 +194,7 @@ function QuestionEditor() {
   // Handle correct answer toggle (for multiple choice and single choice)
   const toggleCorrectAnswer = (index) => {
     if (type === 'single choice' || type === 'judgement') {
-      setCorrectAnswers([index.toString()]); // Allow only one correct answer for single choice and judgement
+      setCorrectAnswers([index.toString()]);
     } else if (type === 'multiple choice') {
       if (correctAnswers.includes(index.toString())) {
         setCorrectAnswers(correctAnswers.filter((i) => i !== index.toString()));
@@ -265,52 +268,52 @@ function QuestionEditor() {
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
-  
+
     if (!text.trim()) {
       setModalError('Question text is required.');
       setShowModal(true);
       return;
     }
-  
+
     if (duration < 1) {
       setModalError('Time limit must be at least 1 second.');
       setShowModal(true);
       return;
     }
-  
+
     if (points < 1) {
       setModalError('Points must be at least 1.');
       setShowModal(true);
       return;
     }
-  
+
     if (type !== 'judgement' && (answers.length < 2 || answers.length > 6)) {
       setModalError('Answers must be between 2 and 6.');
       setShowModal(true);
       return;
     }
-  
+
     if (type === 'single choice' && correctAnswers.length !== 1) {
       setModalError('Single choice questions must have exactly one correct answer.');
       setShowModal(true);
       return;
     }
-  
+
     if (type === 'multiple choice' && correctAnswers.length < 1) {
       setModalError('Multiple choice questions must have at least one correct answer.');
       setShowModal(true);
       return;
     }
-  
+
     if (type === 'judgement' && correctAnswers.length !== 1) {
       setModalError('Judgement questions must have exactly one correct answer (True or False).');
       setShowModal(true);
       return;
     }
-  
+
     setIsLoading(true);
     setModalError('');
-  
+
     try {
       const updatedGames = games.map((g) =>
         g.gameId === gameId
@@ -326,15 +329,15 @@ function QuestionEditor() {
                   points: Number(points),
                   youtubeUrl: youtubeUrl,
                   image: image,
-                  answers: type === 'judgement' ? ['True', 'False'] : answers, // Ensure fixed answers for judgement
+                  answers: type === 'judgement' ? ['True', 'False'] : answers,
                   correctAnswers: type !== 'judgement' ? correctAnswers : correctAnswers,
                 }
                 : q
             ),
           }
-          : g
+        : g
       );
-  
+
       await updateGames(updatedGames);
       navigate(`/game/${gameId}/questions`);
     } catch (err) {
@@ -361,7 +364,7 @@ function QuestionEditor() {
     }
   };
 
-  // Define styles as named objects
+  // Define styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -369,12 +372,11 @@ function QuestionEditor() {
     width: '100%',
     padding: '0px',
     margin: '0px',
-    // Removed backgroundColor since Pages.jsx now handles it
   };
 
   const editorStyle = {
-    width: '50vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '50vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -382,14 +384,14 @@ function QuestionEditor() {
   };
 
   const titleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const subtitleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '1.5rem' : '2.5vh',
     fontWeight: '500',
     color: '#333',
     marginBottom: '2vh',
@@ -399,79 +401,79 @@ function QuestionEditor() {
   const buttonContainerStyle = {
     marginBottom: '2vh',
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
+    justifyContent: 'center',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
     border: 'none',
     borderRadius: '4px',
     cursor: 'not-allowed',
-    margin: '0.5vh 1vw',
   };
 
   const deleteButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#dc2626',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledDeleteButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#f87171',
     border: 'none',
     borderRadius: '4px',
     cursor: 'not-allowed',
-    margin: '0.5vh 1vw',
   };
 
   const loadingStyle = {
     textAlign: 'center',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
   };
 
   const errorStyle = {
     color: 'red',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     marginBottom: '1vh',
     textAlign: 'center',
   };
 
   const gameNotFoundStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     textAlign: 'center',
   };
 
   const questionNotFoundStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     textAlign: 'center',
   };
@@ -483,7 +485,7 @@ function QuestionEditor() {
   };
 
   const questionItemStyle = {
-    padding: '1vh 1vw',
+    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
     background: 'transparent',
     cursor: 'pointer',
     display: 'flex',
@@ -491,15 +493,17 @@ function QuestionEditor() {
     alignItems: 'center',
     marginBottom: '0.5vh',
     borderBottom: '1px solid #eee',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '0',
   };
 
   const questionTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
   };
 
   const noQuestionsStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
   };
 
@@ -512,69 +516,71 @@ function QuestionEditor() {
     marginBottom: '0.5vh',
     display: 'flex',
     alignItems: 'center',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
   };
 
   const labelStyle = {
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '1rem' : '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '25vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '25vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const selectStyle = {
-    width: '25vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '25vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const numberInputStyle = {
-    width: '10vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '10vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const answerInputStyle = {
-    width: '20vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '20vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1vw',
-    marginRight: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
+    marginRight: isMobile ? '0' : '1vw',
   };
 
   const fileInputStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const thumbnailStyle = {
-    maxWidth: '10vw',
+    maxWidth: isMobile ? '50vw' : '10vw',
     marginTop: '0.5vh',
   };
 
   const modalTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
     textAlign: 'center',
   };
@@ -588,21 +594,20 @@ function QuestionEditor() {
 
     return (
       <div style={containerStyle}>
-        
         <div style={editorStyle}>
           <h2 style={titleStyle}>Questions for Game: {game.name}</h2>
           {error && <div style={errorStyle}>{error}</div>}
-          <div >
+          <div style={buttonContainerStyle}>
             <button
               style={buttonStyle}
               onClick={() => navigate(`/game/${gameId}`)}
+              aria-label="Return to game editor"
             >
               Back to Game Editor
             </button>
           </div>
 
           <div style={inputGroupStyle}>
-            
             {game.questions.length > 0 ? (
               <ul style={questionListStyle}>
                 {game.questions.map((q) => (
@@ -613,12 +618,17 @@ function QuestionEditor() {
                     <span
                       style={questionTextStyle}
                       onClick={() => handleEditQuestion(q.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyPress={(e) => e.key === 'Enter' && handleEditQuestion(q.id)}
+                      aria-label={`Edit question: ${q.text || 'Untitled Question'}`}
                     >
                       {q.text || 'Untitled Question'}
                     </span>
                     <button
                       style={deleteButtonStyle}
                       onClick={() => handleDeleteQuestion(q.id)}
+                      aria-label={`Delete question: ${q.text || 'Untitled Question'}`}
                     >
                       Delete
                     </button>
@@ -626,17 +636,16 @@ function QuestionEditor() {
                 ))}
               </ul>
             ) : (
-              <p style={noQuestionsStyle}>No questions yet. Click &quot;Add Question&quot; to start.</p>
+              <p style={noQuestionsStyle}>No questions yet. Click "Add Question" to start.</p>
             )}
             <button
               style={buttonStyle}
               onClick={handleAddQuestion}
+              aria-label="Add a new question"
             >
               Add Question
             </button>
           </div>
-
-          
         </div>
       </div>
     );
@@ -650,9 +659,9 @@ function QuestionEditor() {
       <div style={editorStyle}>
         <h2 style={titleStyle}>Edit Question</h2>
         {error && <div style={errorStyle}>{error}</div>}
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="questionTypeLabel" style={labelStyle}>
             Question Type:
             <select
               value={type}
@@ -660,15 +669,16 @@ function QuestionEditor() {
                 setType(e.target.value);
                 setCorrectAnswers([]);
                 if (e.target.value === 'judgement') {
-                  setAnswers(['True', 'False']); // Set fixed answers for judgement
+                  setAnswers(['True', 'False']);
                 } else if (e.target.value === 'multiple choice') {
-                  setAnswers(['', '']); // Clear answers when switching to multiple choice
-                }
-                else if (e.target.value === 'single') {
-                  setAnswers(['', '']); // Clear answers when switching to multiple choice
+                  setAnswers(['', '']);
+                } else if (e.target.value === 'single choice') {
+                  setAnswers(['', '']);
                 }
               }}
               style={selectStyle}
+              aria-label="Select question type"
+              aria-describedby="questionTypeLabel"
             >
               <option value="multiple choice">Multiple Choice</option>
               <option value="single choice">Single Choice</option>
@@ -676,9 +686,9 @@ function QuestionEditor() {
             </select>
           </label>
         </div>
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="questionTextLabel" style={labelStyle}>
             Question:
             <input
               type="text"
@@ -686,12 +696,15 @@ function QuestionEditor() {
               onChange={(e) => setText(e.target.value)}
               placeholder="Enter question"
               style={inputStyle}
+              required
+              aria-label="Question text"
+              aria-describedby="questionTextLabel"
             />
           </label>
         </div>
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="timeLimitLabel" style={labelStyle}>
             Time Limit (seconds):
             <input
               type="number"
@@ -699,12 +712,15 @@ function QuestionEditor() {
               onChange={(e) => setDuration(e.target.value)}
               min="1"
               style={numberInputStyle}
+              required
+              aria-label="Time limit in seconds"
+              aria-describedby="timeLimitLabel"
             />
           </label>
         </div>
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="pointsLabel" style={labelStyle}>
             Points:
             <input
               type="number"
@@ -712,12 +728,15 @@ function QuestionEditor() {
               onChange={(e) => setPoints(e.target.value)}
               min="1"
               style={numberInputStyle}
+              required
+              aria-label="Points for the question"
+              aria-describedby="pointsLabel"
             />
           </label>
         </div>
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="youtubeUrlLabel" style={labelStyle}>
             YouTube URL (optional):
             <input
               type="text"
@@ -725,18 +744,22 @@ function QuestionEditor() {
               onChange={(e) => setYoutubeUrl(e.target.value)}
               placeholder="Enter YouTube URL"
               style={inputStyle}
+              aria-label="YouTube URL (optional)"
+              aria-describedby="youtubeUrlLabel"
             />
           </label>
         </div>
-  
+
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>
+          <label id="imageUploadLabel" style={labelStyle}>
             Image (optional):
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
               style={fileInputStyle}
+              aria-label="Upload image for the question (optional)"
+              aria-describedby="imageUploadLabel"
             />
           </label>
           {image && (
@@ -744,29 +767,34 @@ function QuestionEditor() {
               src={image}
               alt="Question image"
               style={thumbnailStyle}
+              loading="lazy"
             />
           )}
         </div>
-  
+
         <div style={inputGroupStyle}>
           <h3 style={subtitleStyle}>Answers</h3>
           {answers.map((answer, index) => (
             <div key={index} style={answerGroupStyle}>
-              <label style={labelStyle}>
+              <label id={`answerLabel-${index}`} style={labelStyle}>
                 Answer {index + 1}:
                 <input
                   type="text"
                   value={answer}
                   onChange={(e) => handleAnswerChange(index, e.target.value)}
                   style={answerInputStyle}
-                  disabled={type === 'judgement'} // Disable editing for judgement answers
+                  disabled={type === 'judgement'}
+                  aria-label={`Answer ${index + 1}`}
+                  aria-describedby={`answerLabel-${index}`}
                 />
               </label>
-              <label style={{ marginLeft: '1vw' }}>
+              <label style={{ display: 'flex', alignItems: 'center', marginLeft: '1vw' }}>
                 <input
-                  type={type === 'multiple choice' ? 'checkbox' : 'radio'} // Use radio for single choice and judgement
+                  type={type === 'multiple choice' ? 'checkbox' : 'radio'}
                   checked={correctAnswers.includes(index.toString())}
                   onChange={() => toggleCorrectAnswer(index)}
+                  style={{ marginRight: '0.5vw' }}
+                  aria-label={`Mark answer ${index + 1} as correct`}
                 />
                 Correct
               </label>
@@ -775,6 +803,7 @@ function QuestionEditor() {
                   style={answers.length <= 2 ? disabledDeleteButtonStyle : deleteButtonStyle}
                   onClick={() => removeAnswer(index)}
                   disabled={answers.length <= 2}
+                  aria-label={`Remove answer ${index + 1}`}
                 >
                   Remove
                 </button>
@@ -786,23 +815,26 @@ function QuestionEditor() {
               style={answers.length >= 6 ? disabledButtonStyle : buttonStyle}
               onClick={addAnswer}
               disabled={answers.length >= 6}
+              aria-label="Add a new answer option"
             >
               Add Answer
             </button>
           )}
         </div>
-  
+
         <div style={buttonContainerStyle}>
           <button
             style={isLoading ? disabledButtonStyle : buttonStyle}
             onClick={handleSave}
             disabled={isLoading}
+            aria-label={isLoading ? "Saving question" : "Save question"}
           >
             {isLoading ? 'Saving...' : 'Save'}
           </button>
           <button
             style={buttonStyle}
             onClick={() => navigate(`/game/${gameId}/questions`)}
+            aria-label="Cancel editing question"
           >
             Cancel
           </button>
