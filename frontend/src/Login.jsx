@@ -1,6 +1,73 @@
 import { useState } from 'react';
 import axios from 'axios';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import styled from 'styled-components';
+
+const Container = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  height: '100%',
+  width: '100%',
+  padding: '0px',
+}));
+
+const LoginBox = styled.div(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '30vw',
+  height: isMobile ? 'auto' : '40vh',
+  backgroundColor: '#fff',
+  borderRadius: '8px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '2vh 3vw',
+  marginTop: '4vh',
+}));
+
+const Title = styled.h1(({ isMobile }) => ({
+  fontSize: isMobile ? '20px' : '2.5vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const InputGroup = styled.div(({ isMobile }) => ({
+  marginBottom: '2vh',
+  width: isMobile ? '80vw' : '23vw',
+  textAlign: 'left',
+}));
+
+const Label = styled.label(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+  display: 'block',
+}));
+
+const Input = styled.input(({ isMobile, isLoading }) => ({
+  width: '100%',
+  padding: '1.5vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.5vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: isLoading ? '#f5f5f5' : '#fff',
+  cursor: isLoading ? 'not-allowed' : 'text',
+}));
+
+const Button = styled.button(({ isMobile, isLoading }) => ({
+  width: isMobile ? '80vw' : '22.5vw',
+  padding: '1.5vh 0',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: isLoading ? 'not-allowed' : 'pointer',
+  marginTop: '1vh',
+  transition: 'background-color 0.3s',
+}));
 
 function Login({ successJob, showError }) {
   const [email, setEmail] = useState('');
@@ -43,80 +110,15 @@ function Login({ successJob, showError }) {
     }
   };
 
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    height: '100%',
-    width: '100%',
-    padding: '0px',
-  };
-
-  const loginBoxStyle = {
-    width: isMobile ? '90vw' : '30vw',
-    height: isMobile ? 'auto' : '40vh',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '2vh 3vw',
-    marginTop: '4vh',
-  };
-
-  const titleStyle = {
-    fontSize: isMobile ? '20px' : '2.5vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-  };
-
-  const inputGroupStyle = {
-    marginBottom: '2vh',
-    width: isMobile ? '80vw' : '23vw',
-    textAlign: 'left',
-  };
-
-  const labelStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#555',
-    marginBottom: '0.5vh',
-    display: 'block',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '1.5vh 2vw',
-    fontSize: isMobile ? '1rem' : '1.5vh',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    backgroundColor: isLoading ? '#f5f5f5' : '#fff',
-    cursor: isLoading ? 'not-allowed' : 'text',
-  };
-
-  const buttonStyle = {
-    width: isMobile ? '80vw' : '22.5vw',
-    padding: '1.5vh 0',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: isLoading ? 'not-allowed' : 'pointer',
-    marginTop: '1vh',
-    transition: 'background-color 0.3s',
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={loginBoxStyle}>
-        <h1 style={titleStyle}>Login</h1>
-        <div style={inputGroupStyle}>
-          <label id="emailText" style={labelStyle}>Email</label>
-          <input
-            style={inputStyle}
+    <Container>
+      <LoginBox isMobile={isMobile}>
+        <Title isMobile={isMobile}>Login</Title>
+        <InputGroup isMobile={isMobile}>
+          <Label id="emailText" isMobile={isMobile}>Email</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -124,14 +126,15 @@ function Login({ successJob, showError }) {
             placeholder="Enter your email"
             disabled={isLoading}
             required
-            aria-label = "Email Address"
+            aria-label="Email Address"
             aria-describedby="emailText"
           />
-        </div>
-        <div style={inputGroupStyle}>
-          <label id="passwordText" style={labelStyle}>Password</label>
-          <input
-            style={inputStyle}
+        </InputGroup>
+        <InputGroup isMobile={isMobile}>
+          <Label id="passwordText" isMobile={isMobile}>Password</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -139,20 +142,21 @@ function Login({ successJob, showError }) {
             placeholder="Enter your password"
             disabled={isLoading}
             required
-            aria-label = "Password"
+            aria-label="Password"
             aria-describedby="passwordText"
           />
-        </div>
-        <button
-          style={buttonStyle}
+        </InputGroup>
+        <Button
+          isMobile={isMobile}
+          isLoading={isLoading}
           type="submit"
           onClick={login}
           disabled={isLoading}
         >
           {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </LoginBox>
+    </Container>
   );
 }
 
