@@ -18,6 +18,7 @@ import PlayGround from './PlayGround';
 import NavigateToPlay from './NavigateToPlay';
 import OldSession from './OldSession';
 import Index from './Index';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -26,6 +27,8 @@ function Pages() {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Check if the current route is a play route
   const isPlayRoute = location.pathname.startsWith('/play');
@@ -107,12 +110,12 @@ function Pages() {
     setOpen(true);
   };
 
-  // Define styles as named objects
+  // Define styles with mobile responsiveness
   const containerStyle = {
     minHeight: '100vh',
     width: '100%',
     backgroundColor: '#f0f2f5',
-    padding: '2vh 3vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     margin: '0',
     boxSizing: 'border-box',
   };
@@ -120,18 +123,21 @@ function Pages() {
   const navStyle = {
     marginBottom: '2vh',
     textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
   };
 
   const linkStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#3b82f6',
     textDecoration: 'none',
-    margin: '0 1vw',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
@@ -142,8 +148,8 @@ function Pages() {
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
@@ -173,13 +179,15 @@ function Pages() {
                 style={isLoading ? disabledButtonStyle : buttonStyle}
                 onClick={logout}
                 disabled={isLoading}
+                aria-label={isLoading ? "Logging out" : "Logout"}
               >
                 {isLoading ? 'Logging out...' : 'Logout'}
               </button>
             ) : (
               <>
-                <Link to="/register" style={linkStyle}>Register</Link> |{' '}
-                <Link to="/login" style={linkStyle}>Login</Link>
+                <Link to="/register" style={linkStyle} aria-label="Navigate to register page">Register</Link>
+                {isMobile ? <br /> : ' | '}
+                <Link to="/login" style={linkStyle} aria-label="Navigate to login page">Login</Link>
               </>
             )}
           </nav>
@@ -189,8 +197,7 @@ function Pages() {
 
       <div style={contentStyle}>
         <Routes>
-          {/* <Route path="/" element={<HomePage />} /> */}
-          <Route path="/" element={<Index token = {token} />} />
+          <Route path="/" element={<Index token={token} />} />
           <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
           <Route path="/login" element={<Login successJob={successJob} showError={showError} />} />
           <Route path="/dashboard" element={<Dashboard />} />
