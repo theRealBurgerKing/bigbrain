@@ -7,6 +7,112 @@ import styled from 'styled-components';
 
 
 
+function QuestionEditor() {
+  const { gameId, questionId } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [games, setGames] = useState([]);
+  const [game, setGame] = useState(null);
+  const [question, setQuestion] = useState(null);
+  const [text, setText] = useState('');
+  const [type, setType] = useState('multiple choice');
+  const [duration, setDuration] = useState(30);
+  const [points, setPoints] = useState(10);
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [image, setImage] = useState('');
+  const [answers, setAnswers] = useState(['', '']);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  const fetchGames = async () => {
+    if (!token) {
+      setError('No token found. Please log in again.');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    try {
+      const response = await axios.get('http://localhost:5005/admin/games', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const gamesData = response.data.games
+        ? Object.values(response.data.games).map((game) => ({
+          gameId: game.id ? String(game.id) : null,
+          owner: game.owner || null,
+          name: game.name || 'Untitled Game',
+          thumbnail: game.thumbnail || '',
+          createdAt: game.createdAt || new Date().toISOString(),
+          active: game.active || null,
+          questions: Array.isArray(game.questions)
+            ? game.questions.map((q, index) => ({
+              id: q.id ? String(q.id) : `${Date.now()}-${index}`,
+              duration: q.duration ? Number(q.duration) : null,
+              points: q.points ? Number(q.points) : 10,
+              correctAnswers: Array.isArray(q.correctAnswers) ? q.correctAnswers.map(String) : [],
+              isCorrect: q.isCorrect !== undefined ? q.isCorrect : false,
+              text: q.text || '',
+              answers: Array.isArray(q.answers) ? q.answers : ['', ''],
+              type: q.type || 'multiple choice',
+              youtubeUrl: q.youtubeUrl || '',
+              image: q.image || '',
+            }))
+            : [],
+        }))
+        : [];
+
+      if (response.status === 200) {
+        setGames(gamesData);
+        const gameData = gamesData.find((g) => g.gameId === gameId);
+        if (gameData) {
+          setGame(gameData);
+          if (questionId) {
+            const questionData = gameData.questions.find((q) => q.id === questionId);
+            if (questionData) {
+              setQuestion(questionData);
+              setText(questionData.text);
+              setType(questionData.type);
+              setDuration(questionData.duration || 30);
+              setPoints(questionData.points || 10);
+              setYoutubeUrl(questionData.youtubeUrl);
+              setImage(questionData.image);
+              setAnswers(questionData.answers);
+              setCorrectAnswers(questionData.correctAnswers);
+            } else {
+              setError('Question not found.');
+            }
+          }
+        } else {
+          setError('Game not found.');
+        }
+      }
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('myusername');
+          setTimeout(() => navigate('/login'), 2000);
+        } else if (err.response.status === 403) {
+          setError('Forbidden: You do not have permission.');
+        } else {
+          setError(err.response.data?.error || 'An error occurred.');
+        }
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchGames();
   }, [gameId, questionId, token, navigate]);
