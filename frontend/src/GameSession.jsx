@@ -3,6 +3,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
 import Results from './Results';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function GameSession() {
   const location = useLocation();
@@ -19,6 +20,8 @@ function GameSession() {
   const [showResultsOrNot, setShowResultsOrNot] = useState(false);
   const resultsShownRef = useRef(false);
   const [results, setResults] = useState([]);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const fetchSession = async () => {
     if (!token) {
@@ -114,7 +117,7 @@ function GameSession() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Define styles as named objects
+  // Define styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -125,8 +128,8 @@ function GameSession() {
   };
 
   const boxStyle = {
-    width: '50vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '50vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -134,14 +137,14 @@ function GameSession() {
   };
 
   const titleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const textStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
   };
@@ -149,23 +152,26 @@ function GameSession() {
   const buttonContainerStyle = {
     marginTop: '2vh',
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
+    justifyContent: 'center',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const modalTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
     textAlign: 'center',
   };
@@ -210,10 +216,18 @@ function GameSession() {
         )}
 
         <div style={buttonContainerStyle}>
-          <button style={buttonStyle} onClick={() => nextQuestion(gameId)}>
+          <button
+            style={buttonStyle}
+            onClick={() => nextQuestion(gameId)}
+            aria-label="Advance to the next question"
+          >
             Next
           </button>
-          <button style={buttonStyle} onClick={() => navigate('/dashboard')}>
+          <button
+            style={buttonStyle}
+            onClick={() => navigate('/dashboard')}
+            aria-label="Return to dashboard"
+          >
             Back
           </button>
         </div>
@@ -227,12 +241,14 @@ function GameSession() {
                 onClick={() => {
                   getResults(sessionId);
                 }}
+                aria-label="Show game results"
               >
                 Yes
               </button>
               <button
                 style={buttonStyle}
                 onClick={() => navigate('/dashboard')}
+                aria-label="Skip results and return to dashboard"
               >
                 No
               </button>
@@ -250,7 +266,11 @@ function GameSession() {
           <Modal onClose={() => setError('')}>
             <p style={modalTextStyle}>{error}</p>
             <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={() => setError('')}>
+              <button
+                style={buttonStyle}
+                onClick={() => setError('')}
+                aria-label="Close error message"
+              >
                 OK
               </button>
             </div>
