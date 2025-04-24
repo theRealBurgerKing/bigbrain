@@ -1,6 +1,86 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useMediaQuery } from '@mui/material';
+import styled from 'styled-components';
+
+const Container = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  height: '100%',
+  width: '100%',
+  padding: 0,
+  margin: 0,
+}));
+
+const RegisterBox = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '30vw',
+  height: isMobile ? 'auto' : '60vh',
+  backgroundColor: '#fff',
+  borderRadius: '8px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: isMobile ? '5vw' : '2vh 3vw',
+  marginTop: '4vh',
+}));
+
+const Title = styled.h1.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '20px' : '2.5vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const InputGroup = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginBottom: '1.5vh',
+  width: isMobile ? '100%' : '25vw',
+  textAlign: 'left',
+}));
+
+const Label = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '14px' : '1.5vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+  display: 'block',
+}));
+
+const Input = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
+  width: '100%',
+  padding: '1.2vh 2vw',
+  fontSize: isMobile ? '14px' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: isLoading ? '#f5f5f5' : '#fff',
+  cursor: isLoading ? 'not-allowed' : 'text',
+}));
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
+  width: isMobile ? '100%' : '24vw',
+  padding: '1.2vh 0',
+  fontSize: isMobile ? '16px' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: isLoading ? 'not-allowed' : 'pointer',
+  marginTop: '3vh',
+  transition: 'background-color 0.3s',
+}));
 
 function Register({ successJob, showError }) {
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -67,82 +147,15 @@ function Register({ successJob, showError }) {
     }
   };
 
-
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    height: '100%',
-    width: '100%',
-    padding: 0,
-    margin: 0,
-  };
-
-  const registerBoxStyle = {
-    width: isMobile ? '90vw' : '30vw',
-    height: isMobile ? 'auto' : '60vh',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: isMobile ? '5vw' : '2vh 3vw',
-    marginTop: '4vh',
-  };
-
-  const titleStyle = {
-    fontSize: isMobile ? '20px' : '2.5vh',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '2vh',
-  };
-
-  const inputGroupStyle = {
-    marginBottom: '1.5vh',
-    width: isMobile ? '100%' : '25vw',
-    textAlign: 'left',
-  };
-
-  const labelStyle = {
-    fontSize: isMobile ? '14px' : '1.5vh',
-    color: '#555',
-    marginBottom: '0.5vh',
-    display: 'block',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '1.2vh 2vw',
-    fontSize: isMobile ? '14px' : '1.8vh',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    backgroundColor: isLoading ? '#f5f5f5' : '#fff',
-    cursor: isLoading ? 'not-allowed' : 'text',
-  };
-
-  const buttonStyle = {
-    width: isMobile ? '100%' : '24vw',
-    padding: '1.2vh 0',
-    fontSize: isMobile ? '16px' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: isLoading ? 'not-allowed' : 'pointer',
-    marginTop: '3vh',
-    transition: 'background-color 0.3s',
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={registerBoxStyle} aria-label="Registration form">
-        <h1 style={titleStyle}>Register</h1>
-        <div style={inputGroupStyle}>
-          <label id="emailText2" style={labelStyle}>Email</label>
-          <input
-            style={inputStyle}
+    <Container>
+      <RegisterBox isMobile={isMobile} aria-label="Registration form">
+        <Title isMobile={isMobile}>Register</Title>
+        <InputGroup isMobile={isMobile}>
+          <Label id="-axisText2" isMobile={isMobile}>Email</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -153,11 +166,12 @@ function Register({ successJob, showError }) {
             aria-label="Email address"
             aria-describedby="emailText2"
           />
-        </div>
-        <div style={inputGroupStyle}>
-          <label id="usernameText" style={labelStyle}>Username</label>
-          <input
-            style={inputStyle}
+        </InputGroup>
+        <InputGroup isMobile={isMobile}>
+          <Label id="usernameText" isMobile={isMobile}>Username</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -168,11 +182,12 @@ function Register({ successJob, showError }) {
             aria-label="Username"
             aria-describedby="usernameText"
           />
-        </div>
-        <div style={inputGroupStyle}>
-          <label id="passwordText" style={labelStyle}>Password</label>
-          <input
-            style={inputStyle}
+        </InputGroup>
+        <InputGroup isMobile={isMobile}>
+          <Label id="passwordText" isMobile={isMobile}>Password</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -183,11 +198,12 @@ function Register({ successJob, showError }) {
             aria-label="Password"
             aria-describedby="passwordText"
           />
-        </div>
-        <div style={inputGroupStyle}>
-          <label id="confirmPasswordText" style={labelStyle}>Confirm Password</label>
-          <input
-            style={inputStyle}
+        </InputGroup>
+        <InputGroup isMobile={isMobile}>
+          <Label id="confirmPasswordText" isMobile={isMobile}>Confirm Password</Label>
+          <Input
+            isMobile={isMobile}
+            isLoading={isLoading}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             onBlur={handleConfirmPasswordBlur}
@@ -199,18 +215,19 @@ function Register({ successJob, showError }) {
             aria-label="Confirm password"
             aria-describedby="confirmPasswordText"
           />
-        </div>
-        <button
-          style={buttonStyle}
+        </InputGroup>
+        <Button
+          isMobile={isMobile}
+          isLoading={isLoading}
           type="submit"
           onClick={register}
           disabled={isLoading}
           aria-label="Register now"
         >
           {isLoading ? 'Registering...' : 'Register'}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </RegisterBox>
+    </Container>
   );
 }
 
