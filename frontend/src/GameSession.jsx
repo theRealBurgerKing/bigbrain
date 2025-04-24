@@ -48,7 +48,6 @@ function GameSession() {
         }
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         if (err.response.status === 500) {
           setError('No such session is ON.');
@@ -73,14 +72,10 @@ function GameSession() {
           },
         }
       );
-      if (response.status === 200) {
-        console.log(response.data);
-      }
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error);
       } else {
-        console.log(err);
         setError('Failed to connect to the server. Please try again.');
       }
     } finally {
@@ -95,11 +90,9 @@ function GameSession() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setResults(response.data);
       }
     } catch (err) {
-      console.log(err);
     }
 
     setShowResults(true);
@@ -199,7 +192,7 @@ function GameSession() {
             <div style={textStyle}>
               <strong>Current Question:</strong> 
               {session.position === -1 ? 'Waiting for start' : 
-               (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
+              (session.position + 1 > Object.keys(session.questions).length ? 'Showing result' : `Question ${session.position + 1}`)}
             </div>
             <div style={textStyle}>
               <strong>Answer Available:</strong> {session.answerAvailable ? 'Yes' : 'No'}

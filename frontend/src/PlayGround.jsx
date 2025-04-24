@@ -8,6 +8,7 @@ function PlayGround() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { sessionId } = useParams();
+  const [error, setError] = useState('');
   const [player, setPlayer] = useState('');
   const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
   const [active, setActive] = useState(false);
@@ -30,18 +31,16 @@ function PlayGround() {
         { "name": player }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setPlayerId(response.data.playerId);
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         if (err.response.status === 400) {
           setError(err.response.data.error);
           const timeout = setTimeout(() => navigate('/play'), 2000);
           return () => clearTimeout(timeout);
         } else {
-          setError(err.response);
+          setError(err.response.data.error || 'An error occurred');
         }
       }
     }
@@ -63,16 +62,13 @@ function PlayGround() {
         setActive(response.data.started);
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         if (err.response.data.error === "Session ID is not an active session") {
           setActive(false);
           setFinish(true);
+        } else {
+          setError(err.response.data.error);
         }
-      } else {
-        setError(err.response.data.error);
-        const timeout = setTimeout(() => navigate('/play'), 2000);
-        return () => clearTimeout(timeout);
       }
     }
   };
@@ -86,7 +82,6 @@ function PlayGround() {
         setCorrectAnswers(response.data.answers);
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         setError(err.response.data.error);
       }
@@ -95,16 +90,13 @@ function PlayGround() {
 
   const fetchQuestion = async () => {
     try {
-      console.log('Fetching question for sessionId:', sessionId);
       const q = await axios.get(
         `http://localhost:5005/play/${playerId}/question`
       );
-      console.log('Fetched question:', q.data);
       if (q.status === 200) {
         setQuestions(prevQuestions => {
           if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
             const updatedQuestions = [...prevQuestions, q.data.question];
-            console.log('Updated questions:', updatedQuestions);
             setQuestion(q.data.question);
             setCorrectAnswers([]);
             setSelectedAnswers([]);
@@ -128,7 +120,6 @@ function PlayGround() {
         }
       }
     } catch (err) {
-      console.log('Error fetching question:', err);
       if (err.response) {
         setError(err.response.data.error);
       }
@@ -165,7 +156,6 @@ function PlayGround() {
         setSubmitSuccess(true);
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         setError(err.response.data.error);
       }
@@ -180,9 +170,7 @@ function PlayGround() {
       );
       if (response.status === 200) {
         let sumScore = 0;
-        console.log(questions);
         response.data.forEach((ans, index) => {
-          console.log(index);
           let timeDifference = questions[index].duration;
           if (ans.questionStartedAt && ans.answeredAt) {
             const questionStartTime = new Date(ans.questionStartedAt);
@@ -200,14 +188,11 @@ function PlayGround() {
             score: score.toFixed(2),
             correct: ans.correct,
           };
-          console.log(questions[index].id);
-          console.log(result);
           setResults(prevResults => [...prevResults, result]);
         });
         setTotal(sumScore.toFixed(2));
       }
     } catch (err) {
-      console.log(err);
       if (err.response) {
         setError(err.response.data.error);
       }
@@ -235,7 +220,6 @@ function PlayGround() {
 
   useEffect(() => {
     if (prevActiveRef.current && !active) {
-      console.log("Game ended.");
       setError('');
       fetchScore();
     }
@@ -415,6 +399,12 @@ function PlayGround() {
     margin: '0 5px',
   };
 
+  const modalTextStyle = {
+    fontSize: '1.8vh',
+    color: '#333',
+    textAlign: 'center',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={boxStyle}>
@@ -552,7 +542,18 @@ function PlayGround() {
 
         {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
-            <br />Submission successful!
+            <p style={modalTextStyle}>Submission successful!</p>
+          </Modal>
+        )}
+
+        {error && (
+          <Modal onClose={() => setError('')}>
+            <p style={modalTextStyle}>{error}</p>
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle} onClick={() => setError('')}>
+                OK
+              </button>
+            </div>
           </Modal>
         )}
       </div>
