@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 const ModalWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: (_prop) => true,
 })(() => ({
   position: 'fixed',
   inset: 0,
@@ -13,7 +13,7 @@ const ModalWrapper = styled.div.withConfig({
 }));
 
 const ModalOverlay = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: (_prop) => true,
 })(() => ({
   position: 'absolute',
   inset: 0,
@@ -21,7 +21,7 @@ const ModalOverlay = styled.div.withConfig({
 }));
 
 const ModalContent = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: (_prop) => true,
 })(() => ({
   position: 'relative',
   zIndex: 10,
@@ -33,7 +33,7 @@ const ModalContent = styled.div.withConfig({
 }));
 
 const ModalClose = styled.button.withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: (_prop) => true,
 })(() => ({
   position: 'absolute',
   top: '0.75rem',

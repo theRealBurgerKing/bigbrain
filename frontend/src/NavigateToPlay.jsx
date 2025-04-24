@@ -61,7 +61,7 @@ const Label = styled.label.withConfig({
 }));
 
 const Input = styled.input.withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: (_prop) => true,
 })(({ isMobile }) => ({
   width: isMobile ? '100%' : '25vw',
   padding: isMobile ? '1.2vh 2vw' : '1vh 1vw',
