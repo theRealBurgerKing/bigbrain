@@ -466,7 +466,136 @@ function PlayGround() {
           </InputGroup>
         )}
 
-        
+        {playerId && !active && !finish && (
+          <LobbyContainer isMobile={isMobile} aria-labelledby="lobby-title">
+            <LobbyTitle isMobile={isMobile}>Welcome to the Game Lobby!</LobbyTitle>
+            <SquareContainer>
+              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+              <Square className="square" isMobile={isMobile} aria-hidden="true" />
+            </SquareContainer>
+            <LobbyText isMobile={isMobile} aria-live="polite">Please wait for the game to start...</LobbyText>
+            <ButtonContainer isMobile={isMobile}>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
+                Back
+              </Button>
+            </ButtonContainer>
+          </LobbyContainer>
+        )}
+
+        {playerId && active && question && question.answers && (
+          <>
+            <Subtitle isMobile={isMobile}>
+              Question {currentQuestionIndex + 1}: {question.text}
+            </Subtitle>
+            <Text isMobile={isMobile}>
+              URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
+            </Text>
+            <Text isMobile={isMobile}>
+              Score: {question.points}
+            </Text>
+            <Text isMobile={isMobile}>
+              Time: {timeLeft}
+            </Text>
+            {question.answers.length > 0 ? (
+              <AnswerList>
+                {question.answers.map((ans, index) => {
+                  const indexStr = index.toString();
+                  const isCorrect = correctAnswers?.includes(indexStr);
+                  return (
+                    <AnswerItem
+                      key={index}
+                      isMobile={isMobile}
+                      style={isCorrect ? { backgroundColor: 'lightgreen' } : {}}
+                    >
+                      <input
+                        type={question.type === 'multiple choice' ? 'checkbox' : 'radio'}
+                        name="ans"
+                        checked={selectedAnswers.includes(indexStr)}
+                        onChange={() => handleAnswerSelect(indexStr)}
+                        disabled={timeLeft <= 0}
+                        aria-label={`Option ${index + 1}: ${ans}`}
+                        id={`answer-${index}`}
+                      />
+                      <label htmlFor={`answer-${index}`}>{ans}</label>
+                    </AnswerItem>
+                  );
+                })}
+              </AnswerList>
+            ) : (
+              <Text isMobile={isMobile}>No questions yet.</Text>
+            )}
+            <ButtonContainer isMobile={isMobile}>
+              <Button
+                isMobile={isMobile}
+                disabled={timeLeft <= 0}
+                onClick={() => submitQuestion()}
+                aria-label="Submit your answer"
+              >
+                Submit
+              </Button>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
+                Back
+              </Button>
+            </ButtonContainer>
+          </>
+        )}
+
+        {finish && (
+          <>
+            <Subtitle isMobile={isMobile}>Result</Subtitle>
+            <Text isMobile={isMobile}>
+              <strong>Your score = Σ(lg(1 + timelimit - time that you use) * score)</strong>
+            </Text>
+            {Array.isArray(results) && results.length > 0 ? (
+              <ResultList>
+                {results.map((r, index) => (
+                  <ResultItem key={index} isMobile={isMobile}>
+                    Question: {index + 1} : {r.correct ? 'True' : 'False'}
+                    <br />
+                    Time cost: {r.timeDifference}s
+                    <br />
+                    Your score is {r.score}
+                  </ResultItem>
+                ))}
+              </ResultList>
+            ) : (
+              <Text isMobile={isMobile}>No results available.</Text>
+            )}
+            <Text isMobile={isMobile}>Total: {total}</Text>
+            <ButtonContainer isMobile={isMobile}>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
+                Back
+              </Button>
+            </ButtonContainer>
+          </>
+        )}
+
+        {submitSuccess && (
+          <Modal onClose={() => setSubmitSuccess(false)}>
+            <ModalText isMobile={isMobile}>Submission successful!</ModalText>
+          </Modal>
+        )}
+
+      </Box>
+    </Container>
   );
 }
 
