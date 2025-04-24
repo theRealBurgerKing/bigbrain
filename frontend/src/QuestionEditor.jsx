@@ -175,7 +175,77 @@ const Label = styled.label.withConfig({
   display: 'block',
 }));
 
+const Input = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '80vw' : '25vw',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+  marginLeft: isMobile ? '0' : '1vw',
+}));
 
+const Select = styled.select.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '80vw' : '25vw',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+  marginLeft: isMobile ? '0' : '1vw',
+}));
+
+const NumberInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '80vw' : '10vw',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+  marginLeft: isMobile ? '0' : '1vw',
+}));
+
+const AnswerInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '80vw' : '20vw',
+  padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  backgroundColor: '#fff',
+  marginLeft: isMobile ? '0' : '1vw',
+  marginRight: isMobile ? '0' : '1vw',
+}));
+
+const FileInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  marginLeft: isMobile ? '0' : '1vw',
+}));
+
+const Thumbnail = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  maxWidth: isMobile ? '50vw' : '10vw',
+  marginTop: '0.5vh',
+}));
+
+const ModalText = styled.p.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#333',
+  textAlign: 'center',
+}));
 
 function QuestionEditor() {
   const { gameId, questionId } = useParams();
