@@ -20,7 +20,6 @@ function GameSession() {
   const [showResultsOrNot, setShowResultsOrNot] = useState(false);
   const resultsShownRef = useRef(false);
   const [results, setResults] = useState([]);
-  const [isLastQuestion, setIsLastQuestion] = useState(false); // New state to track if it's the last question
 
   const fetchSession = async () => {
     if (!token) {
@@ -36,11 +35,6 @@ function GameSession() {
       if (response.status === 200) {
         setSession(response.data.results);
         setActive(response.data.results.active);
-
-        // Check if the current question is the last one
-        const totalQuestions = Object.keys(response.data.results.questions).length;
-        const currentPosition = response.data.results.position;
-        setIsLastQuestion(currentPosition + 1 === totalQuestions);
 
         if (response.data.results.position >= 0 && response.data.results.active) {
           const startTime = new Date(response.data.results.isoTimeLastQuestionStarted).getTime();
