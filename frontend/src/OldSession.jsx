@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
 import Results from './Results';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function OldSession() {
   const location = useLocation();
@@ -13,6 +14,8 @@ function OldSession() {
   const [error, setError] = useState('');
   const token = localStorage.getItem('token');
   const [results, setResults] = useState([]);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const getResults = async (q) => {
     try {
@@ -31,6 +34,7 @@ function OldSession() {
     }
   };
 
+  // Define styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -41,8 +45,8 @@ function OldSession() {
   };
 
   const boxStyle = {
-    width: '50vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '50vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -50,14 +54,14 @@ function OldSession() {
   };
 
   const titleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const textStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
   };
@@ -69,39 +73,44 @@ function OldSession() {
   };
 
   const sessionItemStyle = {
-    padding: '1vh 1vw',
+    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '0.5vh',
     borderBottom: '1px solid #eee',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '0',
   };
 
   const sessionTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const buttonContainerStyle = {
     marginTop: '2vh',
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
+    justifyContent: 'center',
   };
 
   const modalTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
     textAlign: 'center',
   };
@@ -110,10 +119,11 @@ function OldSession() {
     <div style={containerStyle}>
       <div style={boxStyle}>
         <h2 style={titleStyle}>Sessions Review</h2>
-        <div>
+        <div style={buttonContainerStyle}>
           <button
             style={buttonStyle}
             onClick={() => navigate('/dashboard')}
+            aria-label="Return to dashboard"
           >
             Back to Dashboard
           </button>
@@ -123,7 +133,11 @@ function OldSession() {
             {oldSessions.map((q, index) => (
               <li key={index} style={sessionItemStyle}>
                 <span style={sessionTextStyle}>{q}</span>
-                <button style={buttonStyle} onClick={() => getResults(q)}>
+                <button
+                  style={buttonStyle}
+                  onClick={() => getResults(q)}
+                  aria-label={`View results for session ${q}`}
+                >
                   Result
                 </button>
               </li>
@@ -143,7 +157,11 @@ function OldSession() {
           <Modal onClose={() => setError('')}>
             <p style={modalTextStyle}>{error}</p>
             <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={() => setError('')}>
+              <button
+                style={buttonStyle}
+                onClick={() => setError('')}
+                aria-label="Close error message"
+              >
                 OK
               </button>
             </div>
