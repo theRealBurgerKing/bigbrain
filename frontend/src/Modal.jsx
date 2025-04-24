@@ -1,22 +1,28 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
+import styled from 'styled-components';
 
-
-const modalWrapper = {
+const ModalWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => true, // 目前无自定义属性，允许所有属性
+})(() => ({
   position: 'fixed',
   inset: 0,
   zIndex: 50,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-};
-  
-const modalOverlay = {
+}));
+
+const ModalOverlay = styled.div.withConfig({
+  shouldForwardProp: (prop) => true,
+})(() => ({
   position: 'absolute',
   inset: 0,
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
-};
-  
-const modalContent = {
+}));
+
+const ModalContent = styled.div.withConfig({
+  shouldForwardProp: (prop) => true,
+})(() => ({
   position: 'relative',
   zIndex: 10,
   backgroundColor: 'white',
@@ -24,55 +30,47 @@ const modalContent = {
   boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
   padding: '1.5rem',
   maxWidth: '90%',
-};
-  
-const modalClose = {
+}));
+
+const ModalClose = styled.button.withConfig({
+  shouldForwardProp: (prop) => true,
+})(() => ({
   position: 'absolute',
   top: '0.75rem',
   right: '0.75rem',
   color: '#6b7280',
   fontSize: '1.25rem',
   cursor: 'pointer',
-};
-
+}));
 
 const Modal = ({ onClose, children }) => {
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, []);
 
   return (
-    <div style={modalWrapper}>
-      {}
-      <div
-        style={modalOverlay}
+    <ModalWrapper>
+      <ModalOverlay
         onClick={onClose}
         aria-hidden="true"
       />
-
-      {}
-      <div
-        style={modalContent}
+      <ModalContent
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        {}
-        <button
+        <ModalClose
           onClick={onClose}
-          style={modalClose}
           aria-label="Close modal"
         >
           ×
-        </button>
-
-        {}
+        </ModalClose>
         <div id="modal-title">{children}</div>
-      </div>
-    </div>
+      </ModalContent>
+    </ModalWrapper>
   );
 };
 

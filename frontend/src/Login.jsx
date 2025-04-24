@@ -11,7 +11,9 @@ const Container = styled.div(() => ({
   padding: '0px',
 }));
 
-const LoginBox = styled.div(({ isMobile }) => ({
+const LoginBox = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
   width: isMobile ? '90vw' : '30vw',
   height: isMobile ? 'auto' : '40vh',
   backgroundColor: '#fff',
@@ -25,27 +27,35 @@ const LoginBox = styled.div(({ isMobile }) => ({
   marginTop: '4vh',
 }));
 
-const Title = styled.h1(({ isMobile }) => ({
+const Title = styled.h1.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
   fontSize: isMobile ? '20px' : '2.5vh',
   fontWeight: '600',
   color: '#333',
   marginBottom: '2vh',
 }));
 
-const InputGroup = styled.div(({ isMobile }) => ({
+const InputGroup = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
   marginBottom: '2vh',
   width: isMobile ? '80vw' : '23vw',
   textAlign: 'left',
 }));
 
-const Label = styled.label(({ isMobile }) => ({
+const Label = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
   fontSize: isMobile ? '1rem' : '1.8vh',
   color: '#555',
   marginBottom: '0.5vh',
   display: 'block',
 }));
 
-const Input = styled.input(({ isMobile, isLoading }) => ({
+const Input = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
   width: '100%',
   padding: '1.5vh 2vw',
   fontSize: isMobile ? '1rem' : '1.5vh',
@@ -55,7 +65,9 @@ const Input = styled.input(({ isMobile, isLoading }) => ({
   cursor: isLoading ? 'not-allowed' : 'text',
 }));
 
-const Button = styled.button(({ isMobile, isLoading }) => ({
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
   width: isMobile ? '80vw' : '22.5vw',
   padding: '1.5vh 0',
   fontSize: isMobile ? '1rem' : '1.8vh',
