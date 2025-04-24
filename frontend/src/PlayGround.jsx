@@ -54,6 +54,14 @@ const Text = styled.div.withConfig({
   marginBottom: '0.5vh',
 }));
 
+const Thumbnail = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  maxWidth: isMobile ? '80vw' : '20vw',
+  marginBottom: '1vh',
+  borderRadius: '8px',
+}));
+
 const InputGroup = styled.div(() => ({
   marginBottom: '1.5vh',
   textAlign: 'left',
@@ -495,6 +503,14 @@ function PlayGround() {
             <Subtitle isMobile={isMobile}>
               Question {currentQuestionIndex + 1}: {question.text}
             </Subtitle>
+            {question.image && (
+              <Thumbnail
+                src={question.image}
+                alt={`Image for question ${currentQuestionIndex + 1}`}
+                isMobile={isMobile}
+                loading="lazy"
+              />
+            )}
             <Text isMobile={isMobile}>
               URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
             </Text>
