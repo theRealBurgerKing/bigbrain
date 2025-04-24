@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function GameEditor() {
   const { gameId } = useParams();
@@ -12,6 +13,8 @@ function GameEditor() {
   const [game, setGame] = useState(null);
   const [gameName, setGameName] = useState('');
   const [thumbnail, setThumbnail] = useState('');
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Fetch all games on mount
   useEffect(() => {
@@ -166,7 +169,7 @@ function GameEditor() {
     }
   };
 
-  // Define all styles as named objects
+  // Define all styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -178,8 +181,8 @@ function GameEditor() {
   };
 
   const editorStyle = {
-    width: '50vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '50vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -187,14 +190,14 @@ function GameEditor() {
   };
 
   const titleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const subtitleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '1.5rem' : '2.5vh',
     fontWeight: '500',
     color: '#333',
     marginBottom: '2vh',
@@ -203,48 +206,49 @@ function GameEditor() {
 
   const buttonContainerStyle = {
     marginBottom: '2vh',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
     border: 'none',
     borderRadius: '4px',
     cursor: 'not-allowed',
-    margin: '0.5vh 1vw',
   };
 
   const loadingStyle = {
     textAlign: 'center',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
   };
 
   const errorStyle = {
     color: 'red',
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     marginBottom: '1vh',
     textAlign: 'center',
   };
 
   const gameNotFoundStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     textAlign: 'center',
   };
@@ -255,30 +259,30 @@ function GameEditor() {
   };
 
   const labelStyle = {
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '1rem' : '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '25vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '25vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const fileInputStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
-    marginLeft: '1vw',
+    marginLeft: isMobile ? '0' : '1vw',
   };
 
   const thumbnailStyle = {
-    maxWidth: '10vw',
+    maxWidth: isMobile ? '50vw' : '10vw',
     marginTop: '0.5vh',
   };
 
@@ -295,13 +299,14 @@ function GameEditor() {
           <button
             style={buttonStyle}
             onClick={() => navigate('/dashboard')}
+            aria-label="Return to dashboard"
           >
             Back to Dashboard
           </button>
         </section>
         <section style={inputGroupStyle}>
           <h3 style={subtitleStyle}>Edit</h3>
-          <label style={labelStyle}>
+          <label id="gameNameLabel" style={labelStyle}>
             Game Name:
             <input
               type="text"
@@ -309,23 +314,29 @@ function GameEditor() {
               onChange={(e) => setGameName(e.target.value)}
               placeholder="Enter game name"
               style={inputStyle}
+              required
+              aria-label="Game Name"
+              aria-describedby="gameNameLabel"
             />
           </label>
           <div style={{ marginTop: '1vh' }}>
-            <label style={labelStyle}>
+            <label id="thumbnailLabel" style={labelStyle}>
               Thumbnail:
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleThumbnailUpload}
                 style={fileInputStyle}
+                aria-label="Upload game thumbnail"
+                aria-describedby="thumbnailLabel"
               />
             </label>
             {thumbnail && (
               <img
                 src={thumbnail}
-                alt="Game thumbnail"
+                alt={`Thumbnail for ${gameName || 'game'}`}
                 style={thumbnailStyle}
+                loading="lazy"
               />
             )}
           </div>
@@ -333,6 +344,7 @@ function GameEditor() {
             <button
               style={buttonStyle}
               onClick={() => navigate(`/game/${gameId}/questions`)}
+              aria-label="Edit questions for this game"
             >
               Edit Questions
             </button>
@@ -342,11 +354,11 @@ function GameEditor() {
               style={isLoading ? disabledButtonStyle : buttonStyle}
               onClick={handleSaveGame}
               disabled={isLoading}
+              aria-label="Save game changes"
             >
               Save
             </button>
           </div>
-          
         </section>
       </div>
     </div>
