@@ -770,7 +770,60 @@ function Dashboard() {
           </ModalContainer>
         )}
 
-        
+        {showGameSession && (
+          <Modal onClose={() => setShowGameSession(false)}>
+            <SessionModalContent>
+              <SessionModalText isMobile={isMobile}>Session ID: {showGameSessionId}</SessionModalText>
+              {copySuccess && (
+                <CopySuccessText isMobile={isMobile}>Link copied to clipboard!</CopySuccessText>
+              )}
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={handleCopyLink}
+                aria-label="Copy game session link"
+              >
+                Copy Link
+              </Button>
+              <Button
+                isMobile={isMobile}
+                disabled={false}
+                onClick={() => showGame(showGameGameId)}
+                aria-label="Show current game session"
+              >
+                Show Game
+              </Button>
+            </SessionModalContent>
+          </Modal>
+        )}
+
+        {showDeleteModal && (
+          <Modal onClose={cancelDeleteGame}>
+            <SessionModalContent>
+              <SessionModalText isMobile={isMobile}>Are you sure you want to delete>this game?</SessionModalText>
+              <ModalButtonContainer isMobile={isMobile}>
+                <Button
+                  isMobile={isMobile}
+                  disabled={false}
+                  onClick={confirmDeleteGame}
+                  aria-label="Confirm game deletion"
+                >
+                  Confirm
+                </Button>
+                <Button
+                  isMobile={isMobile}
+                  disabled={false}
+                  onClick={cancelDeleteGame}
+                  aria-label="Cancel game deletion"
+                >
+                  Cancel
+                </Button>
+              </ModalButtonContainer>
+            </SessionModalContent>
+          </Modal>
+        )}
+      </DashboardContainer>
+    </Container>
   );
 }
 
