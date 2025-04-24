@@ -6,7 +6,7 @@ import {
   Link,
   useNavigate,
   useLocation,
-} from "react-router-dom";
+} from 'react-router-dom';
 import Register from './Register1';
 import Login from './Login';
 import Dashboard from './Dashboard';
@@ -19,6 +19,62 @@ import NavigateToPlay from './NavigateToPlay';
 import OldSession from './OldSession';
 import Index from './Index';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import styled from 'styled-components';
+
+const Container = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  minHeight: '100vh',
+  width: '100%',
+  backgroundColor: '#f0f2f5',
+  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  margin: '0',
+  boxSizing: 'border-box',
+}));
+
+const Nav = styled.nav.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginBottom: '2vh',
+  textAlign: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+}));
+
+const LinkStyled = styled(Link).withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#3b82f6',
+  textDecoration: 'none',
+}));
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
+  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: isLoading ? 'not-allowed' : 'pointer',
+  transition: 'background-color 0.3s, transform 0.1s',
+}));
+
+const Hr = styled.hr(() => ({
+  margin: '2vh 0',
+  border: '0',
+  borderTop: '1px solid #ccc',
+}));
+
+const Content = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+}));
 
 function Pages() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -110,92 +166,46 @@ function Pages() {
     setOpen(true);
   };
 
-  // Define styles with mobile responsiveness
-  const containerStyle = {
-    minHeight: '100vh',
-    width: '100%',
-    backgroundColor: '#f0f2f5',
-    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
-    margin: '0',
-    boxSizing: 'border-box',
-  };
-
-  const navStyle = {
-    marginBottom: '2vh',
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: isMobile ? 'column' : 'row',
-    gap: isMobile ? '1vh' : '1vw',
-  };
-
-  const linkStyle = {
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    color: '#3b82f6',
-    textDecoration: 'none',
-  };
-
-  const buttonStyle = {
-    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#3b82f6',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s, transform 0.1s',
-  };
-
-  const disabledButtonStyle = {
-    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
-    fontSize: isMobile ? '1rem' : '1.8vh',
-    fontWeight: '500',
-    color: '#fff',
-    backgroundColor: '#a3bffa',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'not-allowed',
-  };
-
-  const hrStyle = {
-    margin: '2vh 0',
-    border: '0',
-    borderTop: '1px solid #ccc',
-  };
-
-  const contentStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-  };
-
   return (
-    <div style={containerStyle}>
+    <Container isMobile={isMobile}>
       {!isPlayRoute && (
         <>
-          <nav style={navStyle}>
+          <Nav isMobile={isMobile}>
             {token ? (
-              <button
-                style={isLoading ? disabledButtonStyle : buttonStyle}
+              <Button
+                isMobile={isMobile}
+                isLoading={isLoading}
                 onClick={logout}
                 disabled={isLoading}
-                aria-label={isLoading ? "Logging out" : "Logout"}
+                aria-label={isLoading ? 'Logging out' : 'Logout'}
               >
                 {isLoading ? 'Logging out...' : 'Logout'}
-              </button>
+              </Button>
             ) : (
               <>
-                <Link to="/register" style={linkStyle} aria-label="Navigate to register page">Register</Link>
+                <LinkStyled
+                  to="/register"
+                  isMobile={isMobile}
+                  aria-label="Navigate to register page"
+                >
+                  Register
+                </LinkStyled>
                 {isMobile ? <br /> : ' | '}
-                <Link to="/login" style={linkStyle} aria-label="Navigate to login page">Login</Link>
+                <LinkStyled
+                  to="/login"
+                  isMobile={isMobile}
+                  aria-label="Navigate to login page"
+                >
+                  Login
+                </LinkStyled>
               </>
             )}
-          </nav>
-          <hr style={hrStyle} />
+          </Nav>
+          <Hr />
         </>
       )}
 
-      <div style={contentStyle}>
+      <Content>
         <Routes>
           <Route path="/" element={<Index token={token} />} />
           <Route path="/register" element={<Register successJob={successJob} showError={showError} />} />
@@ -210,14 +220,14 @@ function Pages() {
           <Route path="/session/:sessionId" element={<GameSession />} />
           <Route path="*" element={<h2>404 - Page Not Found</h2>} />
         </Routes>
-      </div>
+      </Content>
 
       <ErrorModal
         open={open}
         onClose={handleClose}
         message={errorMessage}
       />
-    </div>
+    </Container>
   );
 }
 
