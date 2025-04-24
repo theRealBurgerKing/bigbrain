@@ -8,7 +8,7 @@ import styled from 'styled-components';
 const Container = styled.div(() => ({
   display: 'flex',
   justifyContent: 'center',
-  minHeight: '80vh',
+  minHeight: '70vh',
   width: '100%',
   padding: '0px',
   margin: '0px',
