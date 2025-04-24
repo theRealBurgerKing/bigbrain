@@ -96,11 +96,9 @@ function PlayGround() {
 
   const fetchQuestion = async () => {
     try {
-      console.log('Fetching question for sessionId:', sessionId);
       const q = await axios.get(
         `http://localhost:5005/play/${playerId}/question`
       );
-      console.log('Fetched question:', q.data);
       if (q.status === 200) {
         setQuestions(prevQuestions => {
           if (!prevQuestions.some(existingQuestion => existingQuestion.id === q.data.question.id)) {
@@ -109,7 +107,7 @@ function PlayGround() {
             setQuestion(q.data.question);
             setCorrectAnswers([]);
             setSelectedAnswers([]);
-            setCurrentQuestionIndex(updatedQuestions.length);
+            setCurrentQuestionIndex(questions.length);
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -250,7 +248,6 @@ function PlayGround() {
     }
   }, [question.id, questions]);
 
-  // Trigger animejs animation when in waiting state
   useEffect(() => {
     if (playerId && !active && !finish) {
       animate('.square', {
@@ -438,6 +435,7 @@ function PlayGround() {
                 onKeyDown={handleKeyDown}
                 type="text"
                 style={inputStyle}
+                aria-label="Player name"
               />
             </label>
             <div style={buttonContainerStyle}>
@@ -452,22 +450,26 @@ function PlayGround() {
         )}
 
         {playerId && !active && !finish && (
-          <div style={lobbyContainerStyle}>
+          <section aria-labelledby="lobby-title" style={lobbyContainerStyle}>
             <h2 style={lobbyTitleStyle}>Welcome to the Game Lobby!</h2>
             <div style={squareContainerStyle}>
-              <div className="square" style={squareStyle}></div>
-              <div className="square" style={squareStyle}></div>
-              <div className="square" style={squareStyle}></div>
-              <div className="square" style={squareStyle}></div>
-              <div className="square" style={squareStyle}></div>
+              <div className="square" style={squareStyle} aria-hidden="true"></div>
+              <div className="square" style={squareStyle} aria-hidden="true"></div>
+              <div className="square" style={squareStyle} aria-hidden="true"></div>
+              <div className="square" style={squareStyle} aria-hidden="true"></div>
+              <div className="square" style={squareStyle} aria-hidden="true"></div>
             </div>
-            <p style={lobbyTextStyle}>Please wait for the game to start...</p>
+            <p style={lobbyTextStyle} aria-live="polite">Please wait for the game to start...</p>
             <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={() => navigate('/play')}>
+              <button
+                style={buttonStyle}
+                onClick={() => navigate('/play')}
+                aria-label="Go back to game selection screen"
+              >
                 Back
               </button>
             </div>
-          </div>
+          </section>
         )}
 
         {playerId && active && question && question.answers && (
@@ -476,7 +478,7 @@ function PlayGround() {
               Question {currentQuestionIndex}: {question.text}
             </h2>
             <div style={textStyle}>
-              URL: <a href={question.youtubeUrl}>{question.youtubeUrl}</a>
+              URL: <a href={question.youtubeUrl} aria-label="Watch the question video">{question.youtubeUrl}</a>
             </div>
             <div style={textStyle}>
               Score: {question.points}
@@ -504,6 +506,7 @@ function PlayGround() {
                         onChange={() => handleAnswerSelect(indexStr)}
                         disabled={timeLeft <= 0}
                         style={{ marginLeft: '1vw' }}
+                        aria-label={`Option ${index}: ${ans}`}
                       />
                       {ans}
                     </li>
@@ -515,9 +518,10 @@ function PlayGround() {
             )}
             <div style={buttonContainerStyle}>
               <button
-                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
+                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle }
                 onClick={() => submitQuestion()}
                 disabled={timeLeft <= 0}
+                aria-disabled={timeLeft <= 0}
               >
                 Submit
               </button>
