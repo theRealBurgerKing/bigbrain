@@ -8,7 +8,6 @@ function PlayGround() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { sessionId } = useParams();
-  const [error, setError] = useState('');
   const [player, setPlayer] = useState('');
   const [playerId, setPlayerId] = useState(searchParams.get('playerId'));
   const [active, setActive] = useState(false);
@@ -303,13 +302,6 @@ function PlayGround() {
     fontSize: '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
-  };
-
-  const errorStyle = {
-    color: 'red',
-    fontSize: '1.8vh',
-    marginBottom: '1vh',
-    textAlign: 'center',
   };
 
   const inputGroupStyle = {
