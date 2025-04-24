@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Modal from './Modal';
 import { animate, stagger } from 'animejs';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 function PlayGround() {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,8 @@ function PlayGround() {
   const [total, setTotal] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const attendGame = async () => {
     try {
@@ -247,6 +250,7 @@ function PlayGround() {
     }
   }, [playerId, active, finish]);
 
+  // Define styles with mobile responsiveness
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -258,8 +262,8 @@ function PlayGround() {
   };
 
   const boxStyle = {
-    width: '30vw',
-    padding: '2vh 3vw',
+    width: isMobile ? '90vw' : '30vw',
+    padding: isMobile ? '2vh 4vw' : '2vh 3vw',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -267,14 +271,14 @@ function PlayGround() {
   };
 
   const titleStyle = {
-    fontSize: '4vh',
+    fontSize: isMobile ? '2.5rem' : '4vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const subtitleStyle = {
-    fontSize: '2.5vh',
+    fontSize: isMobile ? '1.5rem' : '2.5vh',
     fontWeight: '500',
     color: '#333',
     marginBottom: '2vh',
@@ -282,7 +286,7 @@ function PlayGround() {
   };
 
   const textStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
   };
@@ -293,7 +297,7 @@ function PlayGround() {
   };
 
   const labelStyle = {
-    fontSize: '1.5vh',
+    fontSize: isMobile ? '1rem' : '1.5vh',
     color: '#555',
     marginBottom: '0.5vh',
     marginTop: '5vh',
@@ -301,13 +305,13 @@ function PlayGround() {
   };
 
   const inputStyle = {
-    width: '20vw',
-    padding: '1vh 1vw',
-    fontSize: '1.8vh',
+    width: isMobile ? '80vw' : '20vw',
+    padding: isMobile ? '2vh 2vw' : '1vh 1vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#fff',
-    marginLeft: '1.5vw',
+    marginLeft: isMobile ? '0' : '1.5vw',
   };
 
   const answerListStyle = {
@@ -317,7 +321,7 @@ function PlayGround() {
   };
 
   const answerItemStyle = {
-    padding: '1vh 1vw',
+    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
     borderRadius: '5px',
     marginBottom: '0.5vh',
   };
@@ -329,31 +333,33 @@ function PlayGround() {
   const buttonContainerStyle = {
     marginTop: '2vh',
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '1vh' : '1vw',
+    justifyContent: 'center',
   };
 
   const buttonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#3b82f6',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    margin: '0.5vh 1vw',
     transition: 'background-color 0.3s, transform 0.1s',
   };
 
   const disabledButtonStyle = {
-    padding: '1vh 2vw',
-    fontSize: '1.8vh',
+    padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: '#a3bffa',
     border: 'none',
     borderRadius: '4px',
     cursor: 'not-allowed',
-    margin: '0.5vh 1vw',
   };
 
   const resultListStyle = {
@@ -363,7 +369,7 @@ function PlayGround() {
   };
 
   const resultItemStyle = {
-    padding: '1vh 1vw',
+    padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
     marginBottom: '0.5vh',
     borderBottom: '1px solid #eee',
   };
@@ -373,14 +379,14 @@ function PlayGround() {
   };
 
   const lobbyTitleStyle = {
-    fontSize: '3vh',
+    fontSize: isMobile ? '2rem' : '3vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
   };
 
   const lobbyTextStyle = {
-    fontSize: '2vh',
+    fontSize: isMobile ? '1.2rem' : '2vh',
     color: '#555',
     marginBottom: '1vh',
   };
@@ -392,14 +398,14 @@ function PlayGround() {
   };
 
   const squareStyle = {
-    width: '30px',
-    height: '30px',
+    width: isMobile ? '20px' : '30px',
+    height: isMobile ? '20px' : '30px',
     backgroundColor: '#3b82f6',
-    margin: '0 5px',
+    margin: isMobile ? '0 3px' : '0 5px',
   };
 
   const modalTextStyle = {
-    fontSize: '1.8vh',
+    fontSize: isMobile ? '1rem' : '1.8vh',
     color: '#333',
     textAlign: 'center',
   };
@@ -411,7 +417,7 @@ function PlayGround() {
         {!playerId && (
           <div style={inputGroupStyle}>
             <h2 style={subtitleStyle}>Game: {sessionId || 'Unknown'}</h2>
-            <label style={labelStyle}>
+            <label id="playerNameLabel" style={labelStyle}>
               Name:
               <input
                 value={player}
@@ -419,14 +425,24 @@ function PlayGround() {
                 onKeyDown={handleKeyDown}
                 type="text"
                 style={inputStyle}
+                required
                 aria-label="Player name"
+                aria-describedby="playerNameLabel"
               />
             </label>
             <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={attendGame}>
+              <button
+                style={buttonStyle}
+                onClick={attendGame}
+                aria-label="Join the game"
+              >
                 Attend the game!
               </button>
-              <button style={buttonStyle} onClick={() => navigate('/play')}>
+              <button
+                style={buttonStyle}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
                 Back
               </button>
             </div>
@@ -448,7 +464,7 @@ function PlayGround() {
               <button
                 style={buttonStyle}
                 onClick={() => navigate('/play')}
-                aria-label="Go back to game selection screen"
+                aria-label="Return to game selection screen"
               >
                 Back
               </button>
@@ -459,10 +475,10 @@ function PlayGround() {
         {playerId && active && question && question.answers && (
           <>
             <h2 style={subtitleStyle}>
-              Question {currentQuestionIndex}: {question.text}
+              Question {currentQuestionIndex + 1}: {question.text}
             </h2>
             <div style={textStyle}>
-              URL: <a href={question.youtubeUrl} aria-label="Watch the question video">{question.youtubeUrl}</a>
+              URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
             </div>
             <div style={textStyle}>
               Score: {question.points}
@@ -490,9 +506,10 @@ function PlayGround() {
                         onChange={() => handleAnswerSelect(indexStr)}
                         disabled={timeLeft <= 0}
                         style={{ marginLeft: '1vw' }}
-                        aria-label={`Option ${index}: ${ans}`}
+                        aria-label={`Option ${index + 1}: ${ans}`}
+                        id={`answer-${index}`}
                       />
-                      {ans}
+                      <label htmlFor={`answer-${index}`} style={{ marginLeft: '0.5vw' }}>{ans}</label>
                     </li>
                   );
                 })}
@@ -502,14 +519,18 @@ function PlayGround() {
             )}
             <div style={buttonContainerStyle}>
               <button
-                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle }
+                style={timeLeft <= 0 ? disabledButtonStyle : buttonStyle}
                 onClick={() => submitQuestion()}
                 disabled={timeLeft <= 0}
-                aria-disabled={timeLeft <= 0}
+                aria-label="Submit your answer"
               >
                 Submit
               </button>
-              <button style={buttonStyle} onClick={() => navigate('/play')}>
+              <button
+                style={buttonStyle}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
                 Back
               </button>
             </div>
@@ -539,7 +560,11 @@ function PlayGround() {
             )}
             <p style={textStyle}>Total: {total}</p>
             <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={() => navigate('/play')}>
+              <button
+                style={buttonStyle}
+                onClick={() => navigate('/play')}
+                aria-label="Return to game selection screen"
+              >
                 Back
               </button>
             </div>
@@ -549,6 +574,21 @@ function PlayGround() {
         {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
             <p style={modalTextStyle}>Submission successful!</p>
+          </Modal>
+        )}
+
+        {error && (
+          <Modal onClose={() => setError('')}>
+            <p style={modalTextStyle}>{error}</p>
+            <div style={buttonContainerStyle}>
+              <button
+                style={buttonStyle}
+                onClick={() => setError('')}
+                aria-label="Close error message"
+              >
+                OK
+              </button>
+            </div>
           </Modal>
         )}
       </div>
