@@ -1,6 +1,7 @@
 import { Bar, Line } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElement } from 'chart.js';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import styled from 'styled-components';
 
 Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement);
 
@@ -46,49 +47,61 @@ const processData = (results, question) => {
   return { scores, correctPercentages, averageResponseTimes };
 };
 
+const Container = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  padding: isMobile ? '1rem' : '1.5rem',
+  display: 'grid',
+  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+  gap: isMobile ? '1rem' : '1.5rem',
+}));
+
+const Section = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  border: '1px solid #e5e7eb',
+  padding: isMobile ? '0.75rem' : '1rem',
+  borderRadius: '0.5rem',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+}));
+
+const FullWidthSection = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  border: '1px solid #e5e7eb',
+  padding: isMobile ? '0.75rem' : '1rem',
+  borderRadius: '0.5rem',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  gridColumn: isMobile ? 'span 1' : 'span 2',
+}));
+
+const Heading = styled.h2.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1.25rem' : '1.5rem',
+  fontWeight: 'bold',
+  marginBottom: '1rem',
+  color: '#333',
+}));
+
+const Table = styled.table.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: '100%',
+  textAlign: 'left',
+  fontSize: isMobile ? '0.875rem' : '1rem',
+}));
+
 const Results = ({ data, question }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { scores, correctPercentages, averageResponseTimes } = processData(data.results, question);
   const top5 = scores.sort((a, b) => b.score - a.score).slice(0, 5);
 
-  // Define styles with mobile responsiveness
-  const containerStyle = {
-    padding: isMobile ? '1rem' : '1.5rem', // Reduced padding on mobile
-    display: 'grid',
-    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', // Single column on mobile, two columns on desktop
-    gap: isMobile ? '1rem' : '1.5rem', // Reduced gap on mobile
-  };
-
-  const sectionStyle = {
-    border: '1px solid #e5e7eb',
-    padding: isMobile ? '0.75rem' : '1rem',
-    borderRadius: '0.5rem',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  };
-
-  const fullWidthSectionStyle = {
-    ...sectionStyle,
-    gridColumn: isMobile ? 'span 1' : 'span 2', // Full width on mobile and desktop
-  };
-
-  const headingStyle = {
-    fontSize: isMobile ? '1.25rem' : '1.5rem', // Smaller font size on mobile
-    fontWeight: 'bold',
-    marginBottom: '1rem',
-    color: '#333',
-  };
-
-  const tableStyle = {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: isMobile ? '0.875rem' : '1rem', // Smaller font size on mobile
-  };
-
   return (
-    <div style={containerStyle} role="region" aria-label="Game session results">
-      <div style={sectionStyle}>
-        <h2 style={headingStyle} id="top-5-heading">Top 5</h2>
-        <table style={tableStyle} aria-describedby="top-5-heading">
+    <Container isMobile={isMobile} role="region" aria-label="Game session results">
+      <Section isMobile={isMobile}>
+        <Heading isMobile={isMobile} id="top-5-heading">Top 5</Heading>
+        <Table isMobile={isMobile} aria-describedby="top-5-heading">
           <thead>
             <tr>
               <th scope="col">User</th>
@@ -103,11 +116,11 @@ const Results = ({ data, question }) => {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Section>
 
-      <div style={sectionStyle}>
-        <h2 style={headingStyle} id="accuracy-heading">Accuracy</h2>
+      <Section isMobile={isMobile}>
+        <Heading isMobile={isMobile} id="accuracy-heading">Accuracy</Heading>
         <Line
           data={{
             labels: correctPercentages.map((_, i) => `Question ${i + 1}`),
@@ -139,10 +152,10 @@ const Results = ({ data, question }) => {
           aria-label="Line chart of percentage accuracy per question"
           role="img"
         />
-      </div>
+      </Section>
 
-      <div style={fullWidthSectionStyle}>
-        <h2 style={headingStyle} id="response-time-heading">Average Response Time (seconds)</h2>
+      <FullWidthSection isMobile={isMobile}>
+        <Heading isMobile={isMobile} id="response-time-heading">Average Response Time (seconds)</Heading>
         <Bar
           data={{
             labels: averageResponseTimes.map((_, i) => `Question ${i + 1}`),
@@ -171,8 +184,8 @@ const Results = ({ data, question }) => {
           aria-label="Bar chart of average response time per question in seconds"
           role="img"
         />
-      </div>
-    </div>
+      </FullWidthSection>
+    </Container>
   );
 };
 
