@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 const ModalWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => true, // 目前无自定义属性，允许所有属性
+  shouldForwardProp: (prop) => true,
 })(() => ({
   position: 'fixed',
   inset: 0,

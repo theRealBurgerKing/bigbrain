@@ -175,6 +175,14 @@ const Label = styled.label.withConfig({
   display: 'block',
 }));
 
+const CorrectLabel = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginLeft: isMobile ? '0' : '1vw',
+}));
+
 const Input = styled.input.withConfig({
   shouldForwardProp: (prop) => !['isMobile'].includes(prop),
 })(({ isMobile }) => ({
@@ -185,6 +193,12 @@ const Input = styled.input.withConfig({
   borderRadius: '4px',
   backgroundColor: '#fff',
   marginLeft: isMobile ? '0' : '1vw',
+}));
+
+const CorrectInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginRight: '0.5vw',
 }));
 
 const Select = styled.select.withConfig({
@@ -810,16 +824,16 @@ function QuestionEditor() {
                   aria-describedby={`answerLabel-${index}`}
                 />
               </Label>
-              <label style={{ display: 'flex', alignItems: 'center', marginLeft: '1vw' }}>
-                <input
+              <CorrectLabel isMobile={isMobile}>
+                <CorrectInput
                   type={type === 'multiple choice' ? 'checkbox' : 'radio'}
                   checked={correctAnswers.includes(index.toString())}
                   onChange={() => toggleCorrectAnswer(index)}
-                  style={{ marginRight: '0.5vw' }}
+                  isMobile={isMobile}
                   aria-label={`Mark answer ${index + 1} as correct`}
                 />
                 Correct
-              </label>
+              </CorrectLabel>
               {type !== 'judgement' && (
                 <DeleteButton
                   isMobile={isMobile}

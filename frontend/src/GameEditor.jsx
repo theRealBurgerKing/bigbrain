@@ -335,7 +335,7 @@ function GameEditor() {
               aria-describedby="gameNameLabel"
             />
           </Label>
-          <div style={{ marginTop: '1vh' }}>
+          <div>
             <Label id="thumbnailLabel" isMobile={isMobile}>
               Thumbnail:
               <FileInput
