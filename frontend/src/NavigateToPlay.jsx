@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import styled from 'styled-components';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-const Container = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
+const Container = styled.div(() => ({
   display: 'flex',
   justifyContent: 'center',
   minHeight: '40vh',
@@ -15,10 +14,10 @@ const Container = styled.div.withConfig({
 }));
 
 const Box = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  width: '30vw',
-  padding: '2vh 3vw',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '30vw',
+  padding: isMobile ? '3vh 5vw' : '2vh 3vw',
   backgroundColor: '#fff',
   borderRadius: '8px',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -27,34 +26,35 @@ const Box = styled.div.withConfig({
 }));
 
 const Title = styled.h1.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  fontSize: '4vh',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '24px' : '4vh',
   fontWeight: '600',
   color: '#333',
   marginBottom: '0vh',
 }));
 
 const Subtitle = styled.h2.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  fontSize: '1.3vh',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.3vh',
   fontWeight: '500',
   color: '#333',
   marginBottom: '2vh',
 }));
 
 const InputGroup = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
   marginBottom: '1.5vh',
   textAlign: 'left',
+  width: isMobile ? '70vw' : '80%',
 }));
 
 const Label = styled.label.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  fontSize: '1.5vh',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.5vh',
   color: '#555',
   marginBottom: '0.5vh',
   display: 'block',
@@ -62,10 +62,10 @@ const Label = styled.label.withConfig({
 
 const Input = styled.input.withConfig({
   shouldForwardProp: (prop) => true,
-})(() => ({
-  width: '20vw',
-  padding: '1vh 1vw',
-  fontSize: '1.8vh',
+})(({ isMobile }) => ({
+  width: isMobile ? '100%' : '25vw',
+  padding: isMobile ? '1.2vh 2vw' : '1vh 1vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
   border: '1px solid #ccc',
   borderRadius: '4px',
   backgroundColor: '#fff',
@@ -73,18 +73,17 @@ const Input = styled.input.withConfig({
   marginLeft: '1vw',
 }));
 
-const ButtonContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
+const ButtonContainer = styled.div(() => ({
   marginTop: '2vh',
   textAlign: 'center',
 }));
 
 const Button = styled.button.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  padding: '1vh 2vw',
-  fontSize: '1.8vh',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '100%' : '20vw',
+  padding: isMobile ? '1.2vh 3vw' : '1vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
   fontWeight: '500',
   color: '#fff',
   backgroundColor: '#3b82f6',
@@ -96,9 +95,9 @@ const Button = styled.button.withConfig({
 }));
 
 const ModalText = styled.p.withConfig({
-  shouldForwardProp: (prop) => true,
-})(() => ({
-  fontSize: '1.8vh',
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
   color: '#333',
   textAlign: 'center',
 }));
@@ -108,6 +107,7 @@ function NavigateToPlay() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [sessionId, setSessionId] = useState('');
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -123,13 +123,14 @@ function NavigateToPlay() {
 
   return (
     <Container>
-      <Box>
-        <Title>Welcome To Play</Title>
-        <Subtitle>Please Enter the Game Session ID:</Subtitle>
-        <InputGroup>
-          <Label>
+      <Box isMobile={isMobile}>
+        <Title isMobile={isMobile}>Welcome To Play</Title>
+        <Subtitle isMobile={isMobile}>Please Enter the Game Session ID:</Subtitle>
+        <InputGroup isMobile={isMobile}>
+          <Label isMobile={isMobile}>
             Session ID:
             <Input
+              isMobile={isMobile}
               value={sessionId}
               onChange={(e) => setSessionId(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -140,6 +141,7 @@ function NavigateToPlay() {
         </InputGroup>
         <ButtonContainer>
           <Button
+            isMobile={isMobile}
             onClick={() => navigate(`/play/${sessionId}`)}
             aria-label="Submit session ID to join game"
           >
@@ -150,7 +152,7 @@ function NavigateToPlay() {
 
       {showErrorModal && (
         <Modal onClose={handleCloseModal}>
-          <ModalText>{error}</ModalText>
+          <ModalText isMobile={isMobile}>{error}</ModalText>
         </Modal>
       )}
     </Container>
