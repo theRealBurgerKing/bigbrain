@@ -5,6 +5,176 @@ import Modal from './Modal';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import styled from 'styled-components';
 
+const Container = styled.div(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  minHeight: '100vh',
+  width: '100%',
+  padding: '0px',
+  margin: '0px',
+}));
+
+const Editor = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  width: isMobile ? '90vw' : '50vw',
+  padding: isMobile ? '2vh 4vw' : '2vh 3vw',
+  backgroundColor: '#fff',
+  borderRadius: '8px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  margin: '2vh 0',
+}));
+
+const Title = styled.h2.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '2rem' : '3vh',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '2vh',
+}));
+
+const Subtitle = styled.h3.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1.5rem' : '2.5vh',
+  fontWeight: '500',
+  color: '#333',
+  marginBottom: '2vh',
+  textAlign: 'left',
+}));
+
+const ButtonContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginBottom: '2vh',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+  justifyContent: 'center',
+}));
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'isLoading'].includes(prop),
+})(({ isMobile, isLoading }) => ({
+  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: isLoading ? 'not-allowed' : 'pointer',
+  transition: 'background-color 0.3s, transform 0.1s',
+}));
+
+const DeleteButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isMobile', 'disabled'].includes(prop),
+})(({ isMobile, disabled }) => ({
+  padding: isMobile ? '1.5vh 4vw' : '1vh 2vw',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  fontWeight: '500',
+  color: '#fff',
+  backgroundColor: disabled ? '#f87171' : '#dc2626',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  transition: 'background-color 0.3s, transform 0.1s',
+}));
+
+const LoadingText = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  textAlign: 'center',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+}));
+
+const ErrorText = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  color: 'red',
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  marginBottom: '1vh',
+  textAlign: 'center',
+}));
+
+const GameNotFoundText = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  textAlign: 'center',
+}));
+
+const QuestionNotFoundText = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+  textAlign: 'center',
+}));
+
+const QuestionList = styled.ul(() => ({
+  listStyle: 'none',
+  padding: '0',
+  margin: '0',
+}));
+
+const QuestionItem = styled.li.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  padding: isMobile ? '1.5vh 2vw' : '1vh 1vw',
+  background: 'transparent',
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '0.5vh',
+  borderBottom: '1px solid #eee',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '0',
+}));
+
+const QuestionText = styled.span.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#333',
+}));
+
+const NoQuestionsText = styled.p.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.8vh',
+  color: '#555',
+}));
+
+const InputGroup = styled.div(() => ({
+  marginBottom: '1.5vh',
+  textAlign: 'left',
+}));
+
+const AnswerGroup = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  marginBottom: '0.5vh',
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: isMobile ? 'column' : 'row',
+  gap: isMobile ? '1vh' : '1vw',
+}));
+
+const Label = styled.label.withConfig({
+  shouldForwardProp: (prop) => !['isMobile'].includes(prop),
+})(({ isMobile }) => ({
+  fontSize: isMobile ? '1rem' : '1.5vh',
+  color: '#555',
+  marginBottom: '0.5vh',
+  display: 'block',
+}));
+
 
 
 function QuestionEditor() {
