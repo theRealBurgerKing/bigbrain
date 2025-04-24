@@ -46,17 +46,14 @@ function Login({ successJob, showError }) {
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
-    //alignItems: 'center',
     height: '100%',
     width: '100%',
-    //backgroundColor: '#f0f2f5',
     padding: '0px',
-    //paddingTop: '30px',
   };
 
   const loginBoxStyle = {
-    width: '30vw', // Fixed width relative to viewport
-    height: '40vh', // Fixed height relative to viewport
+    width: '30vw',
+    height: '40vh',
     backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -64,12 +61,12 @@ function Login({ successJob, showError }) {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '2vh 3vw', // Padding in viewport units
+    padding: '2vh 3vw',
     marginTop: '4vh',
   };
 
   const titleStyle = {
-    fontSize: '2.5vh', // Font size in viewport height units
+    fontSize: '2.5vh',
     fontWeight: '600',
     color: '#333',
     marginBottom: '2vh',
@@ -77,21 +74,21 @@ function Login({ successJob, showError }) {
 
   const inputGroupStyle = {
     marginBottom: '2vh',
-    width: '23vw', // Input group width in viewport units
+    width: '23vw',
     textAlign: 'left',
   };
 
   const labelStyle = {
-    fontSize: '1.8vh', // Label font size in viewport units
+    fontSize: '1.8vh',
     color: '#555',
     marginBottom: '0.5vh',
     display: 'block',
   };
 
   const inputStyle = {
-    width: '80%', // Full width of input group
-    padding: '1.5vh 2vw', // Padding in viewport units
-    fontSize: '1.5vh', // Font size in viewport units
+    width: '80%',
+    padding: '1.5vh 2vw',
+    fontSize: '1.5vh',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: isLoading ? '#f5f5f5' : '#fff',
@@ -99,9 +96,9 @@ function Login({ successJob, showError }) {
   };
 
   const buttonStyle = {
-    width: '22.5vw', // Button width matches input group
-    padding: '1.5vh 0', // Padding in viewport units
-    fontSize: '1.8vh', // Font size in viewport units
+    width: '22.5vw',
+    padding: '1.5vh 0',
+    fontSize: '1.8vh',
     fontWeight: '500',
     color: '#fff',
     backgroundColor: isLoading ? '#a3bffa' : '#3b82f6',

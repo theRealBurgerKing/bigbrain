@@ -203,7 +203,6 @@ function GameEditor() {
 
   const buttonContainerStyle = {
     marginBottom: '2vh',
-    // textAlign: 'center',
   };
 
   const buttonStyle = {

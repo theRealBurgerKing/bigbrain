@@ -328,7 +328,6 @@ function QuestionEditor() {
                   image: image,
                   answers: type === 'judgement' ? ['True', 'False'] : answers, // Ensure fixed answers for judgement
                   correctAnswers: type !== 'judgement' ? correctAnswers : correctAnswers,
-                  isCorrect: false, // Judgement type no longer uses isCorrect
                 }
                 : q
             ),

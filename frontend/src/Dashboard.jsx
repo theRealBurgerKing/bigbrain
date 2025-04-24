@@ -17,7 +17,7 @@ function Dashboard() {
   const [showGameSession, setShowGameSession] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
-  const [copySuccess, setCopySuccess] = useState(false); // New state for copy success message
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // GET request to fetch all games
   const fetchGames = async () => {

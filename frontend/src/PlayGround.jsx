@@ -485,7 +485,6 @@ function PlayGround() {
                         checked={selectedAnswers.includes(indexStr)}
                         onChange={() => handleAnswerSelect(indexStr)}
                         disabled={timeLeft <= 0}
-                        style={{ marginLeft: '1vw' }}
                       />
                       {ans}
                     </li>
@@ -543,17 +542,6 @@ function PlayGround() {
         {submitSuccess && (
           <Modal onClose={() => setSubmitSuccess(false)}>
             <p style={modalTextStyle}>Submission successful!</p>
-          </Modal>
-        )}
-
-        {error && (
-          <Modal onClose={() => setError('')}>
-            <p style={modalTextStyle}>{error}</p>
-            <div style={buttonContainerStyle}>
-              <button style={buttonStyle} onClick={() => setError('')}>
-                OK
-              </button>
-            </div>
           </Modal>
         )}
       </div>
