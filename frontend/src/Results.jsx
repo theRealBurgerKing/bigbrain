@@ -26,7 +26,6 @@ const processData = (results,question) => {
     user.answers.forEach((ans, index) => {
       if (ans.correct) {
         score += Math.log10(1 + question[index].duration- questionAnswerTimes[index][idx])*question[index].points;
-        console.log(Math.log10(1 + question[index].duration -questionAnswerTimes[index][idx])*question[index].points);
       }
     });
     return {
@@ -43,7 +42,6 @@ const processData = (results,question) => {
     return (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2);
   });
 
-  // console.log(scores)
   return { scores, correctPercentages, averageResponseTimes };
 };
 

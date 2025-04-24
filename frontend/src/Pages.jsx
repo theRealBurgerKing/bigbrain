@@ -72,7 +72,6 @@ function Pages() {
       setToken(null);
       navigate('/login');
     } catch (err) {
-      console.log('Error occurred:', err);
       if (err.response) {
         if (err.response.status === 401) {
           setErrorMessage('Session expired. Please log in again.');

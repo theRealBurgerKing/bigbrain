@@ -20,11 +20,9 @@ function OldSession() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setResults(response.data);
       }
     } catch (err) {
-      console.log(err);
     }
 
     setShowResults(true);

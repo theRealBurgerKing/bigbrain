@@ -354,7 +354,6 @@ function Dashboard() {
           setError(err.response.data?.error || 'An error occurred while updating games.');
         }
       } else {
-        console.log(err);
         setError('Failed to connect to the server. Please try again.');
       }
     }
@@ -388,7 +387,6 @@ function Dashboard() {
           setError(err.response.data?.error || 'An error occurred while updating games.');
         }
       } else {
-        console.log(err);
         setError('Failed to connect to the server. Please try again.');
       }
     } finally {
