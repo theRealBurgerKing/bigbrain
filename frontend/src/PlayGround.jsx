@@ -389,7 +389,7 @@ function PlayGround() {
     if (!playerId || finish) return;
     const intervalId = setInterval(() => {
       fetchActive();
-    }, 10);
+    }, 100);
 
     return () => clearInterval(intervalId);
   }, [playerId, finish]);
@@ -399,7 +399,7 @@ function PlayGround() {
     const intervalId = setInterval(() => {
       setError('');
       fetchQuestion();
-    }, 100);
+    }, 500);
 
     return () => clearInterval(intervalId);
   }, [active]);
