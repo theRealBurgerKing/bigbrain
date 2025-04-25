@@ -627,6 +627,9 @@ function Dashboard() {
                     <GameName isMobile={isMobile}>
                       <strong>Game Name:</strong> {game.name}
                     </GameName>
+                    <GameDetail isMobile={isMobile} aria-label={`Game ID of ${game.name}`}>
+                      <strong>GameID:</strong> {game.gameId ?? 'N/A'}
+                    </GameDetail>
                     <GameDetail isMobile={isMobile}>
                       <strong>Owner:</strong> {game.owner ?? 'N/A'}
                     </GameDetail>

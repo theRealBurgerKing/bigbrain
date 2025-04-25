@@ -46,6 +46,7 @@ describe('Admin Happy Path', () => {
     cy.wait(1000);
     cy.get(`[aria-label="Save question"]`).click();
     cy.get('[aria-label="Return to game editor"]').click();
+    cy.get(`[aria-label="Game name"]`).clear().clear().type(newGameName)
     cy.get('[aria-label="Upload game thumbnail"]').selectFile('src/16pic.jpg');
     cy.wait(1000);
     cy.get('[aria-label="Save game changes"]').click();
