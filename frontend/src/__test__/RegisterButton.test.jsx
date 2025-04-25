@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import axios from 'axios';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Register from '../Register1'; // Adjust path based on actual location
+import Register from '../Register1';
 
 // Mock axios
 vi.mock('axios', () => ({

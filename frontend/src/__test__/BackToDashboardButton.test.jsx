@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, useParams } from 'react-router-dom';
 import axios from 'axios';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import GameEditor from '../GameEditor'; // Adjust path as needed
+import GameEditor from '../GameEditor';
 
 // Mock axios
 vi.mock('axios', () => ({
