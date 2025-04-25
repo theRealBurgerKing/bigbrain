@@ -5,7 +5,7 @@ describe('Admin Happy Path', () => {
   const gameName = 'Test Game';
   const newGameName = 'Updated Game Name';
 
-  before(() => {
+  before('Registers successfully', () => {
     cy.visit('http://localhost:3000/register');
     cy.get('[aria-label="Email address"]').type(adminEmail);
     cy.get('[aria-label="Username"]').type(admin);
@@ -32,7 +32,7 @@ describe('Admin Happy Path', () => {
     cy.wait(1000);
   });
 
-  it('Edit a new game successfully', () => {
+  it('Updates the thumbnail and name of the game successfully', () => {
     cy.get(`[aria-label="Edit game ${gameName}"]`).click();
     cy.get(`[aria-label="Edit questions for this game"]`).click();
     cy.get(`[aria-label="Add a new question"]`).click();
@@ -46,6 +46,8 @@ describe('Admin Happy Path', () => {
     cy.wait(1000);
     cy.get(`[aria-label="Save question"]`).click();
     cy.get('[aria-label="Return to game editor"]').click();
+    cy.get('[aria-label="Upload game thumbnail"]').selectFile('src/16pic.jpg');
+    cy.wait(1000);
     cy.get('[aria-label="Save game changes"]').click();
     cy.wait(1000);
   });
