@@ -126,20 +126,8 @@ The `BackToDashboardButton.test.jsx` suite tests the "Back to Dashboard" button 
 - **Test 7: Navigates to login when no token exists**
   - Simulates no token, verifies the "No token found. Please log in again." text, and confirms navigation to `/login`.
 
-7. happy path of an admin that is described as:
-Registers successfully
-Creates a new game successfully
-Updates the thumbnail and name of the game successfully
-Starts a game successfully
-Ends a game successfully
-Loads the results page successfully
-Logs out of the application successfully
-Logs back into the application successfully
 
-8. happy path of player
-Player attend game
-player choose answer
-show results
+
 
 
 # UI Testing Description
