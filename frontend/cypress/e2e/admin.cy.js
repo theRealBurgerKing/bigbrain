@@ -1,3 +1,4 @@
+/* global describe, before, it, cy, beforeEach */
 describe('Admin Happy Path', () => {
   const adminEmail = 'admin@example.com';
   const adminPassword = 'admin123';

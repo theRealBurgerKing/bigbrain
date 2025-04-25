@@ -1,3 +1,4 @@
+/* global describe, before, it, cy, beforeEach */
 describe('User Happy Path', () => {
   const adminEmail = 'admin@example.com';
   const adminPassword = 'admin123';
@@ -58,7 +59,7 @@ describe('User Happy Path', () => {
           body: {
             mutationType: 'ADVANCE',
           },
-        }).then((response) => {
+        }).then(() => {
           cy.wait(2000).then(() => {
             cy.get('#answer-3');
             cy.get('[aria-label="Submit your answer"]').click();
