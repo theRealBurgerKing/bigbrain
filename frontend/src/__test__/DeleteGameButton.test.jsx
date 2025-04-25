@@ -170,7 +170,40 @@ describe('Delete Game Button Component', () => {
     expect(button).toHaveStyle('width: 9vw');
   });
 
-  
+  // Test 6: Button has correct aria-label for accessibility
+  it('has correct aria-label for accessibility', async () => {
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    // Wait for fetchGames to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
+
+    const button = screen.getByRole('button', { name: `Delete game ${mockGame.name}` });
+    expect(button).toHaveAttribute('aria-label', `Delete game ${mockGame.name}`);
+  });
+
+  // Test 7: Button does not trigger modal when disabled
+  it('does not trigger modal when disabled', async () => {
+    vi.mocked(axios.get).mockResolvedValue({
+      status: 200,
+      data: { games: [{ ...mockGame, active: true }] },
+    });
+
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    // Wait for fetchGames to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
 
     const button = screen.getByRole('button', { name: `Delete game ${mockGame.name}` });
 
