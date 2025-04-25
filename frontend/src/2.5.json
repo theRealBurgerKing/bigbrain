@@ -20,13 +20,13 @@
       "correctAnswers": ["0"]
     },
     {
-      "text": "Which are fruits?",
+      "text": "Which of the following are commonly used programming languages in front-end development?",
       "type": "multiple choice",
       "duration": 40,
       "points": 15,
       "youtubeUrl": "",
-      "image": "apple.jpg",
-      "answers": ["Apple", "Carrot", "Banana", "Potato"],
-      "correctAnswers": ["0", "2"]
+      "image": "",
+      "answers": ["HTML", "CSS", "Banana", "JavaScript"],
+      "correctAnswers": ["0", "1", "3"]
     }
   ]

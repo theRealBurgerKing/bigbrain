@@ -512,7 +512,14 @@ function PlayGround() {
               />
             )}
             <Text _isMobile={_isMobile}>
-              URL: <a href={question.youtubeUrl} aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}>{question.youtubeUrl}</a>
+              URL: <a 
+                href={question.youtubeUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label={`Watch the video for question ${currentQuestionIndex + 1}`}
+              >
+                {question.youtubeUrl}
+              </a>
             </Text>
             <Text _isMobile={_isMobile}>
               Score: {question.points}
