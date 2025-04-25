@@ -164,6 +164,7 @@ function Login({ successJob, showError }) {
           type="submit"
           onClick={login}
           disabled={isLoading}
+          aria-label="Login the dashboard"
         >
           {isLoading ? 'Logging in...' : 'Login'}
         </Button>
