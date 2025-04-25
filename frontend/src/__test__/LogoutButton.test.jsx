@@ -190,5 +190,46 @@ describe('Logout Button Component', () => {
     }, { timeout: 1000 });
   });
 
+  // Test 6: Button has correct padding in desktop view
+  it('applies correct padding for desktop view', async () => {
+    vi.mocked(useMediaQuery).mockReturnValue(false); // Simulate desktop view
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <Pages />
+      </MemoryRouter>
+    );
+    const button = screen.getByRole('button', { name: /logout/i });
 
+    // Wait for potential style application
+    await waitFor(() => {
+      expect(button).toHaveStyle('padding: 1vh 2vw');
+    }, { timeout: 1000 });
+  });
+
+  // Test 7: Button does not trigger logout when disabled
+  it('does not trigger logout when disabled', async () => {
+    // Mock axios to simulate a pending request
+    vi.mocked(axios.post).mockImplementation(() => new Promise(() => {}));
+
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <Pages />
+      </MemoryRouter>
+    );
+    const button = screen.getByRole('button', { name: /logout/i });
+
+    // Simulate click to enter loading state
+    fireEvent.click(button);
+
+    // Wait for loading state
+    await waitFor(() => {
+      expect(button).toBeDisabled();
+    });
+
+    // Click again while disabled
+    fireEvent.click(button);
+
+    // Verify no additional axios calls
+    expect(axios.post).toHaveBeenCalledTimes(1);
+  });
 });
