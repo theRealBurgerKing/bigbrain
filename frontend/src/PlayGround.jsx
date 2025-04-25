@@ -286,7 +286,7 @@ function PlayGround() {
             setQuestion(q.data.question);
             setCorrectAnswers([]);
             setSelectedAnswers([]);
-            setCurrentQuestionIndex(questions.length);
+            setCurrentQuestionIndex(updatedQuestions.length);
             return updatedQuestions;
           } else {
             setQuestion(q.data.question);
@@ -501,7 +501,7 @@ function PlayGround() {
         {playerId && active && question && question.answers && (
           <>
             <Subtitle _isMobile={_isMobile}>
-              Question {currentQuestionIndex + 1}: {question.text}
+              Question {currentQuestionIndex}: {question.text}
             </Subtitle>
             {question.image && (
               <Thumbnail
