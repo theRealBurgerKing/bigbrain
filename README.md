@@ -37,6 +37,10 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * If the form submission fails, a reasonable error message is shown
  * A button must exist to allow submission of form
  * The form must be able to be submitted on enter key in any of the fields
+![image](https://github.com/user-attachments/assets/d222c6bd-7866-477e-8ff8-be9b320788d8)
+
+
+
 
 #### 2.1.2. Register Screen
  * A unique route must exist for this screen e.g. `/register`
@@ -46,6 +50,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * If the form submission fails, a reasonable error message is shown
  * A button must exist to allow submission of form
  * The form must be able to be submitted on enter key in any of the fields
+![image](https://github.com/user-attachments/assets/2fd66cb7-611b-472d-8669-7c64f2e948c5)
 
 #### 2.1.3. Logout Button
  * A logout button must exist for all authenticated users on any screen user interacts with.
@@ -59,12 +64,14 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * Each game listed should have a clickable UI component relating to it that takes user to the screen to edit that particular game. E.G. `/game/{game_id}`
  * A button exists on this screen which brings up a UI component that allows user to create a new game, provide a name for the game. After a new game is created, it **must** be added to the dashboard immediately without a refresh.
  * 🙉🙉🙉 (For pairs only) A button exists on this screen that brings up a UI component to allow user to delete a particular game.
+![image](https://github.com/user-attachments/assets/fa3124ad-a95f-435e-9042-358ca85cbf10)
 
 #### 2.2.2. Edit BigBrain Game
  * A unique route must exist for this screen that is parameterised on the game ID. E.G. `/game/{game_id}`
  * This screen allows users to select the question they want to edit
  * This screen allows users to DELETE a particular question and ADD a new question, all actions must be done without a refresh.
  * 🙉🙉🙉 (For pairs only) This screen should also allow the editing of game meta data such as name and thumbnail
+![image](https://github.com/user-attachments/assets/c9aa2462-aa63-409b-9bb0-78ba3505d4fb)
 
 #### 2.2.3. Edit BigBrain Game Question
  * A unique route must exist for this screen that is parameterised both on the Game ID and the question ID. E.G. `/game/{game_id}/question/{question_id}`
@@ -78,6 +85,8 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
    * Points for how much the question is worth (as a `number`)
    * The ability to optionally attach a URL to a youtube video, or upload a photo, to enhance the question being asked.
    * Anywhere between **2** and **6** answers, each contains the answer as a `string`
+![image](https://github.com/user-attachments/assets/9bccc494-bba5-4f3e-8eae-86c83767341c)
+![image](https://github.com/user-attachments/assets/6155436f-2d1a-465a-b20d-fb297cec5dbf)
 
 ### 2.3. Feature 3. Admin Start, Stop, Results of game session (10%)
 
@@ -87,6 +96,8 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * This session ID should be able to be **copied** to clipboard by some kind of "Copy Link" UI component. When this item is clicked, a direct URL is copied to the clipboard. When going to this URL, the users should be given play screen (described in `2.4`) with the session code already pre-populated.
  * After user started a game session, the UI should change appropriately to reflect that a game session is active for a particular game.
  * Note: Only **one** session of a game can be active at one time.
+![image](https://github.com/user-attachments/assets/a07074f2-d1ae-411c-8e2e-48b4bd736c7a)
+![image](https://github.com/user-attachments/assets/d380b685-6cee-48c0-a965-1ee6c6b47ba0)
 
 #### 2.3.2. Stopping a game session
  * On the dashboard page, the ability to stop a started game session. Stopping a game session sends all active players to the results screen. A stopped session cannot be restarted.
@@ -109,6 +120,8 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
    * Navigating to a pre-determined URL they know about, then entering a session ID that an admin provides; or
    * Just following a URL the admin provides that includes the session ID in it
  * After players are there, they need to enter their own name to attempt to join the session. If successful, they're taken to `2.4.2`.
+![image](https://github.com/user-attachments/assets/9073ad3f-5025-4def-bb97-f67bde4b9696)
+![image](https://github.com/user-attachments/assets/16a4838a-fda4-4de1-9ddd-94e8aeae2531)
 
 #### 2.4.2. Play Game
  * If the game session has not yet started (i.e. have not advanced to the first question) a screen can exist that just says "Please wait".
@@ -121,16 +134,20 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
  * When the timer hits 0, the answer/results of that particular question are displayed
  * The answer screen remains visible until the admin advances the game question onto the next question.
  * Note: Once the game session begins (onto the first question or more) **NO** other players can join.
- 
+ ![image](https://github.com/user-attachments/assets/d305181b-d0b9-45e3-a863-4c62eecce4c4)
+![image](https://github.com/user-attachments/assets/abfa48a6-d9fe-47bc-a57c-add1403cc3f6)
+
 ### 2.5. Feature 5. Results (5%)
 
 #### 2.5.1. Game Session Results
  * After the final question is answered, a screen is displayed to players showing the key results:
    * The player's performance in each question, including how many points they scored, and how many seconds they took to answer each of them.
+![image](https://github.com/user-attachments/assets/9016712c-863d-4283-a644-9172a461f10b)
 
 #### 2.5.2. 🙉🙉🙉 (For pairs only) Past game session results
  * Allow admins to access a page whereby they can see a list of previous sessions for a game, and then view results for those previous sessions as well.
- 
+ ![image](https://github.com/user-attachments/assets/7b12834e-1303-4893-8385-9a1b1698ffbd)
+
 ### 2.6. Extra Features (5%)
 
 #### 2.6.1. Lobby room
@@ -143,6 +160,7 @@ Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not in
 #### 2.6.3. 🙉🙉🙉 (For pairs only) Points system
  * Devise a more advanced points system whereby a player's score is the product of the time taken to complete a question (i.e. speed) and the number of points a question is worth.
  * This points system should be explained (in writing) on the results screen for both admins and players.
+![image](https://github.com/user-attachments/assets/ae0b807c-6401-4ebc-a9a7-ddd2f9e8b32c)
 
 ### 2.7. Linting
 
