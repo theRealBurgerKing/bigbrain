@@ -13,7 +13,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - **Backend**: RESTful API (provided)
 - **Authentication**: JWT-based admin authentication
 - **Real-time Communication**: Session-based game management
-- **Testing**: Component testing (Vitest) + UI testing (Cypress/Playwright)
+- **Testing**: Component testing (Vitest) + UI testing (Cypress)
 
 ## Core Features / 核心功能
 
@@ -30,6 +30,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - 所有界面都具备持久化登出功能
 ![image](https://github.com/user-attachments/assets/2fd66cb7-611b-472d-8669-7c64f2e948c5)
 ![image](https://github.com/user-attachments/assets/d222c6bd-7866-477e-8ff8-be9b320788d8)
+
 ### 2. Game Management System / 游戏管理系统
 
 **Game Dashboard / 游戏仪表板**
@@ -39,9 +40,8 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - 无需刷新页面的实时游戏创建
 - Game metadata display (name, question count, thumbnail, duration)
 - 游戏元数据显示（名称、题目数量、缩略图、时长）
-- Direct navigation to game editing interfaces
-- 直接导航到游戏编辑界面
 ![image](https://github.com/user-attachments/assets/fa3124ad-a95f-435e-9042-358ca85cbf10)
+
 **Advanced Game Editing / 高级游戏编辑**
 - Multi-level question management system
 - 多层级题目管理系统
@@ -59,6 +59,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 ![image](https://github.com/user-attachments/assets/c9aa2462-aa63-409b-9bb0-78ba3505d4fb)
 ![image](https://github.com/user-attachments/assets/9bccc494-bba5-4f3e-8eae-86c83767341c)
 ![image](https://github.com/user-attachments/assets/6155436f-2d1a-465a-b20d-fb297cec5dbf)
+
 ### 3. Real-time Session Management / 实时会话管理
 
 **Session Control / 会话控制**
@@ -71,7 +72,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - Real-time session status monitoring
 - 实时会话状态监控
 ![image](https://github.com/user-attachments/assets/a07074f2-d1ae-411c-8e2e-48b4bd736c7a)
-![image](https://github.com/user-attachments/assets/d380b685-6cee-48c0-a965-1ee6c6b47ba0)
+
 **Live Game Administration / 实时游戏管理**
 - Question advancement control during active sessions
 - 活跃会话期间的题目推进控制
@@ -79,6 +80,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - 会话终止并通知玩家
 - Mid-question progression capabilities
 - 题目进行中的推进功能
+![image](https://github.com/user-attachments/assets/d380b685-6cee-48c0-a965-1ee6c6b47ba0)
 
 ### 4. Player Experience / 玩家体验
 
@@ -91,6 +93,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - 具有愉快等待体验的大厅系统
 ![image](https://github.com/user-attachments/assets/9073ad3f-5025-4def-bb97-f67bde4b9696)
 ![image](https://github.com/user-attachments/assets/16a4838a-fda4-4de1-9ddd-94e8aeae2531)
+
 **Interactive Gameplay / 互动游戏体验**
 - Real-time question display with media content
 - 实时题目显示，包含媒体内容
@@ -102,6 +105,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - 时间到期后的实时答案揭晓
  ![image](https://github.com/user-attachments/assets/d305181b-d0b9-45e3-a863-4c62eecce4c4)
 ![image](https://github.com/user-attachments/assets/abfa48a6-d9fe-47bc-a57c-add1403cc3f6)
+
 ### 5. Comprehensive Results & Analytics / 全面的结果与分析
 
 **Player Performance Tracking / 玩家表现跟踪**
@@ -122,6 +126,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - Historical session data access
 - 历史会话数据访问
 ![image](https://github.com/user-attachments/assets/9016712c-863d-4283-a644-9172a461f10b)
+
 ## Advanced Features / 高级特性
 
 ### Enhanced Points System / 增强积分系统
@@ -130,6 +135,7 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - Transparent scoring explanation on results screens
 - 结果界面上的透明评分说明
 ![image](https://github.com/user-attachments/assets/ae0b807c-6401-4ebc-a9a7-ddd2f9e8b32c)
+
 ### Bulk Game Creation / 批量游戏创建
 - CSV/JSON file upload for complete game data import
 - CSV/JSON 文件上传，完整游戏数据导入
@@ -142,25 +148,6 @@ BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、�
 - Session comparison and analysis tools
 - 会话对比和分析工具
  ![image](https://github.com/user-attachments/assets/7b12834e-1303-4893-8385-9a1b1698ffbd)
-## Technical Requirements / 技术要求
-
-### Development Standards / 开发标准
-- **Single Page Application**: No page refreshes required
-- **单页应用**：无需页面刷新
-- **Responsive Design**: Optimal experience across all devices
-- **响应式设计**：所有设备上的最佳体验
-- **Error Handling**: Comprehensive error management and user feedback
-- **错误处理**：全面的错误管理和用户反馈
-- **Code Quality**: ESLint compliance with zero warnings/errors
-- **代码质量**：ESLint 合规，零警告/错误
-
-### Testing Strategy / 测试策略
-- **Component Testing**: Individual component unit tests with high coverage
-- **组件测试**：单个组件单元测试，高覆盖率
-- **UI Testing**: End-to-end user journey testing
-- **UI 测试**：端到端用户旅程测试
-- **Test Scenarios**: Complete admin workflow from registration to results
-- **测试场景**：从注册到结果的完整管理员工作流
 
 ## User Journey Examples / 用户旅程示例
 
