@@ -1,269 +1,194 @@
-# Assessment 4 (ReactJS)
+# BigBrain Quiz Platform - 项目描述
+*A Real-time Quiz Platform Built with React.js - 基于 React.js 的实时竞答平台*
 
-[Please see course website for full spec](https://cgi.cse.unsw.edu.au/~cs6080/NOW/assessments/assignments/ass4)
+## Project Overview / 项目概述
 
-This assignment is due Friday the 25th of April, 11pm.
+BigBrain is a modern, interactive quiz platform that enables administrators to create, manage, and conduct real-time quiz sessions while allowing players to join and participate from any device. The platform features a comprehensive admin dashboard and an intuitive player interface.
 
-## Change Log
+BigBrain 是一个现代化的交互式竞答平台，管理员可以创建、管理和主持实时竞答会话，玩家可以从任何设备加入并参与竞答。该平台具有全面的管理仪表板和直观的玩家界面。
 
-* 09/04: Updated typos in spec (headers, bad sum of marks); removed custom.js to simplify; better defined a structure; made clearer what is and isn't required in the main game blob.
-* 11/04: Fix bug on backend where questions & answers were not being returned correctly.
-* 15/04: Fix bug on backend where gameId from frontend was not handled properly, game creation requirement, happy path requirement & swagger doc player can't GET/PUT answer.
-* 22/04: Due date extended 3 hours
+## Technology Stack / 技术栈
 
-## 1. Setup
+- **Frontend**: React.js (Single Page Application)
+- **Backend**: RESTful API (provided)
+- **Authentication**: JWT-based admin authentication
+- **Real-time Communication**: Session-based game management
+- **Testing**: Component testing (Vitest) + UI testing (Cypress/Playwright)
 
-**Please run `./util/setup.sh` in your terminal before you begin. This will set up some checks in relation to the "Git Commit Requirements".**
+## Core Features / 核心功能
 
-It's important to note that you should **NOT** use any pre-built web app templates or any AI web app creators for this assignment.
+### 1. Admin Authentication System / 管理员认证系统
 
-Dependencies files such as `package.json` and `package-lock.json` are excluded from git requirement and should be updated accordingly to include the latest dependencies of your work, make sure to install dependencies correctly in `frontend` directory.
-
-## 2. The Front-end (Work to do)
-
-You are to build a frontend for a provided backend. This frontend shall be build with React.js. It shall be a single page application that does not require a refresh for state updates. (Failure to make your app a fully single page app will result in significant mark penalties)
-
-Features need to be implemented (described below) in order for your React.js app to meet the requirements of the task, and to operate with the backend described in 3.2.
-
-The requirements describe a series of **screens**. Screens can be popups/modals, or entire pages. The use of that language is so that you can choose how you want it to be displayed. A screen is essentially a certain state of your web-based application.
-
-Anything marked 🙉🙉🙉 only needs to completed by pair-attempts and not individual-attempts.
-
-### 2.1. Feature 1. Admin Auth (9%)
-
-#### 2.1.1. Login Screen
- * A unique route must exist for this screen e.g. `/login`
- * User must be able to enter their `email` and `password`.
- * If the form submission fails, a reasonable error message is shown
- * A button must exist to allow submission of form
- * The form must be able to be submitted on enter key in any of the fields
-![image](https://github.com/user-attachments/assets/d222c6bd-7866-477e-8ff8-be9b320788d8)
-
-
-
-
-#### 2.1.2. Register Screen
- * A unique route must exist for this screen e.g. `/register`
- * User must be able to enter their `email` and `password` and `name`
- * A confirm `password` field should exist where user re-enters their password.
- * If the two passwords don't match, the user should receive an error popup before submission.
- * If the form submission fails, a reasonable error message is shown
- * A button must exist to allow submission of form
- * The form must be able to be submitted on enter key in any of the fields
+**Admin Registration & Login / 管理员注册与登录**
+- Secure user registration with email, password, and name validation
+- 安全的用户注册，包含邮箱、密码和姓名验证
+- Login functionality with proper error handling
+- 登录功能，具备完善的错误处理机制
+- Password confirmation during registration
+- 注册时的密码确认功能
+- Persistent logout functionality across all screens
+- 所有界面都具备持久化登出功能
 ![image](https://github.com/user-attachments/assets/2fd66cb7-611b-472d-8669-7c64f2e948c5)
+![image](https://github.com/user-attachments/assets/d222c6bd-7866-477e-8ff8-be9b320788d8)
+### 2. Game Management System / 游戏管理系统
 
-#### 2.1.3. Logout Button
- * A logout button must exist for all authenticated users on any screen user interacts with.
- * This logout button, when clicked, logs user out and returns to the login screen, user then needs to login again to access the app.
-
-### 2.2. Feature 2. Admin Creating & Editing a Game (11%)
-
-#### 2.2.1. Dashboard
- * A unique route must exist for this screen e.g. `/dashboard`
- * A dashboard of all games is displayed, where each game shows the **name**. And 🙉🙉🙉(For pairs only), you also need to include **number of questions** it contains, a **thumbnail**, and a **total duration** to complete (sum of each individual question's duration)
- * Each game listed should have a clickable UI component relating to it that takes user to the screen to edit that particular game. E.G. `/game/{game_id}`
- * A button exists on this screen which brings up a UI component that allows user to create a new game, provide a name for the game. After a new game is created, it **must** be added to the dashboard immediately without a refresh.
- * 🙉🙉🙉 (For pairs only) A button exists on this screen that brings up a UI component to allow user to delete a particular game.
+**Game Dashboard / 游戏仪表板**
+- Comprehensive dashboard displaying all created games
+- 显示所有已创建游戏的综合仪表板
+- Real-time game creation without page refresh
+- 无需刷新页面的实时游戏创建
+- Game metadata display (name, question count, thumbnail, duration)
+- 游戏元数据显示（名称、题目数量、缩略图、时长）
+- Direct navigation to game editing interfaces
+- 直接导航到游戏编辑界面
 ![image](https://github.com/user-attachments/assets/fa3124ad-a95f-435e-9042-358ca85cbf10)
-
-#### 2.2.2. Edit BigBrain Game
- * A unique route must exist for this screen that is parameterised on the game ID. E.G. `/game/{game_id}`
- * This screen allows users to select the question they want to edit
- * This screen allows users to DELETE a particular question and ADD a new question, all actions must be done without a refresh.
- * 🙉🙉🙉 (For pairs only) This screen should also allow the editing of game meta data such as name and thumbnail
+**Advanced Game Editing / 高级游戏编辑**
+- Multi-level question management system
+- 多层级题目管理系统
+- Support for three question types:
+- 支持三种题目类型：
+  - **Single Choice** / 单选题: One correct answer from multiple options
+  - **Multiple Choice** / 多选题: Multiple correct answers, all must be selected
+  - **Judgment** / 判断题: True/false questions
+- Rich media support (YouTube videos, image uploads)
+- 富媒体支持（YouTube 视频、图片上传）
+- Flexible answer configuration (2-6 answers per question)
+- 灵活的答案配置（每题 2-6 个答案）
+- Time limits and point values for each question
+- 每题的时间限制和分值设置
 ![image](https://github.com/user-attachments/assets/c9aa2462-aa63-409b-9bb0-78ba3505d4fb)
-
-#### 2.2.3. Edit BigBrain Game Question
- * A unique route must exist for this screen that is parameterised both on the Game ID and the question ID. E.G. `/game/{game_id}/question/{question_id}`
- * Editable items on this page include:
-   * The question type (multiple choice, single choice, judgement)
-     * Single choice questions have multiple answers the player can guess, **ONLY** one is correct
-     * Multiple choice questions have multiple answers the player can guess, **MULTIPLE** are correct and they must select **ALL** correct ones
-     * Judgement questions have a **SINGLE** answer the player can guess, the answer is either correct or incorrect
-   * The question itself (as a `string`)
-   * Time limit that users have to answer the question (as a `number`)
-   * Points for how much the question is worth (as a `number`)
-   * The ability to optionally attach a URL to a youtube video, or upload a photo, to enhance the question being asked.
-   * Anywhere between **2** and **6** answers, each contains the answer as a `string`
 ![image](https://github.com/user-attachments/assets/9bccc494-bba5-4f3e-8eae-86c83767341c)
 ![image](https://github.com/user-attachments/assets/6155436f-2d1a-465a-b20d-fb297cec5dbf)
+### 3. Real-time Session Management / 实时会话管理
 
-### 2.3. Feature 3. Admin Start, Stop, Results of game session (10%)
-
-#### 2.3.1. Starting a game session
- * On the dashboard page, users should be able to start a new game session via clicking a `start game` button.
- * When the game session is started, a popup is displayed that shows the session ID of the game as a `string`
- * This session ID should be able to be **copied** to clipboard by some kind of "Copy Link" UI component. When this item is clicked, a direct URL is copied to the clipboard. When going to this URL, the users should be given play screen (described in `2.4`) with the session code already pre-populated.
- * After user started a game session, the UI should change appropriately to reflect that a game session is active for a particular game.
- * Note: Only **one** session of a game can be active at one time.
+**Session Control / 会话控制**
+- One-click game session initialization
+- 一键游戏会话初始化
+- Unique session ID generation with clipboard sharing
+- 唯一会话 ID 生成，支持剪贴板分享
+- Pre-populated join URLs for seamless player access
+- 预填充加入链接，便于玩家无缝访问
+- Real-time session status monitoring
+- 实时会话状态监控
 ![image](https://github.com/user-attachments/assets/a07074f2-d1ae-411c-8e2e-48b4bd736c7a)
 ![image](https://github.com/user-attachments/assets/d380b685-6cee-48c0-a965-1ee6c6b47ba0)
+**Live Game Administration / 实时游戏管理**
+- Question advancement control during active sessions
+- 活跃会话期间的题目推进控制
+- Session termination with player notification
+- 会话终止并通知玩家
+- Mid-question progression capabilities
+- 题目进行中的推进功能
 
-#### 2.3.2. Stopping a game session
- * On the dashboard page, the ability to stop a started game session. Stopping a game session sends all active players to the results screen. A stopped session cannot be restarted.
- * When the game session is stopped, a popup appears that prompts the admin "Would you like to view the results?" If they clicked yes, they are taken to the screen described in `2.3.3`
+### 4. Player Experience / 玩家体验
 
-#### 2.3.3. Advancing & getting the results of a game
- * A unique route must exist for this screen that is parameterised on the session ID. E.G. `/session/{session_id}`
- * If the game session hasn't finished, it should allow the admin to advance to the next question or stop the session. You can advance either in the middle of a question's duration counting down or once the question has time up.
- * Once the game session has finished, it should display the following:
-   * A table of up to top **5** users and their **score**
-   * A bar/line chart showing a breakdown of what percentage of people (Y axis) got certain questions (X axis) correct
-   * A chart showing the average response/answer time for each question
-   * Any other interesting information you see fit (Bonus mark can be granted for this based on your implementation)
-
-### 2.4. Feature 4. Player able to join and play game session (10%)
-
-#### 2.4.1. Play Join
- * A unique route must exist for this screen
- * A user is able to enter a session by either:
-   * Navigating to a pre-determined URL they know about, then entering a session ID that an admin provides; or
-   * Just following a URL the admin provides that includes the session ID in it
- * After players are there, they need to enter their own name to attempt to join the session. If successful, they're taken to `2.4.2`.
+**Seamless Join Process / 无缝加入流程**
+- Multiple join methods (direct URL or session ID entry)
+- 多种加入方式（直接链接或输入会话 ID）
+- Custom player name registration
+- 自定义玩家姓名注册
+- Lobby system with pleasant waiting experience
+- 具有愉快等待体验的大厅系统
 ![image](https://github.com/user-attachments/assets/9073ad3f-5025-4def-bb97-f67bde4b9696)
 ![image](https://github.com/user-attachments/assets/16a4838a-fda4-4de1-9ddd-94e8aeae2531)
-
-#### 2.4.2. Play Game
- * If the game session has not yet started (i.e. have not advanced to the first question) a screen can exist that just says "Please wait".
- * Once advanced onto at least the first question, users are now on a screen that gives the current question being asked. This consists of:
-   * The question text
-   * A video or image depending on whether it exists.
-   * A countdown with how many seconds remain until you can't answer anymore.
-   * A selection of single, multiple or judgement answers, that are clickable.
- * The answer shall be sent to the server immediately after each user interaction. If further selections are modified, more requests are sent
- * When the timer hits 0, the answer/results of that particular question are displayed
- * The answer screen remains visible until the admin advances the game question onto the next question.
- * Note: Once the game session begins (onto the first question or more) **NO** other players can join.
+**Interactive Gameplay / 互动游戏体验**
+- Real-time question display with media content
+- 实时题目显示，包含媒体内容
+- Visual countdown timers for each question
+- 每题的可视化倒计时器
+- Immediate answer submission and modification
+- 即时答案提交和修改
+- Live answer revelation after time expires
+- 时间到期后的实时答案揭晓
  ![image](https://github.com/user-attachments/assets/d305181b-d0b9-45e3-a863-4c62eecce4c4)
 ![image](https://github.com/user-attachments/assets/abfa48a6-d9fe-47bc-a57c-add1403cc3f6)
+### 5. Comprehensive Results & Analytics / 全面的结果与分析
 
-### 2.5. Feature 5. Results (5%)
+**Player Performance Tracking / 玩家表现跟踪**
+- Individual question performance metrics
+- 单题表现指标
+- Response time analysis for each question
+- 每题的响应时间分析
+- Personal score breakdown and ranking
+- 个人得分明细和排名
 
-#### 2.5.1. Game Session Results
- * After the final question is answered, a screen is displayed to players showing the key results:
-   * The player's performance in each question, including how many points they scored, and how many seconds they took to answer each of them.
+**Administrative Analytics / 管理分析**
+- Top 5 player leaderboard display
+- 前 5 名玩家排行榜显示
+- Question accuracy statistics with visual charts
+- 题目正确率统计及可视化图表
+- Average response time analytics
+- 平均响应时间分析
+- Historical session data access
+- 历史会话数据访问
 ![image](https://github.com/user-attachments/assets/9016712c-863d-4283-a644-9172a461f10b)
+## Advanced Features / 高级特性
 
-#### 2.5.2. 🙉🙉🙉 (For pairs only) Past game session results
- * Allow admins to access a page whereby they can see a list of previous sessions for a game, and then view results for those previous sessions as well.
- ![image](https://github.com/user-attachments/assets/7b12834e-1303-4893-8385-9a1b1698ffbd)
-
-### 2.6. Extra Features (5%)
-
-#### 2.6.1. Lobby room
- * If a game session is active, but has yet to move into position 0 (i.e. is still in position -1), then a player lives in a state of limbo. Implement a "lobby" screen that is pleasant and entertaining for users while they await for the game to begin.
-
-#### 2.6.2. 🙉🙉🙉 (For pairs only) Game Upload
- * For `2.2.1`, when a new game is created, the user can optionally upload a `.csv` or `.json` (you choose) file containing the full data for a game. The data structure is validated on frontend before being passed to the backend normally.
- * If you implement this feature, you **MUST** attach an example `.csv` or `.json` into your assignment 4 repo in the project folder. This file must have name `2.5.json`  or `2.5.csv`. This is so we can actually test that it works while marking otherwise you won't be awarded mark for this section.
-
-#### 2.6.3. 🙉🙉🙉 (For pairs only) Points system
- * Devise a more advanced points system whereby a player's score is the product of the time taken to complete a question (i.e. speed) and the number of points a question is worth.
- * This points system should be explained (in writing) on the results screen for both admins and players.
+### Enhanced Points System / 增强积分系统
+- Speed-based scoring algorithm combining accuracy and response time
+- 基于速度的评分算法，结合准确性和响应时间
+- Transparent scoring explanation on results screens
+- 结果界面上的透明评分说明
 ![image](https://github.com/user-attachments/assets/ae0b807c-6401-4ebc-a9a7-ddd2f9e8b32c)
+### Bulk Game Creation / 批量游戏创建
+- CSV/JSON file upload for complete game data import
+- CSV/JSON 文件上传，完整游戏数据导入
+- Frontend data validation before backend submission
+- 后端提交前的前端数据验证
 
-### 2.7. Linting
+### Historical Data Management / 历史数据管理
+- Access to previous session results
+- 访问历史会话结果
+- Session comparison and analysis tools
+- 会话对比和分析工具
+ ![image](https://github.com/user-attachments/assets/7b12834e-1303-4893-8385-9a1b1698ffbd)
+## Technical Requirements / 技术要求
 
-- Linting must be run from inside the `frontend` folder by running `npm run lint`. You have to make sure linting doesn't produce **any** error and warning to gain the mark for linting section.
+### Development Standards / 开发标准
+- **Single Page Application**: No page refreshes required
+- **单页应用**：无需页面刷新
+- **Responsive Design**: Optimal experience across all devices
+- **响应式设计**：所有设备上的最佳体验
+- **Error Handling**: Comprehensive error management and user feedback
+- **错误处理**：全面的错误管理和用户反馈
+- **Code Quality**: ESLint compliance with zero warnings/errors
+- **代码质量**：ESLint 合规，零警告/错误
 
-### 2.8. Testing
+### Testing Strategy / 测试策略
+- **Component Testing**: Individual component unit tests with high coverage
+- **组件测试**：单个组件单元测试，高覆盖率
+- **UI Testing**: End-to-end user journey testing
+- **UI 测试**：端到端用户旅程测试
+- **Test Scenarios**: Complete admin workflow from registration to results
+- **测试场景**：从注册到结果的完整管理员工作流
 
-As part of this assignment you are required to write some tests for your components (component testing), and for your application as a whole (ui testing).
+## User Journey Examples / 用户旅程示例
 
-For **component testing**, you must:
+### Admin Workflow / 管理员工作流
+1. **Registration/Login** → **注册/登录**
+2. **Create New Game** → **创建新游戏**
+3. **Add/Edit Questions** → **添加/编辑题目**
+4. **Start Game Session** → **开始游戏会话**
+5. **Share Session Link** → **分享会话链接**
+6. **Advance Questions** → **推进题目**
+7. **View Results & Analytics** → **查看结果与分析**
 
-- Write tests for different components (3 if solo, 🙉🙉🙉 6 if working in a pair)
-- For each of the components, they must not have more than 50% similarity (e.g. you can't test a "Card" component and a "BigCard" component, that are virtually the same)
-- Ensure your tests have excellent **coverage** (look at all different use cases and edge cases)
-- Ensure your tests have excellent **clarity** (well commented and code isn't overly complex)
-- Ensure your tests are **designed** well (logical ordering of tests, avoid any tests that aren't necessary or don't add any meaningful value)
+### Player Workflow / 玩家工作流
+1. **Join via Link/Session ID** → **通过链接/会话ID加入**
+2. **Enter Player Name** → **输入玩家姓名**
+3. **Wait in Lobby** → **在大厅等待**
+4. **Answer Questions** → **回答问题**
+5. **View Individual Results** → **查看个人结果**
 
-Vitest has been setup in your `frontend` folder, there is one example test file located at _`frontend/src/__test__`_, feel free to use it or use `cypress` for component testing.
+## Project Goals / 项目目标
 
-For **ui testing**, you must:
+This platform demonstrates modern web development practices while creating an engaging, real-time interactive experience. It showcases advanced React.js patterns, state management, real-time communication, and comprehensive testing methodologies.
 
-- Write a test for the "happy path" of an admin that is described as: 
+该平台展示了现代 Web 开发实践，同时创造了引人入胜的实时交互体验。它展示了高级 React.js 模式、状态管理、实时通信和全面的测试方法。
 
-  1. Registers successfully
+The BigBrain platform serves as both an educational tool and an entertainment system, suitable for classrooms, corporate training, social events, and competitive gaming scenarios.
 
-  2. Creates a new game successfully
+BigBrain 平台既是教育工具也是娱乐系统，适用于课堂、企业培训、社交活动和竞技游戏场景。
 
-  3. (Not required) Updates the thumbnail and name of the game successfully (yes, it will have no questions)
-
-  4. Starts a game successfully
-
-  5. Ends a game successfully (yes, no one will have played it)
-
-  6. Loads the results page successfully
-
-  7. Logs out of the application successfully
-
-  8. Logs back into the application successfully
-
-- (🙉🙉🙉 For pairs only) also required to write a test for another path through the program, describing the steps and the rationale behind this choice in `TESTING.md`, this path **must** contain different features than the ones described in the previous path.
-
-#### Advice for Component Testing
-
-- Find a simple primitive component you've written, and if you don't have one, write one. This could include a common button you use, or a popup, or a box, or an input. Often examples of these are just MUI or other library components you might have wrapped slightly and includes some props you've passed in
-- Simply write some unit tests that check that for a given prop input, the component behaves in a certain way (e.g. action or visual display), etc etc
-- E.G. Creating a `MyButton` that wraps a MUI `Button`.
-- E.G. A simple example is the list of answers for a question. It takes in the answers list we've defined and renders a bunch of MUI ListItems, Checkboxes, TextFields and IconButtons
-- Your app is going to be a set of pages, and those pages are made up of primitive components. But if you don't have layers of components between that it means your code is not well modularised. Another example could be if we said to you - no component should be longer than 50 lines of code. You'd probably go refactor to group common sets of primitives together into a new component.
-
-#### Advice for UI Testing
-
-- If you use cypress, consider adding `cy.wait(1000)` if necessary to add slight pauses in your tests if you find that the page is rendering slower than cypress is trying to test.
-- If you use Playwright, consider adding `await page.waitForTimeout(1000)` if necessary to add slight pauses in your tests if you find that the page is rendering slower than playwright is trying to test.
-- If you're having issues using Cypress on WSL2, try following [this guide](https://shouv.medium.com/how-to-run-cypress-on-wsl2-989b83795fb6).
-
-#### Other advice / help
-
-- The tutor will run an empty (reset) backend when running `npm run test` whilst marking.
-
-#### Running tests
-
-Tests must be run from inside the `frontend` folder by running `npm run test`. Then you might need to press `a` to run all tests.
-
-You are welcomed to modify the `npm run test` command by updating the `test` script inside `frontend/package.json`. For example, if you would like to run standard react testing alongside cypress UI tests you can use `react-scripts test —watchAll=false && npm run cypress open` and if you've used cypress for both component and UI test, then you can replace that line with `cypress open`.
-
-### 2.9. Backend API Structure
-
-On backend, for a given admin, they have full control of the games blob storage which they can use GET, PUT `/admin/games` as the getter and setter for the game data. You can add as much or as less fields into each game object and per question object as you want.
-
-However, we do have a minimum requirement for the game object, which is:
-
-```json
-{
-    gameId: number,
-    owner: number,
-    questions: [
-        {
-            duration: number,
-            correctAnswers: string[],
-            [more],
-            [more],
-            [more],
-        },
-        {
-            duration: number,
-            correctAnswers: string[],
-            [more],
-            [more],
-            [more],
-        },
-    ],
-    [more],
-    [more],
-    [more],
-}
-```
-All those "[more]"s in the above JSON are just placeholders to show that you can add more data to the game or to the question. Whatever unique data YOU put in there will then just be given back to you by other API calls such as `/admin/games` and `/admin/session/{session_id}/status`.
-
-### 2.10. Other notes
-
-- The port you can use to `fetch` data from the backend is defined in `frontend/backend.config.json`
-- [This article may be useful to some students](https://stackoverflow.com/questions/66284286/react-jest-mock-usenavigate)
-- For users of typescript, [follow this guide](https://nw-syd-gitlab.cseunsw.tech/COMP6080/25T1/react-typescript)
-- For images, you can just pass in base64 encoded images
 - For certain requests you may want to "poll" the backend, i.e. have the friend end repeatedly make an API call every 1 second to check for updates.
 - Make sure you navigated to the correct directory when installing dependencies.
